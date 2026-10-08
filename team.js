@@ -80,6 +80,7 @@ function openProfile(){const s=S(),p=T.points(s),r=T.rankOf(p.total);
   `<div class="pf-hero"><div class="pf-badge">${insignia(r.index,96)}</div><div><span class="pf-rank">${esc(r.rank.name)}</span><b class="pf-pts">${_t('team.ekspeditsii',{n:p.total,pts:fmt(p.total)})}</b>${r.next?`<div class="pf-bar"><i style="width:${Math.round(r.progress*100)}%"></i></div><small class="pf-next">${_t('team.zvaniya',{name:esc(r.next.name),toNext:fmt(r.toNext)})}</small>`:'<small class="pf-next">'+_t('team.vysshee_zvanie')+'</small>'}</div></div>`+
   `<div class="pf-parts">${Object.entries(p.parts).map(([k,v])=>`<div><span>${PART_NAMES[k]}</span><b>${fmt(v)}</b></div>`).join('')}</div>`+
   `<h3 class="g-sub">${_t('team.zvaniya2')}</h3><div class="pf-ladder">${T.RANKS.map((x,k)=>`<div class="${k<r.index?'done':k===r.index?'now':'next'}">${insignia(k,34)}<span><b>${esc(x.name)}</b><small>${k?_t('team.x2',{pts:fmt(x.min)}):_t('team.start_ekspeditsii')}</small></span>${k<=r.index?`<i>${ICON.check}</i>`:''}</div>`).join('')}</div>`+
+  `<p class="g-note pf-xp-note">${_t('moon.xp_note')}</p>`+(UI.moonCard?UI.moonCard():'')+
   `<button class="primary g-cta" id="pf-leaders">${_t('team.tablitsa_liderov',{trophy:IC.trophy})}</button><button class="g-secondary" id="pf-share">${ICON.share} ${_t('team.podelitsya_zvaniem')}</button><p class="g-note pts-disclaimer">${_t('points.disclaimer')}</p>`;
  wireClose(profD);$('#pf-leaders').onclick=()=>openLeaders('overall');$('#pf-share').onclick=()=>UI.openShare&&UI.openShare('invite');open('profile');}
 function celebrate(r){rankD.innerHTML=`<div class="ru-rays" aria-hidden="true"></div><div class="ru-body"><span class="eyebrow">${_t('team.novoe_zvanie')}</span><div class="ru-badge">${insignia(r.index,132)}</div><h2>${esc(r.rank.name)}</h2><p>${['',_t('team.pervyy_polet'),_t('team.ty_znaesh'),_t('team.teper_ty'),_t('team.vysshee_zvanie2')][r.index]||''}</p>
@@ -90,8 +91,10 @@ function checkRank(){const up=T.rankUp(S());if(up){Game.save();whenFree(()=>cele
 
 // ---------- leaderboard ----------
 const leadD=dialog('leaders','leaders-dialog');let leadKind='overall',leadCache={},leadBusy=false;
+// v37: places by server Moon Points; a hidden player is shown by a callsign («hide me» in Rules → Privacy).
+const lbName=x=>x.hidden&&x.tag?_t('lb.callsign',{tag:x.tag}):x.name||_t('team.kosmonavt');
 function rowHtml(x,kind){const medal=x.place<=3?`<i class="lb-medal m${x.place}">${x.place}</i>`:`<i class="lb-place">${x.place}</i>`;
- return`<div class="lb-row ${x.me?'me':''}">${medal}<span class="lb-name">${kind==='overall'?insignia(T.rankOf(x.score||0).index,22):`<span class="lb-ico">${ICON.crew}</span>`}<b>${esc(x.name||_t('team.kosmonavt'))}</b>${x.me?'<em>'+_t('team.ty')+'</em>':''}</span><span class="lb-val">${kind==='overall'?fmt(x.score||0):`${x.full||0}<small> · ${x.joined||0}</small>`}</span></div>`;}
+ return`<div class="lb-row ${x.me?'me':''} ${x.hidden?'hidden-name':''}">${medal}<span class="lb-name">${kind==='overall'?insignia(Math.max(0,Math.min(4,x.rank|0)),22):`<span class="lb-ico">${ICON.crew}</span>`}<b>${esc(lbName(x))}</b>${x.me?'<em>'+_t('team.ty')+'</em>':''}</span><span class="lb-val">${kind==='overall'?fmt(x.points||0):`${x.full||0}<small> · ${x.joined||0}</small>`}</span></div>`;}
 async function loadLeaders(kind){if(!UI.online||leadBusy)return;leadBusy=true;try{const r=await UI.api('/api/leaderboard',{kind});leadCache[kind]=r;}catch{leadCache[kind]={error:true};}leadBusy=false;if(leadD.open)renderLeaders();}
 function renderLeaders(){const s=S(),p=T.points(s),r=T.rankOf(p.total),data=leadCache[leadKind];
  const tabs=`<div class="lb-tabs" role="tablist"><button role="tab" data-kind="overall" class="${leadKind==='overall'?'on':''}">${_t('team.obschiy_zachet',{trophy:IC.trophy})}</button><button role="tab" data-kind="recruiters" class="${leadKind==='recruiters'?'on':''}">${ICON.crew}${_t('team.verbovschiki')}</button></div>`;
@@ -100,20 +103,26 @@ function renderLeaders(){const s=S(),p=T.points(s),r=T.rankOf(p.total),data=lead
  if(!UI.online)body=`<div class="lb-soon"><span class="gchip badge">${_t('growth.skoro')}</span><b>${_t('team.reyting_vseh')}</b><p>${_t('team.tablitsa_liderov2')}</p><button class="g-secondary" id="lb-invite">${ICON.crew} ${_t('team.pozvat_druzey')}</button></div>`;
  else if(!data){body='<div class="lb-loading">'+_t('team.zagruzhaem_reyting')+'</div>';loadLeaders(leadKind);}
  else if(data.error)body=`<div class="lb-soon"><b>${_t('team.net_svyazi')}</b><p>${_t('team.poprobuy_otkryt')}</p><button class="g-secondary" id="lb-retry">${_t('team.obnovit')}</button></div>`;
- else{const list=(data.top||[]);body=(list.length?`<div class="lb-head"><span>${_t('team.mesto')}</span><span>${leadKind==='overall'?_t('team.ochki'):_t('team.proshli_zhizn')}</span></div><div class="lb-list">${list.map(x=>rowHtml(x,leadKind)).join('')}</div>`:'<div class="lb-soon"><b>'+_t('team.poka_pusto')+'</b><p>'+_t('team.stan_pervym')+'</p></div>')+(data.me&&data.me.place&&!list.some(x=>x.me)?`<div class="lb-list pinned">${rowHtml({...data.me,me:true,name:name()},leadKind)}</div>`:'');}
+ else{const list=(data.top||[]);body=(list.length?`<div class="lb-head"><span>${_t('team.mesto')}</span><span>${leadKind==='overall'?_t('team.ochki'):_t('team.proshli_zhizn')}</span></div><div class="lb-list">${list.map(x=>rowHtml(x,leadKind)).join('')}</div>`:'<div class="lb-soon"><b>'+_t('team.poka_pusto')+'</b><p>'+_t('team.stan_pervym')+'</p></div>')+(data.me&&data.me.place&&!list.some(x=>x.me)?`<div class="lb-list pinned">${rowHtml({...data.me,me:true,name:data.me.hidden?'':name()},leadKind)}</div>`:'');}
  leadD.innerHTML=head(_t('team.reyting_ekspeditsi'),_t('team.tablitsa_liderov3'),'leaders')+tabs+mine+body+'<p class="g-note">'+(leadKind==='recruiters'?_t('team.drug_zaschityvaets'):_t('team.ochki_syuzhet')+'</p><p class="g-note pts-disclaimer">'+_t('points.disclaimer'))+'</p>';
  wireClose(leadD);leadD.querySelectorAll('[data-kind]').forEach(b=>b.onclick=()=>{leadKind=b.dataset.kind;renderLeaders();});
  const inv=$('#lb-invite');if(inv)inv.onclick=()=>UI.openCrew();const rt=$('#lb-retry');if(rt)rt.onclick=()=>{delete leadCache[leadKind];renderLeaders();};}
 function openLeaders(kind='overall'){leadKind=kind;delete leadCache[kind];renderLeaders();open('leaders');}
 
-// ---------- «Код сигнала» card inside «Связь с Землёй» ----------
-let codeMsg='',codeOk=false;
-function codeCard(){const n=S().team.codes.length;return`<div class="code-card"><div class="cc-top">${IC.signal}<div><b>${_t('team.kod_signala')}</b><small>${_t('team.kot_pryachet')}</small></div></div>
- <form class="cc-form" id="code-form" autocomplete="off"><input id="code-input" maxlength="16" placeholder="${_t('team.kod_video')}" autocapitalize="characters" spellcheck="false" aria-label="${_t('team.kod_signala')}"><button class="primary" id="code-send" type="submit">${_t('team.vvesti')}</button></form>
- <p class="cc-msg ${codeOk?'ok':''}" id="code-msg" role="status">${esc(codeMsg)}</p><small class="cc-count">${n?_t('team.aktivirovano_kodov',{n}):_t('team.kazhdyy_kod')}</small></div>`;}
-function wireCode(d){const f=d.querySelector('#code-form');if(!f)return;f.onsubmit=e=>{e.preventDefault();const inp=d.querySelector('#code-input'),r=T.redeem(S(),inp.value,window.MoonCodes||[]);codeOk=r.ok;
- if(r.ok){const got=window.MoonGrowth.applyReward(S(),r.reward);codeMsg=`${_t('team.signal_prinyat',{got:window.MoonGrowth.gotText(got)})}`;haptic();commit();checkRank();try{window.MoonCinema?.sound?.chime?.();}catch{}}else{codeMsg=r.text;haptic('warning');Game.save();}
- const msg=d.querySelector('#code-msg');if(msg){msg.textContent=codeMsg;msg.className='cc-msg '+(codeOk?'ok':'');}if(r.ok){inp.value='';const cnt=d.querySelector('.cc-count');if(cnt)cnt.textContent=_t('team.aktivirovano_kodov',{n:S().team.codes.length});}};}
+// ---------- «Код сигнала» card inside «Связь с Землёй» (v37: checked on the server; offline → «available after launch») ----------
+let codeMsg='',codeOk=false,codeBusy=false;
+function codeCard(){const n=S().team.codes.length,on=!!UI.online,max=(UI.rules?UI.rules():window.MoonGrowth.MOON).code.max;
+ return`<div class="code-card ${on?'':'pending'}"><div class="cc-top">${IC.signal}<div><b>${_t('team.kod_signala')}</b><small>${_t('team.kot_pryachet',{max})}</small></div></div>
+ <form class="cc-form" id="code-form" autocomplete="off"><input id="code-input" maxlength="24" placeholder="${_t('team.kod_video')}" autocapitalize="characters" spellcheck="false" aria-label="${_t('team.kod_signala')}" ${on?'':'disabled'}><button class="primary" id="code-send" type="submit" ${on&&!codeBusy?'':'disabled'}>${codeBusy?'…':_t('team.vvesti')}</button></form>
+ <p class="cc-msg ${codeOk?'ok':''}" id="code-msg" role="status">${esc(on?codeMsg:_t('code.offline'))}</p><small class="cc-count">${n?_t('team.aktivirovano_kodov',{n}):_t('team.kazhdyy_kod')}</small></div>`;}
+function codeError(r){return r.error==='wrong_code'?_t('code.wrong',{n:Math.max(0,r.left|0)}):r.error==='too_many_attempts'?_t('code.too_many'):r.error==='too_short'?_t('code.short'):r.error==='already'?_t('tcore.etot_kod'):r.error==='expired'?_t('tcore.srok_deystviya'):_t('growth.net_svyazi');}
+function wireCode(d){const f=d.querySelector('#code-form');if(!f)return;f.onsubmit=async e=>{e.preventDefault();const inp=d.querySelector('#code-input');if(codeBusy||!UI.online)return;const raw=inp.value;
+ if(T.normalizeCode(raw).length<4){codeOk=false;codeMsg=_t('code.short');}
+ else{codeBusy=true;const btn=d.querySelector('#code-send');if(btn){btn.disabled=true;btn.textContent='…';}
+  let r;try{r=await UI.api('/api/code/redeem',{code:raw});}catch(err){r={ok:false,error:err.code||'network'};}codeBusy=false;codeOk=!!r.ok;
+  if(r.ok){const got=window.MoonGrowth.applyServerReward(S(),r.reward)||{};T.addCode(S(),r.codeId);codeMsg=_t('team.signal_prinyat',{got:window.MoonGrowth.gotText({...got,points:r.reward?.points||0})});inp.value='';haptic();commit();checkRank();try{window.MoonCinema?.sound?.chime?.();}catch{}}
+  else{if(r.error==='already')T.addCode(S(),r.codeId);codeMsg=codeError(r);haptic('warning');Game.save();}}
+ const card=d.querySelector('.code-card');if(card){const t=document.createElement('div');t.innerHTML=codeCard();card.replaceWith(t.firstElementChild);wireCode(d);if(!codeOk){const ni=d.querySelector('#code-input');if(ni){ni.value=raw;ni.focus({preventScroll:true});ni.select?.();}}}};}
 function openCode(){UI.openTasks();setTimeout(()=>{const i=$('#code-input');if(i){i.scrollIntoView({block:'center'});}},120);}
 
 // ---------- entry points ----------

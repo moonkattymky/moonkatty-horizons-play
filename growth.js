@@ -1,6 +1,8 @@
-/* Growth stage 1 UI: «Вахта на базе» daily streak, «Пригласи члена экипажа», «Поделиться», channel/social tasks
-   and optional cloud save. Everything works offline (localStorage); server features switch on when API_BASE is set
-   and the game runs inside Telegram (signed initData). Rules live in growth-core.js. */
+/* Growth UI: «Вахта на базе» daily streak, «Пригласи члена экипажа», «Поделиться», «Связь с Землёй» tasks,
+   Moon Points display and optional cloud save. Everything works offline (localStorage); server features switch on when
+   API_BASE is set and the game runs inside Telegram (signed initData). Rules live in growth-core.js.
+   v37: Moon Points come only from the server (a cached copy is shown); offline they read «available after launch».
+   Social tasks = personal MKTY code + link reviewed by the team; signal codes and the channel are checked on the server. */
 (function(){'use strict';
 const Game=window.MoonGame,G=window.MoonGrowth,cfg=window.MoonGrowthConfig||{};if(!Game||!G)return;
 const $=s=>document.querySelector(s),S=()=>Game.state,tg=()=>window.Telegram?.WebApp||null;
@@ -8,7 +10,8 @@ const root=$('#app-viewport')||document.body;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const plural=(n,a,b,c)=>{const m10=n%10,m100=n%100;return m10===1&&m100!==11?a:m10>=2&&m10<=4&&(m100<12||m100>14)?b:c;};
 const API=String(cfg.API_BASE||'').replace(/\/+$/,'');
-let online=false,serverUser=null,crew={count:0,list:[]},channelInfo={enabled:false,rewarded:false},lastCloud=0,cloudTimer=0,booted=false;
+let online=false,serverUser=null,crew={count:0,joined:0,list:[]},channelInfo={enabled:false,rewarded:false},lastCloud=0,cloudTimer=0,booted=false;
+let session=null,social=null,rules=null;// session: {token,exp} after /api/session; social: personal code + statuses; rules: numbers from the server
 
 const ICON={
  crystal:'<svg class="gi gi-crystal" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.8 19.4 9 12 22.2 4.6 9Z" fill="#2f7dff"/><path d="M12 1.8 15.2 9 12 22.2 8.8 9Z" fill="#8ccaff"/><path d="M4.6 9h14.8" stroke="#e3f3ff" stroke-width="1.1"/></svg>',
@@ -27,7 +30,7 @@ const ICON={
  star:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2.5 2.8 6 6.5.7-4.9 4.4 1.4 6.4L12 16.8 6.2 20l1.4-6.4-4.9-4.4 6.5-.7Z" fill="#b48cff"/></svg>',
  link:'<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.3 1.3"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.3-1.3"/></svg>',
  check:'<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>'};
-function chips(r,cls=''){if(!r)return'';const out=[];if(r.crystals)out.push(`<span class="gchip ${cls}">${ICON.crystal}+${r.crystals}</span>`);if(r.metal)out.push(`<span class="gchip ${cls}">${ICON.metal}+${r.metal}</span>`);if(r.energy)out.push(`<span class="gchip ${cls}">${ICON.energy}+${r.energy}</span>`);return out.join('');}
+function chips(r,cls=''){if(!r)return'';const out=[];if(r.points)out.push(`<span class="gchip mp ${cls}">⭐+${r.points}</span>`);if(r.crystals)out.push(`<span class="gchip ${cls}">${ICON.crystal}+${r.crystals}</span>`);if(r.metal)out.push(`<span class="gchip ${cls}">${ICON.metal}+${r.metal}</span>`);if(r.energy)out.push(`<span class="gchip ${cls}">${ICON.energy}+${r.energy}</span>`);return out.join('');}
 function haptic(kind='success'){try{tg()?.HapticFeedback?.notificationOccurred?.(kind);}catch{}}
 function toast(t){if(t)Game.toast(t);}
 function commit(){Game.save();Game.refresh();updateBadges();if(online)cloudSave(true);}
@@ -45,16 +48,23 @@ async function copy(text){try{if(navigator.clipboard?.writeText){await navigator
 
 // ---------- server (optional) ----------
 function initData(){return tg()?.initData||'';}
+// Fresh initData (10 min) opens a session; then a 12-hour session token signs every call.
+function authHeader(){return session&&session.exp*1000>Date.now()+60000?'session '+session.token:'tma '+initData();}
+const M=()=>({...G.MOON,...(rules?{story:rules.story||G.MOON.story,streak:rules.streak||G.MOON.streak,channel:rules.channel??G.MOON.channel,social:rules.social||G.MOON.social,referral:rules.referral??G.MOON.referral,referralCap:rules.referralCap??G.MOON.referralCap,code:rules.code||G.MOON.code,codeFails:rules.codeFails??G.MOON.codeFails,socialPending:rules.socialPending??G.MOON.socialPending}:{})});
+// Server balance → local cache (never computed on the phone).
+function gotMoon(r){if(r&&r.moon&&G.setMoon(S(),r.moon)){Game.save();updateMoon();}}
 function setCrew(c){if(c)crew=c;try{window.MoonTeamUI?.onCrew?.(crew);}catch{}}
 async function api(path,body={},timeout=9000){if(!API||!initData())throw new Error('offline');const ctrl=typeof AbortController==='function'?new AbortController():null,timer=setTimeout(()=>ctrl?.abort(),timeout);
- try{const r=await fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'tma '+initData()},body:JSON.stringify(body),signal:ctrl?.signal});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||('HTTP '+r.status));return data;}finally{clearTimeout(timer);}}
+ try{const r=await fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json','Authorization':path==='/api/session'?'tma '+initData():authHeader()},body:JSON.stringify(body),signal:ctrl?.signal});const data=await r.json().catch(()=>({}));
+  if(r.status===401&&/session/.test(data.error||''))session=null;if(!r.ok){const e=new Error(data.error||('HTTP '+r.status));e.code=data.error||'';e.status=r.status;throw e;}gotMoon(data);return data;}finally{clearTimeout(timer);}}
 const tzOffset=()=>-new Date().getTimezoneOffset();
-function applyServerRewards(list){let total={crystals:0,metal:0,energy:0},n=0;for(const r of list||[]){const got=G.applyServerReward(S(),r);if(got){n++;for(const k in total)total[k]+=got[k];}}if(n){commit();haptic();toast(_t('growth.nagrady_ekipazha')+' '+(G.rewardText(total)||_t('growth.ryukzak_polon')));}return n;}
+function applyServerRewards(list){let total={points:0,crystals:0,metal:0,energy:0},n=0;for(const r of list||[]){const got=G.applyServerReward(S(),r);if(got){n++;for(const k in total)total[k]+=got[k]||0;}}if(n){commit();haptic();toast(_t('growth.nagrady_ekipazha')+' '+(G.rewardText(total)||_t('growth.ryukzak_polon')));}return n;}
 async function claimPending(list){if(!list?.length)return;try{const r=await api('/api/rewards/claim',{ids:list.map(x=>x.id)});applyServerRewards(r.rewards);}catch{}}
 async function boot(){if(booted)return;booted=true;const ref=startParam(),s=S();
  if(ref&&ref!==myId()&&!s.growth.refBy){s.growth.refBy=ref;Game.save();setTimeout(()=>toast(online?_t('growth.ty_ekipazhe'):_t('growth.ty_ekipazhe2')),2200);}
  if(!API||!initData()){renderAll();return;}
- try{const r=await api('/api/session',{startParam:ref?'ref_'+ref:'',tzOffset:tzOffset(),local:{updatedAt:s.updatedAt,progress:G.progressScore(s)}});online=true;serverUser=r.user||null;setCrew(r.crew);channelInfo=r.channel||channelInfo;
+ try{const r=await api('/api/session',{startParam:ref?'ref_'+ref:'',tzOffset:tzOffset(),local:{updatedAt:s.updatedAt,progress:G.progressScore(s)}});online=true;serverUser=r.user||null;session=r.session||null;social=r.social||null;rules=r.rules||null;setCrew(r.crew);channelInfo=r.channel||channelInfo;
+  if(r.privacy)S().growth.lbHidden=!!r.privacy.hidden;
   if(r.save&&r.save.data&&G.pickSave(S(),r.save.data)==='remote'&&!Game.running){if(Game.replace(r.save.data))toast(_t('growth.progress_zagruzhen'));}
   else cloudSave(true);
   if(r.streak)syncServerStreak(r.streak,null);
@@ -64,7 +74,7 @@ function cloudSave(force=false){if(!online)return;const now=Date.now();if(!force
  api('/api/save',{data:s,updatedAt:s.updatedAt}).then(r=>{if(r.crew)setCrew(r.crew);if(r.rewards?.length)claimPending(r.rewards);if(r.accepted===false&&r.save?.data&&!Game.running&&G.pickSave(S(),r.save.data)==='remote')Game.replace(r.save.data);}).catch(()=>{});}
 Game.onSave=()=>{if(online)cloudSave(false);};
 // Last chance to upload when Telegram hides or closes the Mini App (keepalive survives page unload).
-function flushCloud(){if(!online)return;try{fetch(API+'/api/save',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json','Authorization':'tma '+initData()},body:JSON.stringify({data:S(),updatedAt:S().updatedAt})}).catch(()=>{});lastCloud=Date.now();}catch{}}
+function flushCloud(){if(!online)return;try{fetch(API+'/api/save',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json','Authorization':authHeader()},body:JSON.stringify({data:S(),updatedAt:S().updatedAt})}).catch(()=>{});lastCloud=Date.now();}catch{}}
 addEventListener('pagehide',flushCloud);document.addEventListener('visibilitychange',()=>{if(document.hidden)flushCloud();});
 
 // ---------- dialogs ----------
@@ -84,11 +94,14 @@ function renderStreak(flash=0){const s=S(),st=G.streakStatus(s),d=streakDialog;
   `<p class="g-lead">${st.claimed?(st.locked?_t('growth.chasy_ustroystva'):_t('growth.nagrada_dnya',{n:st.day})+' '+(st.day===7?_t('growth.nachnetsya_novaya'):_t('growth.dalshe_nagrady'))):st.broken?_t('growth.seriya_prervalas'):_t('growth.zahodi_kazhdyy')}</p>`+
   `<div class="st-grid">${tiles}</div>`+
   `<div class="st-meta"><span>${_t('growth.seriya',{n:run})}</span><span>${_t('growth.rekord',{n:Math.max(s.streak.best||0,run)})}</span></div>`+
+  `<div class="st-moon ${online?'':'pending'}"><span class="stm-label">⭐ ${_t('moon.streak_row')}</span><span class="stm-days">${M().streak.map((p,i)=>`<i class="${online&&i===Math.min(7,st.run)-1&&!st.claimed?'now':''}">+${p}</i>`).join('')}</span>`+
+  (online?(st.claimed?'':`<b class="stm-today">${_t('moon.today',{n:G.streakPoints(st.run)})}</b>`):`<small>${_t('growth.seriya_hranitsya')}</small>`)+`</div>`+
   `<button class="primary g-cta" id="streak-claim" ${st.claimed?'disabled':''}>${st.claimed?_t('growth.nagrada_poluchena'):_t('growth.zabrat_nagradu',{n:st.day})}</button>`+
-  `<p class="g-feedback" id="streak-feedback" role="status"></p><p class="g-note">${_t('growth.propustish_den')+(online?'':' '+_t('growth.seriya_hranitsya'))}</p>`;
+  `<p class="g-feedback" id="streak-feedback" role="status"></p><p class="g-note">${_t('growth.propustish_den')}</p>`;
  wireClose(d);$('#streak-claim').onclick=claimStreak;}
-function syncServerStreak(sv,reward){const s=S(),st=G.streakStatus(s);if(!sv)return;if(reward&&!st.claimed){const got=G.applyReward(s,reward);s.streak={day:st.today,count:sv.count,run:sv.run,best:Math.max(sv.best||0,s.streak.best||0),total:(s.streak.total||0)+1};return got;}
- if(sv.claimedToday&&!st.claimed){s.streak={day:st.today,count:sv.count,run:sv.run,best:Math.max(sv.best||0,s.streak.best||0),total:s.streak.total||0};}return null;}
+function syncServerStreak(sv,reward){const s=S(),st=G.streakStatus(s);if(!sv)return;const shield=sv.shield?st.today:(s.streak.shield||'');
+ if(reward&&!st.claimed){const got=G.applyReward(s,reward);got.points=reward.points||0;s.streak={day:st.today,count:sv.count,run:sv.run,best:Math.max(sv.best||0,s.streak.best||0),total:(s.streak.total||0)+1,shield};return got;}
+ if(sv.claimedToday&&!st.claimed){s.streak={day:st.today,count:sv.count,run:sv.run,best:Math.max(sv.best||0,s.streak.best||0),total:s.streak.total||0,shield};}return null;}
 async function claimStreak(){if(claiming)return;claiming=true;const s=S();let text='',ok=false,day=G.streakStatus(s).day;
  try{if(online){try{const r=await api('/api/streak/claim',{tzOffset:tzOffset()});const got=syncServerStreak(r.streak,r.reward);if(got){ok=true;day=r.streak.count;text=_t('gcore.vahta_den',{day})+': '+G.gotText(got);}else text=_t('growth.nagrada_segodnya');}catch{const r=G.claimStreak(s);ok=r.ok;text=r.text;}}
   else{const r=G.claimStreak(s);ok=r.ok;text=r.text;}}finally{claiming=false;}
@@ -97,21 +110,21 @@ function openStreak(){renderStreak();open('streak');}
 
 // «Пригласи члена экипажа»
 const crewDialog=dialog('crew','crew-dialog');
-function renderCrew(){const d=crewDialog,R=G.REFERRAL_REWARDS,link=invite(),inTg=!!tgUser(),list=crew.list||[];
- const friends=list.length?`<ul class="crew-list">${list.map(f=>`<li><span class="crew-ava">${esc((f.name||'?').slice(0,1).toUpperCase())}</span><span class="crew-name">${esc(f.name||_t('growth.chlen_ekipazha'))}${f.premium?`<i class="crew-prem" title="Telegram Premium">${ICON.star}</i>`:''}<small>${f.status==='completed'?_t('growth.proshel_zhizn'):_t('growth.ekipazhe_zhdem')}</small></span><span class="crew-st ${f.status}">${f.status==='completed'?ICON.check:'…'}</span></li>`).join('')}</ul>`
-  :online?`<div class="crew-empty"><b>${_t('growth.poka_nikogo')}</b><span>${_t('growth.otprav_ssylku')} ${chips(R.joinReferrer,'small')}</span></div>`
+function renderCrew(){const d=crewDialog,R=G.REFERRAL_REWARDS,m=M(),link=invite(),inTg=!!tgUser(),list=crew.list||[],bonus={points:m.referral,...R.full};
+ const friends=list.length?`<ul class="crew-list">${list.map(f=>{const done=f.status==='completed';return`<li><span class="crew-ava">${esc((f.name||'?').slice(0,1).toUpperCase())}</span><span class="crew-name">${esc(f.name||_t('growth.chlen_ekipazha'))}<small>${done?(f.paid===false?_t('crew.done_capped'):_t('crew.done_paid',{n:m.referral})):_t('growth.ekipazhe_zhdem')}</small></span><span class="crew-st ${f.status}">${done?ICON.check:'…'}</span></li>`;}).join('')}</ul>`
+  :online?`<div class="crew-empty"><b>${_t('growth.poka_nikogo')}</b><span>${_t('growth.otprav_ssylku')} ${chips({points:m.referral},'small')}</span></div>`
   :`<div class="crew-soon"><span class="soon-tag">${_t('growth.skoro')}</span><b>${_t('growth.nagrady_druzey')}</b><span>${_t('growth.server_ekipazha')}</span></div>`;
  d.innerHTML=head(_t('growth.priglasi_chlena'),_t('growth.soberi_svoy'),'crew')+
-  `<div class="crew-hero" style="background-image:linear-gradient(180deg,#0b213300 45%,#0b2133e6 100%),url('${esc(cfg.CREW_HERO_IMAGE||'assets/crew-hero-v33.jpg')}')"><span class="crew-count">${ICON.crew}<b>${crew.count||0}</b> ${_t('growth.ekipazhe',{n:crew.count||0})}</span></div>`+
+  `<div class="crew-hero" style="background-image:linear-gradient(180deg,#0b213300 45%,#0b2133e6 100%),url('${esc(cfg.CREW_HERO_IMAGE||'assets/crew-hero-v33.jpg')}')"><span class="crew-count">${ICON.crew}<b>${crew.count||0}</b> ${_t('growth.ekipazhe',{n:crew.count||0})}</span>${crew.joined>crew.count?`<span class="crew-joined">${_t('crew.joined',{n:crew.joined})}</span>`:''}</div>`+
   `<div class="crew-rewards">
-    <div class="cr-row"><span class="cr-step">1</span><span class="cr-text"><b>${_t('growth.drug_otkryl')}</b><small>${_t('growth.tebe_srazu')} ${chips(R.joinInvitee,'small')}</small></span><span class="cr-chips">${chips(R.joinReferrer)}</span></div>
-    <div class="cr-row"><span class="cr-step">2</span><span class="cr-text"><b>${_t('growth.drug_proshel')}</b><small>${_t('growth.polnaya_nagrada')}</small></span><span class="cr-chips">${chips(R.full)}</span></div>
-    <div class="cr-row prem"><span class="cr-step">${ICON.star}</span><span class="cr-text"><b>${_t('growth.drug_telegram')}</b><small>${_t('growth.vmesto_shaga')}</small></span><span class="cr-chips">${chips(R.fullPremium)}</span></div></div>`+
+    <div class="cr-row"><span class="cr-step">1</span><span class="cr-text"><b>${_t('growth.drug_otkryl')}</b><small>${_t('growth.tebe_srazu')}</small></span><span class="cr-chips"></span></div>
+    <div class="cr-row"><span class="cr-step">2</span><span class="cr-text"><b>${_t('growth.drug_proshel')}</b><small>${_t('growth.polnaya_nagrada',{n:m.referral})}</small></span><span class="cr-chips">${chips(bonus)}</span></div>
+    <div class="cr-row cap"><span class="cr-step">⏱</span><span class="cr-text"><b>${_t('crew.cap_title')}</b><small>${_t('crew.cap_text',{cap:crew.cap||m.referralCap})}</small></span></div></div>`+
   `<div class="crew-link"><span class="cl-label">${ICON.link}${inTg?_t('growth.tvoya_lichnaya'):_t('growth.ssylka_igru')}</span><code>${esc(link.replace(/^https:\/\//,''))}</code><button id="crew-copy">${_t('growth.kopirovat')}</button></div>`+
   (inTg?'':'<p class="g-note">'+_t('growth.otkroy_igru')+'</p>')+
   `<button class="primary g-cta" id="crew-invite">${ICON.share}${_t('growth.otpravit_priglashe')}</button>`+
   (tg()?.shareToStory?`<button class="g-secondary" id="crew-story">${_t('growth.podelitsya_istorii')}</button>`:'')+
-  `<h3 class="g-sub">${_t('growth.moy_ekipazh')} <span>${crew.count||0}</span></h3>${friends}<p class="g-feedback" id="crew-feedback" role="status"></p>`;
+  `<h3 class="g-sub">${_t('growth.moy_ekipazh')} <span>${crew.count||0}</span></h3>${friends}<p class="g-note">${_t('crew.cats_note')}</p><p class="g-feedback" id="crew-feedback" role="status"></p>`;
  wireClose(d);$('#crew-copy').onclick=async()=>{const ok=await copy(link);$('#crew-feedback').textContent=ok?_t('growth.ssylka_skopirovana'):_t('growth.udalos_skopirovat');if(ok)haptic();};
  $('#crew-invite').onclick=()=>shareChat('invite');if($('#crew-story'))$('#crew-story').onclick=shareStory;}
 function openCrew(){renderCrew();open('crew');if(online)api('/api/crew',{}).then(r=>{setCrew(r.crew);if(crewDialog.open)renderCrew();}).catch(()=>{});}
@@ -123,7 +136,7 @@ function rewardShare(){const r=G.claimShare(S());if(r.ok){commit();setTimeout(()
 function shareChat(kind=shareContext){const link=invite(),text=shareText(kind);if(tg())openUrl(G.shareUrl(link,text));else if(navigator.share)navigator.share({title:'MOONKATTY · New Horizons',text,url:link}).catch(()=>{});else openUrl(G.shareUrl(link,text));rewardShare();}
 function shareStory(){const app=tg(),link=invite();if(!app?.shareToStory){shareChat();return;}const opts={text:_t('growth.lechu_lunu')};if(tgUser()?.is_premium)opts.widget_link={url:link,name:_t('growth.igrat_moonkatty')};else opts.text+=' '+link;
  try{app.shareToStory(absolute(langAsset(cfg.SHARE_STORY_IMAGE)),opts);rewardShare();}catch{shareChat();}}
-function renderShare(){const d=shareDialog,story=!!tg()?.shareToStory,claimed=S().growth.shareDay===G.localDay();
+function renderShare(){const d=shareDialog,story=!!tg()?.shareToStory,claimed=S().growth.shareDay===G.utcDay();
  d.innerHTML=head(_t('growth.podelitsya'),_t('growth.rasskazhi_moonkatt'),'share')+
   `<div class="share-preview"><img src="${esc(langAsset(cfg.SHARE_CARD_IMAGE))}" alt="${_t('growth.kartinka_moonkatty')}" loading="lazy"></div>`+
   `<p class="g-lead">${shareContext==='chapter'?_t('growth.otlichnaya_rabota'):_t('growth.kartinka_kotom')}</p>`+
@@ -134,36 +147,64 @@ function renderShare(){const d=shareDialog,story=!!tg()?.shareToStory,claimed=S(
  $('#share-copy').onclick=async()=>{const ok=await copy(invite());$('#share-feedback').textContent=ok?_t('growth.ssylka_skopirovana2'):_t('growth.udalos_skopirovat2');};}
 function openShare(kind='invite'){shareContext=kind;renderShare();open('share');}
 
-// Задания: канал + соцсети
-const tasksDialog=dialog('tasks','tasks-dialog');let channelBusy=false,channelMsg='';
+// ---------- Moon Points card (server balance, cached; «available after launch» without a server) ----------
+function moonCard(){const v=G.moonView(S(),online),btn=`<button type="button" class="mc-rules">${_t('moon.rules')}</button>`;
+ if(v.state==='pending')return`<div class="moon-card pending"><span class="mc-star" aria-hidden="true">⭐</span><span class="mc-text"><small>${_t('moon.title')}</small><b>${_t('moon.after_launch')}</b><em>${_t('moon.pending_note')}</em></span>${btn}</div>`;
+ return`<div class="moon-card ${v.state}"><span class="mc-star" aria-hidden="true">⭐</span><span class="mc-text"><small>${_t('moon.title')}</small><b class="mc-val">${G.formatPoints(v.points)}</b>${v.state==='cached'?`<em>${_t('moon.cached_note')}</em>`:''}</span>${btn}</div>`;}
+function updateMoon(){document.querySelectorAll('.moon-card').forEach(el=>{const t=document.createElement('div');t.innerHTML=moonCard();el.replaceWith(t.firstElementChild);});}
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('.mc-rules'))window.MoonRulesUI?.open();});
+
+// «Связь с Землёй»: channel (bot check) · signal code (server) · daily list · social review tasks · community chat (link only)
+const tasksDialog=dialog('tasks','tasks-dialog');let channelBusy=false,channelMsg='',socOpen='',socKind={},socDraft={},socMsg={},socBusy=false;
 function socialUrl(id){if(id==='chat'){const c=String(cfg.CHAT_USERNAME||'').trim().replace(/^@/,'');return /^[A-Za-z0-9_]{4,}$/.test(c)?'https://t.me/'+c:'';}return String(cfg.SOCIAL?.[id]||'');}
-function socialTasks(){return G.SOCIAL_TASKS.filter(t=>/^https:\/\//.test(socialUrl(t.id)));}
-function renderTasks(){const d=tasksDialog,s=S(),ch=String(cfg.CHANNEL_USERNAME||'').replace(/^@/,''),st=G.streakStatus(s),shareDone=s.growth.shareDay===G.localDay();
- const channelDone=s.growth.channel||channelInfo.rewarded;
+function socialPlatforms(){return G.SOCIAL_PLATFORMS.filter(id=>/^https:\/\//.test(socialUrl(id)));}
+const SOC_TITLE={x:'gcore.chitay_moonkatty',tiktok:'gcore.podpishis_tiktok',instagram:'gcore.podpishis_instagra',youtube:'gcore.podpishis_youtube'};
+function socWord(state,n){return state==='pending'?_t('soc.s_pending'):state==='approved'?_t('soc.s_approved'):state==='rejected'?_t('soc.s_rejected'):'⭐+'+n;}
+function socError(e,id){const name=G.SOCIAL_NAMES[id]||id,c=e&&e.code;return c==='bad_proof'?_t('soc.e_bad_proof',{platform:name}):c==='already'?_t('soc.e_already',{platform:name}):c==='daily_limit'?_t('soc.e_daily_limit',{platform:name}):c==='pending_limit'?_t('soc.e_pending_limit',{n:M().socialPending}):c==='duplicate_proof'?_t('soc.e_duplicate'):_t('growth.net_svyazi');}
+function socialHtml(){const ids=socialPlatforms(),chat=socialUrl('chat'),m=M();if(!ids.length&&!chat)return'';
+ const code=online&&social?`<div class="soc-code"><span class="sc-text"><small>${_t('soc.code_title')}</small><b dir="ltr">${esc(social.code)}</b></span><button type="button" id="soc-copy">${_t('growth.kopirovat')}</button><p>${_t('soc.code_hint')}</p></div>`
+  :`<div class="soc-code pending"><span class="sc-text"><small>${_t('soc.code_title')}</small><b dir="ltr">MKTY-····</b></span><p>${_t('soc.code_offline')}</p></div>`;
+ const rows=ids.map(id=>{const st=social?.platforms?.[id]||{follow:'none',daily:'none'},open=online&&socOpen===id,kind=socKind[id]||(st.follow==='none'||st.follow==='rejected'?'follow':'daily'),msg=socMsg[id];
+  const done=st.follow==='approved'&&st.daily==='approved',sub=online?_t('soc.line',{follow:socWord(st.follow,m.social.follow),daily:socWord(st.daily,m.social.daily)}):G.SOCIAL_NAMES[id]+' · MOONKATTY';
+  return`<div class="task-row soc-row ${done?'claimed':''} ${open?'open':''}"><span class="tr-icon">${ICON[id]}</span><span class="tr-text"><b>${_t(SOC_TITLE[id])}</b><small>${sub}</small></span><span class="tr-side"><button class="tr-btn" data-soc-open="${id}">${_t('growth.otkryt')}</button>${online?`<button class="tr-btn gold" data-soc-form="${id}" aria-expanded="${open}">${_t('soc.send')}</button>`:''}</span></div>`+
+   (open?`<form class="soc-form" data-soc-submit="${id}" autocomplete="off"><div class="soc-kinds" role="tablist"><button type="button" role="tab" data-soc-kind="follow" class="${kind==='follow'?'on':''}">${_t('soc.follow')} · ⭐+${m.social.follow}</button><button type="button" role="tab" data-soc-kind="daily" class="${kind==='daily'?'on':''}">${_t('soc.daily')} · ⭐+${m.social.daily}</button></div>`+
+    `<div class="soc-input"><input name="proof" dir="ltr" inputmode="url" autocapitalize="off" spellcheck="false" maxlength="300" value="${esc(socDraft[id]||'')}" placeholder="${esc(_t(kind==='follow'?'soc.ph_follow':'soc.ph_daily'))}" aria-label="${esc(_t(kind==='follow'?'soc.ph_follow':'soc.ph_daily'))}"><button class="primary" type="submit" ${socBusy?'disabled':''}>${_t('soc.send_btn')}</button></div>`+
+    `<p class="soc-msg ${msg?.ok?'ok':''}" role="status">${esc(msg?.text||'')}</p></form>`:'');}).join('');
+ const chatRow=chat?`<div class="task-row chat-row"><span class="tr-icon">${ICON.telegram}</span><span class="tr-text"><b>${_t('gcore.vstupi_chat')}</b><small>${_t('soc.chat_sub')}</small></span><span class="tr-side"><button class="tr-btn" data-soc-open="chat">${_t('growth.otkryt')}</button></span></div>`:'';
+ return`<h3 class="g-sub">${_t('growth.my_sotssetyah')}</h3>${code}<p class="soc-steps">${_t('soc.steps',{n:m.social.follow})}</p><div class="task-list">${rows}${chatRow}</div><p class="g-note">${online?_t('growth.zadaniya_sotssetey'):_t('soc.offline')}</p>`;}
+function renderTasks(){const d=tasksDialog,s=S(),m=M(),ch=String(cfg.CHANNEL_USERNAME||'').replace(/^@/,''),st=G.streakStatus(s),shareDone=s.growth.shareDay===G.utcDay();
+ const channelDone=s.growth.channel||channelInfo.rewarded,focus=document.activeElement&&d.contains(document.activeElement)&&document.activeElement.name==='proof';
  const channel=ch?`<div class="task-hero ${channelDone?'done':''}"><div class="th-top">${ICON.telegram}<div><b>${_t('growth.podpishis_kanal')}</b><small>${_t('growth.novosti_ekspeditsi')}</small></div></div>
-   <div class="th-reward">${chips(G.CHANNEL_REWARD)}<span class="gchip badge">${_t('growth.znachok_svyazist')}</span></div>
+   <div class="th-reward">${chips({points:m.channel,...G.CHANNEL_REWARD})}<span class="gchip badge">${_t('growth.znachok_svyazist')}</span></div>
    ${channelDone?`<div class="th-state ok">${ICON.check}${_t('growth.podpiska_podtverzh')}</div>`:`<div class="th-actions"><button class="primary" id="channel-open">${_t('growth.podpisatsya')}</button><button id="channel-check" ${online?'':'disabled'}>${channelBusy?_t('growth.proveryaem'):_t('growth.proverit')}</button></div><div class="th-state ${online?'':'pending'}">${esc(channelMsg)||(online?_t('growth.podpishis_zatem'):_t('growth.proverka_podpiski'))}</div>`}</div>`:'';
  const row=(icon,title,sub,reward,btn,cls='')=>`<div class="task-row ${cls}"><span class="tr-icon">${icon}</span><span class="tr-text"><b>${title}</b><small>${sub}</small></span><span class="tr-side">${reward}${btn}</span></div>`;
- const socials=socialTasks().map(t=>{const ss=G.socialState(s,t.id);const btn=ss.state==='claimed'?`<i class="tr-done">${ICON.check}</i>`:ss.state==='ready'?`<button class="tr-btn gold" data-social-claim="${t.id}">${_t('growth.zabrat')}</button>`:ss.state==='waiting'?`<button class="tr-btn" disabled>0:${String(Math.ceil(ss.left/1000)).padStart(2,'0')}</button>`:`<button class="tr-btn" data-social-open="${t.id}">${_t('growth.otkryt')}</button>`;
-  return row(ICON[t.id==='chat'?'telegram':t.id],t.title,ss.state==='waiting'?_t('growth.proveryaem_perehod'):ss.state==='ready'?_t('growth.gotovo_zaberi'):t.name+' · MOONKATTY',ss.state==='claimed'?'':chips(t.reward,'small'),btn,ss.state);}).join('');
  d.innerHTML=head(_t('growth.zadaniya_bonusy'),_t('growth.svyaz_zemley'),'tasks')+
-  `<p class="g-lead">${_t('growth.pomogi_ekspeditsii')}</p>`+channel+(window.MoonTeamUI?window.MoonTeamUI.codeCard():'')+
+  `<p class="g-lead">${_t('growth.pomogi_ekspeditsii')}</p>`+moonCard()+channel+(window.MoonTeamUI?window.MoonTeamUI.codeCard():'')+
   `<div class="task-list">`+
-   row(ICON.gift,_t('growth.vahta_baze'),_t(st.claimed?'growth.7_nagrada':'growth.7_nagrada2',{n:st.day}),st.claimed?'':chips(st.reward,'small'),`<button class="tr-btn ${st.claimed?'':'gold'}" data-go="streak">${st.claimed?_t('growth.otkryt'):_t('growth.zabrat')}</button>`,st.claimed?'claimed':'ready')+
-   row(ICON.crew,_t('growth.priglasi_druga'),_t('growth.nagrada_kazhdogo'),chips(G.REFERRAL_REWARDS.full,'small'),'<button class="tr-btn" data-go="crew">'+_t('growth.pozvat')+'</button>')+
+   row(ICON.gift,_t('growth.vahta_baze'),_t(st.claimed?'growth.7_nagrada':'growth.7_nagrada2',{n:st.day}),st.claimed?'':chips({points:online?st.points:0,...st.reward},'small'),`<button class="tr-btn ${st.claimed?'':'gold'}" data-go="streak">${st.claimed?_t('growth.otkryt'):_t('growth.zabrat')}</button>`,st.claimed?'claimed':'ready')+
+   row(ICON.crew,_t('growth.priglasi_druga'),_t('growth.nagrada_kazhdogo',{n:m.referral}),chips({points:m.referral},'small'),'<button class="tr-btn" data-go="crew">'+_t('growth.pozvat')+'</button>')+
    row(ICON.share,_t('growth.podelis_igroy'),shareDone?_t('growth.segodnya_uzhe'):_t('growth.raz_den'),shareDone?'':chips(G.SHARE_REWARD,'small'),`<button class="tr-btn" data-go="share">${shareDone?_t('growth.esche_raz'):_t('growth.podelitsya2')}</button>`,shareDone?'claimed':'')+
-  `</div>`+(socials?`<h3 class="g-sub">${_t('growth.my_sotssetyah')}</h3><div class="task-list">${socials}</div><p class="g-note">${_t('growth.zadaniya_sotssetey')}</p>`:'');
+  `</div>`+socialHtml();
  wireClose(d);
  d.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>({streak:openStreak,crew:openCrew,share:()=>openShare('invite')})[b.dataset.go]());
- d.querySelectorAll('[data-social-open]').forEach(b=>b.onclick=()=>{const id=b.dataset.socialOpen;G.startSocial(S(),id);Game.save();openUrl(socialUrl(id));renderTasks();});
- d.querySelectorAll('[data-social-claim]').forEach(b=>b.onclick=()=>{const r=G.claimSocial(S(),b.dataset.socialClaim);if(r.ok){haptic();commit();}toast(r.text);renderTasks();});
+ d.querySelectorAll('[data-soc-open]').forEach(b=>b.onclick=()=>openUrl(socialUrl(b.dataset.socOpen)));
+ d.querySelectorAll('[data-soc-form]').forEach(b=>b.onclick=()=>{const id=b.dataset.socForm;socOpen=socOpen===id?'':id;renderTasks();if(socOpen)setTimeout(()=>d.querySelector('.soc-form input')?.focus({preventScroll:true}),30);});
+ d.querySelectorAll('.soc-form').forEach(f=>{const id=f.dataset.socSubmit,inp=f.querySelector('input');inp.oninput=()=>{socDraft[id]=inp.value;};
+  f.querySelectorAll('[data-soc-kind]').forEach(b=>b.onclick=()=>{socKind[id]=b.dataset.socKind;socMsg[id]=null;renderTasks();});
+  f.onsubmit=e=>{e.preventDefault();submitSocial(id,socKind[id]||f.querySelector('[data-soc-kind].on')?.dataset.socKind||'follow',inp.value);};});
+ if(focus)d.querySelector('.soc-form input')?.focus({preventScroll:true});
+ const cp=$('#soc-copy');if(cp)cp.onclick=async()=>{const ok=await copy(social?.code||'');if(ok){haptic();toast(_t('soc.code_copied'));}};
  if($('#channel-open'))$('#channel-open').onclick=()=>{openUrl('https://t.me/'+ch);channelMsg=online?_t('growth.podpisalsya_nazhmi'):_t('growth.spasibo_proverka');renderTasks();};
  if($('#channel-check'))$('#channel-check').onclick=checkChannel;window.MoonTeamUI?.wireCode?.(d);}
+async function submitSocial(id,kind,proof){if(socBusy||!online)return;socBusy=true;socMsg[id]=null;renderTasks();
+ try{const r=await api('/api/social/submit',{platform:id,kind,proof:String(proof||'').trim()});social=r.social||social;socMsg[id]={ok:true,text:_t('soc.sent')};socDraft[id]='';haptic();}
+ catch(e){socMsg[id]={ok:false,text:socError(e,id)};haptic('warning');}socBusy=false;renderTasks();}
+async function refreshSocial(){if(!online)return;try{const r=await api('/api/social/status',{});social=r.social||social;if(tasksDialog.open)renderTasks();}catch{}}
 async function checkChannel(){if(channelBusy||!online)return;channelBusy=true;renderTasks();try{const r=await api('/api/channel/check',{});if(r.member){channelInfo.rewarded=true;S().growth.channel=true;if(r.reward)applyServerRewards([r.reward]);else commit();channelMsg='';haptic();}else{channelMsg=r.error==='channel_not_configured'?_t('growth.proverka_kanala'):_t('growth.poka_vidim');haptic('warning');}}catch{channelMsg=_t('growth.net_svyazi');}channelBusy=false;renderTasks();}
-function openTasks(){renderTasks();open('tasks');}
+function openTasks(){renderTasks();open('tasks');refreshSocial();}
 
 // ---------- entry points ----------
-const OPEN={streak:openStreak,crew:openCrew,tasks:openTasks,share:()=>openShare('invite')};
+const OPEN={streak:openStreak,crew:openCrew,tasks:openTasks,share:()=>openShare('invite'),rules:()=>window.MoonRulesUI?.open()};
 function navButton(kind,label,cls){const b=document.createElement('button');b.className=cls;b.dataset.growth=kind;b.innerHTML=`<span class="gn-icon">${ICON[{streak:'gift',crew:'crew',tasks:'tasks',share:'share'}[kind]]}</span><span class="gn-label">${label}</span><i class="g-dot" hidden></i>`;b.onclick=()=>OPEN[kind]();return b;}
 function mount(){
  const coverNav=$('.cover-navigation');if(coverNav&&!$('.growth-nav')){const nav=document.createElement('nav');nav.className='growth-nav';nav.setAttribute('aria-label',_t('growth.bonusy_ekipazh'));nav.append(navButton('streak',_t('growth.vahta'),'gn'),navButton('crew',_t('game.ekipazh'),'gn'),navButton('tasks',_t('growth.zadaniya'),'gn'));coverNav.after(nav);}
@@ -173,18 +214,18 @@ function mount(){
  const end=$('#end-next');if(end&&!$('#end-share')){const b=document.createElement('button');b.id='end-share';b.className='g-secondary';b.innerHTML=ICON.share+_t('growth.podelitsya_druzyam');b.onclick=()=>{$('#end')?.close();openShare('chapter');};end.after(b);}
 }
 function updateBadges(){const s=S(),st=G.streakStatus(s),cover=$('#cover'),dock=$('#growth-dock');
- const socialReady=socialTasks().some(t=>G.socialState(s,t.id).state==='ready'),alerts={streak:!st.claimed,crew:false,tasks:socialReady||(!st.claimed),share:false};
+ const alerts={streak:!st.claimed,crew:false,tasks:!st.claimed,share:false};
  document.querySelectorAll('[data-growth]').forEach(b=>{const dot=b.querySelector('.g-dot');if(dot)dot.hidden=!alerts[b.dataset.growth];});
  document.querySelectorAll('.growth-nav [data-growth="streak"] .gn-label,#growth-dock [data-growth="streak"] .gn-label').forEach(l=>l.textContent=st.claimed?_t('growth.vahta2'):_t('growth.den3',{n:st.day}));
  if(dock)dock.hidden=!cover||!cover.hidden;
  const strip=$('#streak-strip');if(strip){strip.className=st.claimed?'claimed':'ready';strip.innerHTML=`<span class="ss-dots">${[1,2,3,4,5,6,7].map(d=>`<i class="${d<st.day||(st.claimed&&d===st.day)?'on':d===st.day?'now':''}"></i>`).join('')}</span><span class="ss-text"><span class="eyebrow">${_t('growth.vahta_baze2')}</span><b>${_t(st.claimed?'growth.7_polucheno':'growth.7_nagrada2',{n:st.day})}</b></span><span class="ss-go">${st.claimed?'›':_t('growth.zabrat')}</span>`;}}
-function renderAll(){updateBadges();if(streakDialog.open)renderStreak();if(crewDialog.open)renderCrew();if(tasksDialog.open)renderTasks();if(shareDialog.open)renderShare();}
+function renderAll(){updateBadges();updateMoon();if(streakDialog.open)renderStreak();if(crewDialog.open)renderCrew();if(tasksDialog.open)renderTasks();if(shareDialog.open)renderShare();}
 mount();updateBadges();
-setInterval(()=>{updateBadges();if(tasksDialog.open&&socialTasks().some(t=>G.socialState(S(),t.id).state==='waiting'))renderTasks();},1000);
+setInterval(updateBadges,1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){renderAll();maybeShowStreak(1200);}});
 function maybeShowStreak(delay=900){setTimeout(()=>{const s=S();if(document.querySelector('dialog[open]')||!G.shouldShowStreak(s))return;G.markStreakSeen(s);Game.save();openStreak();},delay);}
 // Wait briefly for telegram-web-app.js (loaded async by telegram-viewport.js) before talking to the server.
 let waited=0;(function waitTelegram(){if(tg()?.initData||waited>=2500||!API){boot();return;}waited+=250;setTimeout(waitTelegram,250);})();
 maybeShowStreak(1100);
-window.MoonGrowthUI={openStreak,openCrew,openTasks,openShare,maybeStreak:maybeShowStreak,api,kit:{ICON,chips,dialog,open,head,wireClose,haptic,commit,esc,plural},get crew(){return crew;},get user(){return serverUser;},get online(){return online;},renderAll};
+window.MoonGrowthUI={openStreak,openCrew,openTasks,openShare,maybeStreak:maybeShowStreak,api,moonCard,updateMoon,openUrl,rules:M,kit:{ICON,chips,dialog,open,head,wireClose,haptic,commit,esc,plural},get crew(){return crew;},get user(){return serverUser;},get online(){return online;},get channel(){return channelInfo;},renderAll};
 })();

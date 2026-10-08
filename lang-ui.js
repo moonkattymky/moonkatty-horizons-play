@@ -19,7 +19,11 @@ function render(highlight){const cur=highlight||I.lang;const tdir=I.isRTL(I.lang
  `<p class="lp-hint" dir="${tdir}">${esc(_t('lang.hint'))}</p>`;}
 function open({firstRun=false}={}){if(!dlg)build();first=firstRun;render(firstRun?I.detected:I.lang);
  if(!dlg.open){try{dlg.showModal();}catch{dlg.setAttribute('open','');}}
- const on=dlg.querySelector('.lp-item.on');if(on)try{on.focus({preventScroll:true});}catch{}}
+ fitNames();const on=dlg.querySelector('.lp-item.on');if(on)try{on.focus({preventScroll:true});}catch{}}
+// Native names are never cut: a long single word shrinks a little; multi-word names may wrap to a second line.
+function fitNames(){if(!dlg)return;dlg.querySelectorAll('.lp-name').forEach(el=>{el.style.fontSize='';el.style.overflowWrap='';if(!el.clientWidth)return;let fs=parseFloat(getComputedStyle(el).fontSize)||15;let n=0;
+ while(el.scrollWidth>el.clientWidth+.5&&fs>12&&n++<10){fs-=.5;el.style.fontSize=fs+'px';}if(el.scrollWidth>el.clientWidth+.5)el.style.overflowWrap='anywhere';});}
+addEventListener('resize',()=>{if(dlg&&dlg.open)fitNames();});
 function close(){if(dlg&&dlg.open)dlg.close();}
 function pick(id){const b=dlg.querySelector(`[data-lang-id="${id}"]`);if(b){dlg.querySelectorAll('.lp-item').forEach(x=>x.classList.toggle('on',x===b));b.classList.add('picked');}
  const reloading=I.choose(id);

@@ -1,6 +1,6 @@
 if(typeof _t==='undefined'&&typeof require==='function')require('./i18n.js');
 /* v35 growth stage 2 rules (no DOM): crew cats with hourly income that accrues while the game is closed,
-   secret «Код сигнала» codes (stored only as hashes), ranks Кадет → Адмирал Луны. Shared by the game and node tests.
+   «Код сигнала» input rules, ranks Кадет → Адмирал Луны (rank XP is cosmetic; Moon Points live on the server). Shared by the game and node tests.
    Server mirror of the rank points: server/src/logic.js (tests compare). */
 (function(root,factory){const node=typeof module==='object'&&module.exports;const api=factory(node?require('./core.js'):root.MoonCore);if(node)module.exports=api;else root.MoonTeam=api;})(typeof globalThis!=='undefined'?globalThis:this,function(Core){
 const HOUR=3600000;
@@ -49,30 +49,14 @@ function upgrade(s,id,now=Date.now()){const c=byId(id),l=level(s,id);if(!c||!l)r
  if(!canPay(s,cost))return{ok:false,text:`${_t('tcore.nuzhno',{crystals:cost.crystals,metal:cost.metal})}`};accrue(s,now);pay(s,cost);team(s).levels[id]=l+1;return{ok:true,text:`${_t('core.uroven',{name:c.name,v:l+1})}`};}
 function upgradeStorage(s,now=Date.now()){const t=team(s),next=STORAGE[(t.cap||0)+1];if(!next)return{ok:false,text:_t('tcore.sklad_uzhe')};const cost={crystals:next.cost[0],metal:next.cost[1]};
  if(!canPay(s,cost))return{ok:false,text:`${_t('tcore.nuzhno',{crystals:cost.crystals,metal:cost.metal})}`};accrue(s,now);pay(s,cost);t.cap=(t.cap||0)+1;return{ok:true,text:`${_t('tcore.sklad_stantsii2',{hours:next.hours})}`};}
+// v37: n = qualified friends (finished LIFE #1) from the server; only they unlock the friend cats (3/5/10).
 function setFriends(s,n){const t=team(s),v=Math.max(0,Math.min(100000,Math.floor(Number(n)||0)));if(v>t.friends)t.friends=v;return syncCrew(s);}
 
-// ---------- «Код сигнала»: only salted SHA-256 prefixes are shipped; each code works once ----------
-function sha256(msg){const K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
- const bytes=[...unescape(encodeURIComponent(msg))].map(c=>c.charCodeAt(0)),l=bytes.length*8;bytes.push(0x80);while(bytes.length%64!==56)bytes.push(0);for(let i=7;i>=0;i--)bytes.push(i>3?0:(l>>>(i*8))&255);
- let H=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];const r=(x,n)=>(x>>>n)|(x<<(32-n));
- for(let o=0;o<bytes.length;o+=64){const w=new Array(64);for(let i=0;i<16;i++)w[i]=(bytes[o+i*4]<<24)|(bytes[o+i*4+1]<<16)|(bytes[o+i*4+2]<<8)|bytes[o+i*4+3];
-  for(let i=16;i<64;i++){const s0=r(w[i-15],7)^r(w[i-15],18)^(w[i-15]>>>3),s1=r(w[i-2],17)^r(w[i-2],19)^(w[i-2]>>>10);w[i]=(w[i-16]+s0+w[i-7]+s1)|0;}
-  let[a,b,c,d,e,f,g,h]=H;for(let i=0;i<64;i++){const t1=(h+(r(e,6)^r(e,11)^r(e,25))+((e&f)^(~e&g))+K[i]+w[i])|0,t2=((r(a,2)^r(a,13)^r(a,22))+((a&b)^(a&c)^(b&c)))|0;h=g;g=f;f=e;e=(d+t1)|0;d=c;c=b;b=a;a=(t1+t2)|0;}
-  H=H.map((v,i)=>(v+[a,b,c,d,e,f,g,h][i])|0);}
- return H.map(v=>(v>>>0).toString(16).padStart(8,'0')).join('');}
-const CODE_SALT='moonkatty-signal-v1:';
-// Players type codes from videos: case, spaces, dashes and Cyrillic look-alike letters do not matter.
+// ---------- «Код сигнала» (v37): codes are checked by the server only — the game ships no codes and no hashes ----------
+// Players type codes from videos: case, spaces, dashes and Cyrillic look-alike letters do not matter (server: logic.js normalizeCode).
 function normalizeCode(raw){const map={'А':'A','В':'B','Е':'E','К':'K','М':'M','Н':'H','О':'O','Р':'P','С':'C','Т':'T','Х':'X','У':'Y'};return String(raw||'').toUpperCase().replace(/[\s\-_.]/g,'').replace(/[АВЕКМНОРСТХУ]/g,ch=>map[ch]).slice(0,24);}
-function codeHash(raw){return sha256(CODE_SALT+normalizeCode(raw)).slice(0,24);}
-const MAX_FAILS=5,LOCK_MS=60000;
-function redeem(s,raw,list,now=Date.now(),today=Core.today?Core.today(now):''){const t=team(s),code=normalizeCode(raw);
- if(t.lockUntil>now)return{ok:false,locked:true,wait:Math.ceil((t.lockUntil-now)/1000),text:`${_t('tcore.slishkom_mnogo',{now:Math.ceil((t.lockUntil-now)/1000)})}`};
- if(code.length<4)return{ok:false,text:_t('tcore.kod_4')};
- const h=codeHash(code),entry=(Array.isArray(list)?list:[]).find(e=>e&&e.h===h);
- if(!entry){t.fails=(t.fails||0)+1;if(t.fails>=MAX_FAILS){t.fails=0;t.lockUntil=now+LOCK_MS;}return{ok:false,text:_t('tcore.signal_raspoznan')};}
- t.fails=0;if(t.codes.includes(h))return{ok:false,already:true,text:_t('tcore.etot_kod')};
- if(entry.until&&today&&today>entry.until)return{ok:false,expired:true,text:_t('tcore.srok_deystviya')};
- t.codes.push(h);return{ok:true,entry,reward:{crystals:Math.max(0,entry.reward?.crystals|0),metal:Math.max(0,entry.reward?.metal|0)},text:_t('tcore.signal_prinyat')};}
+// Remember a code the server accepted (its server id, 24 hex) — counts for rank XP and shows the «already used» state.
+function addCode(s,id){const t=team(s);if(typeof id!=='string'||!/^[0-9a-f]{24}$/.test(id)||t.codes.includes(id))return false;t.codes.push(id);if(t.codes.length>500)t.codes.splice(0,t.codes.length-500);return true;}
 
 // ---------- ranks: points from overall progress (deterministic, recomputed from the save) ----------
 const STORY_FLAGS=['recorder','antenna','signal','supply','engineerMet','engineerFixed','navigatorMet','navigatorSolved','scoutMet','artifact','complete','signalBriefed','vaultOpen','blueprint','chapter3Complete'];
@@ -90,4 +74,4 @@ function rankOf(total){let i=0;for(let k=0;k<RANKS.length;k++)if(total>=RANKS[k]
  return{index:i,rank:RANKS[i],next,progress:next?(total-RANKS[i].min)/(next.min-RANKS[i].min):1,toNext:next?next.min-total:0};}
 // Rank-up check: first evaluation is silent (old saves and new players do not get a celebration for their starting rank).
 function rankUp(s){const t=team(s),r=rankOf(points(s).total);if(t.rankSeen<0){t.rankSeen=r.index;return null;}if(r.index>t.rankSeen){t.rankSeen=r.index;return r;}return null;}
-return{HOUR,CREW,MAX_LEVEL,UPGRADE,STORAGE,RANKS,WELCOME_AWAY_MS,MAX_FAILS,LOCK_MS,CODE_SALT,byId,level,unlocked,syncCrew,incomeOf,rates,capHours,storeCap,accrue,stored,claim,welcomeInfo,costOf,hire,upgrade,upgradeStorage,setFriends,sha256,normalizeCode,codeHash,redeem,points,rankOf,rankUp};});
+return{HOUR,CREW,MAX_LEVEL,UPGRADE,STORAGE,RANKS,WELCOME_AWAY_MS,byId,level,unlocked,syncCrew,incomeOf,rates,capHours,storeCap,accrue,stored,claim,welcomeInfo,costOf,hire,upgrade,upgradeStorage,setFriends,normalizeCode,addCode,points,rankOf,rankUp};});
