@@ -77,6 +77,29 @@ function inviteLink(cfg,userId){const bot=String(cfg?.BOT_USERNAME||'MoonkattyHo
  if(!id)return'https://t.me/'+bot+(short?'/'+short:'');
  return short?`https://t.me/${bot}/${short}?startapp=ref_${id}`:`https://t.me/${bot}?start=ref_${id}`;}
 function shareUrl(url,text){return'https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text||'');}
+// v44d: how a task link (channel, chat, socials, share) is opened. Pure decision; growth.js performs it.
+// Inside Telegram a Mini App WebView ignores window.open/target=_blank, so links must go through the Telegram client:
+// t.me → web_app_open_tg_link, everything else → web_app_open_link. The SDK (telegram-web-app.js) is used when it is ready;
+// when it is late, blocked, or the client passed no initData/platform, the same events go straight to the client bridge
+// (TelegramWebviewProxy on mobile/desktop, window.external.notify, postMessage to the web client). Browsers get a new tab.
+// env: {sdk:{version,platform,openLink,openTelegramLink}|null, params:{tgWebAppPlatform,tgWebAppData,tgWebAppVersion}, proxy, notify, framed}
+function verAtLeast(v,min){const a=String(v||'').split('.'),b=String(min).split('.');for(let i=0;i<Math.max(a.length,b.length);i++){const x=parseInt(a[i]||'0',10)||0,y=parseInt(b[i]||'0',10)||0;if(x!==y)return x>y;}return true;}
+function linkPlan(url,env){env=env||{};const u=String(url||'').trim();let parsed=null;try{parsed=new URL(u);}catch(e){}
+ if(!parsed||!/^https?:$/.test(parsed.protocol))return{via:'none'};
+ const host=parsed.hostname.toLowerCase(),tme=host==='t.me'||host==='telegram.me',href=parsed.href,pathFull=parsed.pathname+parsed.search;
+ const p=env.params||{},sdk=env.sdk||null,platform=(sdk&&sdk.platform&&sdk.platform!=='unknown'?sdk.platform:'')||(p.tgWebAppPlatform&&p.tgWebAppPlatform!=='unknown'?p.tgWebAppPlatform:'');
+ const launched=!!(platform||p.tgWebAppData||(sdk&&sdk.initData)),bridge=env.proxy?'proxy':env.notify?'notify':env.framed&&launched?'parent':'';
+ const inTelegram=launched||!!env.proxy||!!env.notify;
+ if(!inTelegram)return{via:'browser',url:href};
+ // SDK only when it knows it talks to a modern client; with version 6.0 it would fall back to window.open/location.href.
+ const sdkOk=!!(sdk&&verAtLeast(sdk.version||p.tgWebAppVersion,'6.1'));
+ if(tme&&sdkOk&&typeof sdk.openTelegramLink==='function')return{via:'sdk-tg',url:href,bridge};
+ if(!tme&&sdkOk&&typeof sdk.openLink==='function')return{via:'sdk',url:href,bridge};
+ if(bridge)return tme?{via:'bridge',url:href,bridge,event:'web_app_open_tg_link',data:{path_full:pathFull}}:{via:'bridge',url:href,bridge,event:'web_app_open_link',data:{url:href}};
+ return{via:'browser',url:href};}
+// Event the bridge fallback posts when the SDK call threw.
+function bridgeEvent(url){let parsed=null;try{parsed=new URL(String(url||''));}catch(e){return null;}const host=parsed.hostname.toLowerCase();
+ return host==='t.me'||host==='telegram.me'?{event:'web_app_open_tg_link',data:{path_full:parsed.pathname+parsed.search}}:{event:'web_app_open_link',data:{url:parsed.href}};}
 
 function claimShare(s,now=Date.now()){ensure(s);const day=utcDay(now);if(s.growth.shareDay===day)return{ok:false,text:''};s.growth.shareDay=day;const got=applyReward(s,SHARE_REWARD);return{ok:true,got,text:_t('gcore.spasibo_chto')+' '+gotText(got)};}
 // Server ledger rewards are applied once per id, even if the response is replayed.
@@ -102,4 +125,4 @@ function progressScore(s){if(!s||typeof s!=='object')return 0;let p=(Number(s.ch
 function pickSave(local,remote){if(!remote)return'local';if(!local)return'remote';const lr=local.growth?.resetAt||0,rr=remote.growth?.resetAt||0;if(lr!==rr)return lr>rr?'local':'remote';
  const a=progressScore(local),b=progressScore(remote);if(a!==b)return a>b?'local':'remote';return(local.updatedAt||0)>=(remote.updatedAt||0)?'local':'remote';}
 
-return{DAY_MS,STREAK_REWARDS,REFERRAL_REWARDS,CHANNEL_REWARD,SHARE_REWARD,MOON,STORY_CHECKPOINTS,storyCheckpoints,checkpointsToSend,SHIELD_DAYS,SOCIAL_PLATFORMS,SOCIAL_NAMES,BADGE_NAMES,streakPoints,utcDay,localDay,dayIndex,streakStatus,applyReward,rewardText,gotText,claimStreak,shouldShowStreak,markStreakSeen,parseStartParam,inviteLink,shareUrl,claimShare,applyServerReward,setMoon,moonView,formatPoints,progressScore,pickSave};});
+return{DAY_MS,STREAK_REWARDS,REFERRAL_REWARDS,CHANNEL_REWARD,SHARE_REWARD,MOON,STORY_CHECKPOINTS,storyCheckpoints,checkpointsToSend,SHIELD_DAYS,SOCIAL_PLATFORMS,SOCIAL_NAMES,BADGE_NAMES,streakPoints,utcDay,localDay,dayIndex,streakStatus,applyReward,rewardText,gotText,claimStreak,shouldShowStreak,markStreakSeen,parseStartParam,inviteLink,shareUrl,linkPlan,bridgeEvent,claimShare,applyServerReward,setMoon,moonView,formatPoints,progressScore,pickSave};});

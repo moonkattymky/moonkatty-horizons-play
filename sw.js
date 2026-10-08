@@ -2,7 +2,7 @@
    - Page (navigation): network first (3.5 s), cached copy when offline or the network hangs.
    - Versioned files (?v=build) and art in assets/: cache first, refreshed in the background.
    - Other origins (Telegram SDK, Crew server API) are never touched. A new build gets a new cache; old ones are dropped. */
-const BUILD='20261009-44c',CACHE='mk-horizons-'+BUILD,PAGE='mk-horizons-page';
+const BUILD='20261009-44d',CACHE='mk-horizons-'+BUILD,PAGE='mk-horizons-page';
 self.addEventListener('install',e=>{self.skipWaiting();});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('mk-horizons-')&&k!==CACHE&&k!==PAGE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 function timeout(ms){return new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms));}
