@@ -182,5 +182,5 @@ function maybeShowStreak(delay=900){setTimeout(()=>{const s=S();if(document.quer
 // Wait briefly for telegram-web-app.js (loaded async by telegram-viewport.js) before talking to the server.
 let waited=0;(function waitTelegram(){if(tg()?.initData||waited>=2500||!API){boot();return;}waited+=250;setTimeout(waitTelegram,250);})();
 maybeShowStreak(1100);
-window.MoonGrowthUI={openStreak,openCrew,openTasks,openShare,get online(){return online;},renderAll};
+window.MoonGrowthUI={openStreak,openCrew,openTasks,openShare,maybeStreak:maybeShowStreak,get online(){return online;},renderAll};
 })();

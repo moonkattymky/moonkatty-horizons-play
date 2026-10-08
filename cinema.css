@@ -1,0 +1,102 @@
+/* v34 cutscenes: full-screen motion comic. Navy/gold/blue-crystal palette of the game UI. */
+dialog.cinema{position:fixed;inset:0;width:100%!important;max-width:none!important;height:100%;max-height:none!important;margin:0;padding:0!important;border:0!important;border-radius:0!important;background:#02060c!important;color:#f4f8fb;overflow:hidden;box-shadow:none;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;cursor:pointer;opacity:1;transition:opacity .45s ease}
+dialog.cinema::backdrop{background:#02060c;backdrop-filter:none}
+dialog.cinema.out{opacity:0}
+.cin-stage{position:absolute;inset:0;overflow:hidden;will-change:transform}
+.cin-slides,.cin-slide{position:absolute;inset:0}
+.cin-slide{opacity:0;transition:opacity .9s ease}
+.cin-slide.in{opacity:1}.cin-slide.leaving{opacity:0;transition-duration:.9s}
+.cin-plane{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+.cin-plane img{display:block;width:100%;height:100%;pointer-events:none}
+.cin-slide.wake .cin-plane img{animation:cin-unblur 3.2s ease-out both}
+@keyframes cin-unblur{0%{filter:blur(9px) brightness(.55)}45%{filter:blur(4px) brightness(.8)}100%{filter:none}}
+.cin-glow{position:absolute;border-radius:50%;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(circle,rgba(var(--c),.55) 0,rgba(var(--c),.22) 32%,rgba(var(--c),0) 70%);animation:cin-pulse 3s ease-in-out infinite}
+@keyframes cin-pulse{0%,100%{opacity:.45;transform:scale(.92)}50%{opacity:1;transform:scale(1.06)}}
+.cin-fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.cin-vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 120% 85% at 50% 42%,transparent 55%,#02060cb0 100%),linear-gradient(180deg,#02060ca6 0,transparent 16%,transparent 52%,#02060ccc 78%,#02060c 100%)}
+.cin-flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 56%,#fff 0,#ffe2b8 40%,#ffb36b 100%);opacity:0;pointer-events:none;mix-blend-mode:screen}
+.cin-alarm{position:absolute;inset:0;pointer-events:none;opacity:0;background:radial-gradient(ellipse at 50% 0,#ff3b2fcc,#ff3b2f22 45%,transparent 75%);mix-blend-mode:screen}
+.fx-alarm .cin-alarm{animation:cin-alarm 1.5s ease-in-out infinite}
+@keyframes cin-alarm{0%,100%{opacity:.08}45%{opacity:.62}}
+.cin-lids{position:absolute;inset:0;pointer-events:none;display:none}
+.cin-lids i{position:absolute;left:-5%;right:-5%;height:52%;background:#000;border-radius:0 0 50% 50%/0 0 22% 22%}
+.cin-lids i:last-child{bottom:0;border-radius:50% 50% 0 0/22% 22% 0 0}
+.fx-wake .cin-lids{display:block}
+.fx-wake .cin-lids i:first-child{animation:cin-lid-top 3s ease-in-out both}.fx-wake .cin-lids i:last-child{animation:cin-lid-bottom 3s ease-in-out both}
+@keyframes cin-lid-top{0%{transform:translateY(0)}22%{transform:translateY(-38%)}34%{transform:translateY(-6%)}56%{transform:translateY(-70%)}66%{transform:translateY(-52%)}100%{transform:translateY(-104%)}}
+@keyframes cin-lid-bottom{0%{transform:translateY(0)}22%{transform:translateY(38%)}34%{transform:translateY(6%)}56%{transform:translateY(70%)}66%{transform:translateY(52%)}100%{transform:translateY(104%)}}
+/* top bar: story-style progress, sound, skip */
+.cin-top{position:absolute;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px 0;display:grid;gap:10px;pointer-events:none;z-index:3}
+.cin-bars{display:flex;gap:5px}
+.cin-bars span{flex:1;height:3px;border-radius:3px;background:#ffffff2e;overflow:hidden}
+.cin-bars i{display:block;height:100%;background:linear-gradient(90deg,#f5d58f,#e9b75c);transform-origin:0 50%;transform:scaleX(0)}
+.cin-row{display:flex;justify-content:space-between;align-items:center}
+.cin-row button{pointer-events:auto;width:auto!important;min-height:0!important;margin:0!important;border:1px solid #f1d49a55!important;background:#071726a8!important;color:#f6e7c4!important;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:999px!important;font-size:13px!important;font-weight:700;letter-spacing:.4px;box-shadow:0 4px 18px #0006}
+.cin-skip{padding:9px 16px!important}.cin-skip b{font-size:16px;margin-left:4px;color:#f5d58f}
+.cin-sound{width:40px!important;height:40px;padding:0!important;display:grid;place-items:center}
+.cin-sound svg{width:20px;height:20px}.cin-sound.muted{color:#9fb3c2!important;border-color:#9fb3c244!important}
+/* chapter title card */
+.cin-title{position:absolute;left:0;right:0;top:var(--title-y,66%);transform:translateY(-50%);text-align:center;pointer-events:none;z-index:2;opacity:0;transition:opacity .9s ease}
+.cin-title.show{opacity:1}
+.cin-title small{display:block;font-size:10px;letter-spacing:3.5px;color:#cfe3ee;opacity:.85;font-weight:700}
+.cin-title h2{margin:10px 0 6px;font:800 clamp(40px,12vw,64px)/1 'Trebuchet MS',Arial,sans-serif;letter-spacing:-1px;background:linear-gradient(180deg,#fff6dc 0,#f5d58f 45%,#c98f2f 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 18px #000c) drop-shadow(0 0 22px #f0b45a55)}
+.cin-title p{margin:0;font:700 clamp(18px,5.4vw,26px)/1.2 'Trebuchet MS',Arial,sans-serif;letter-spacing:5px;text-transform:uppercase;color:#eaf6fb;text-shadow:0 2px 14px #000}
+.cin-title.show h2{animation:cin-title-in 1.6s cubic-bezier(.2,.7,.2,1) both}.cin-title.show p{animation:cin-sub-in 1.8s .25s cubic-bezier(.2,.7,.2,1) both}
+@keyframes cin-title-in{0%{opacity:0;letter-spacing:12px;transform:scale(1.08)}100%{opacity:1;letter-spacing:-1px;transform:none}}
+@keyframes cin-sub-in{0%{opacity:0;letter-spacing:14px}100%{opacity:1;letter-spacing:5px}}
+/* subtitles */
+.cin-sub{position:absolute;left:0;right:0;bottom:0;padding:0 22px calc(env(safe-area-inset-bottom,0px) + 30px);z-index:2;pointer-events:none;opacity:0;transform:translateY(8px);transition:opacity .5s ease,transform .5s ease}
+.cin-sub.show{opacity:1;transform:none}
+.cin-kicker{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:2.6px;color:#f5d58f;padding-bottom:8px;margin-bottom:10px;border-bottom:1px solid #f5d58f55}
+.cin-text{margin:0;font:600 clamp(17px,4.6vw,21px)/1.48 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#f6fbff;text-shadow:0 2px 10px #000,0 0 2px #000;min-height:3em}
+.cin-text span{opacity:0;animation:cin-char .45s ease forwards}
+@keyframes cin-char{0%{opacity:0;filter:blur(3px)}100%{opacity:1;filter:none}}
+.cin-sub.instant .cin-text span{animation:none;opacity:1}
+.cin-hint{display:block;margin-top:14px;font-size:12px;letter-spacing:.6px;color:#bcd2df;opacity:0;transition:opacity .6s ease}
+.cin-hint b{color:#f5d58f;font-size:15px;display:inline-block;animation:cin-nudge 1.4s ease-in-out infinite}
+.cin-sub.typed .cin-hint{opacity:.85}
+@keyframes cin-nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+/* start screen (first launch: the tap unlocks sound) */
+.cin-preroll{position:absolute;inset:0;z-index:5;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:radial-gradient(ellipse at 50% 42%,#0b1d2d99 0,#050d18e6 62%,#02060c 100%),url(assets/cinema/intro-4-earth.jpg) 50% 30%/cover;cursor:default}
+.cin-preroll.show{display:flex}
+.cin-logo{font:800 clamp(38px,12vw,60px)/1 'Trebuchet MS',Arial,sans-serif;letter-spacing:2px;background:linear-gradient(180deg,#fff6dc,#f5d58f 45%,#c98f2f);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 24px #f0b45a66);animation:cin-logo 2.4s ease both}
+.cin-preroll small{font-size:10.5px;letter-spacing:3.4px;color:#cfe3ee;font-weight:700;animation:cin-fade 2.4s .4s ease both}
+.cin-start{margin-top:34px!important;width:auto!important;padding:15px 26px!important;border-radius:999px!important;font-size:16px!important;font-weight:800;border:0!important;background:linear-gradient(120deg,#b8ede9,#6dcdd4)!important;color:#0e3040!important;box-shadow:0 10px 34px #6dcdd455;animation:cin-fade 1.6s .9s ease both}
+.cin-start span{display:inline-block;margin-right:6px}
+.cin-later{width:auto!important;background:none!important;border:0!important;color:#9fb3c2!important;font-size:13px!important;text-decoration:underline;text-underline-offset:3px;animation:cin-fade 1.6s 1.2s ease both}
+@keyframes cin-logo{0%{opacity:0;letter-spacing:14px}100%{opacity:1;letter-spacing:2px}}
+@keyframes cin-fade{0%{opacity:0}100%{opacity:1}}
+.cin-loading{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px;border-radius:50%;border:3px solid #ffffff22;border-top-color:#f5d58f;opacity:0;transition:opacity .3s;animation:cin-spin 1s linear infinite;pointer-events:none}
+.cinema.loading .cin-loading{opacity:1}
+@keyframes cin-spin{to{transform:rotate(360deg)}}
+/* «crystal found» flash: over the game, no bars */
+dialog.cinema.flash-mode{background:transparent!important}
+dialog.cinema.flash-mode::backdrop{background:radial-gradient(circle at 50% 40%,#0b3a66cc,#020a14ee 70%);backdrop-filter:blur(3px)}
+.flash-mode .cin-top,.flash-mode .cin-vignette{display:none}
+.cin-burst{position:absolute;left:50%;top:40%;width:0;height:0;display:none;pointer-events:none;z-index:1}
+.flash-mode .cin-burst.show{display:block}
+.cin-rays{position:absolute;left:-60vmax;top:-60vmax;width:120vmax;height:120vmax;background:repeating-conic-gradient(from 0deg,#6fc3ff30 0 6deg,transparent 6deg 18deg);-webkit-mask:radial-gradient(circle,#000 0,#0008 30%,transparent 62%);mask:radial-gradient(circle,#000 0,#0008 30%,transparent 62%);animation:cin-rays 9s linear infinite,cin-fade .6s ease both}
+.cin-crystal{position:absolute;width:min(46vw,210px);left:calc(min(46vw,210px)/-2);top:calc(min(46vw,210px)/-2);filter:drop-shadow(0 0 26px #4fb6ffcc) drop-shadow(0 0 60px #2f8cffaa);animation:cin-pop .9s cubic-bezier(.2,1.6,.4,1) both,cin-float 3.4s .9s ease-in-out infinite}
+@keyframes cin-rays{to{transform:rotate(360deg)}}
+@keyframes cin-pop{0%{opacity:0;transform:scale(.2) rotate(-12deg)}100%{opacity:1;transform:none}}
+@keyframes cin-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.flash-mode .cin-title{top:62%}
+.flash-mode .cin-title small{display:none}
+.flash-mode .cin-title h2{font-size:clamp(32px,9.5vw,46px);background:linear-gradient(180deg,#f2fbff,#9ad8ff 50%,#3e9bff);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 3px 14px #000c) drop-shadow(0 0 20px #4fb6ff66)}
+.flash-mode .cin-sub{text-align:center;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 54px)}
+.flash-mode .cin-text{font-size:16px;min-height:0;max-width:340px;margin:0 auto}
+/* main menu block */
+.cinema-menu{display:grid;gap:10px;margin:14px 0 4px;padding:14px;border-radius:16px;border:1px solid #f1d49a40;background:linear-gradient(135deg,#1c3b52cc,#0b1f31e6)}
+.cin-watch{display:flex!important;align-items:center;gap:12px;text-align:left;margin:0!important;padding:10px 12px!important;border-radius:13px!important;background:linear-gradient(120deg,#25475f,#13293c)!important;border:1px solid #f5d58f66!important}
+.cin-watch .cin-play{flex:0 0 38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#f8e2a8,#d9a346);color:#2b1c05;font-size:14px;padding-left:3px;box-shadow:0 0 18px #f0b45a55}
+.cin-watch b{display:block;font-size:15px;color:#fff3d6}.cin-watch small{display:block;font-size:11.5px;color:#a9c3d2;font-weight:500;margin-top:2px}
+.cin-chips{display:flex;gap:7px}
+.cin-chips button{flex:1;margin:0!important;padding:8px 4px!important;min-height:0!important;font-size:12px!important;border-radius:10px!important;background:#0d2436!important;border:1px solid #86cdd944!important;color:#d9eef6!important;white-space:nowrap}
+.cin-chips button:disabled{opacity:.45}
+.cin-switch{display:flex!important;justify-content:space-between;align-items:center;margin:0!important;padding:6px 2px!important;min-height:0!important;background:none!important;border:0!important;color:#cfe3ee!important;font-size:13px!important}
+.cin-switch i{width:42px;height:24px;border-radius:12px;background:#33495a;position:relative;transition:background .25s}
+.cin-switch i b{position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#dfe9ef;transition:transform .25s}
+.cin-switch i.on{background:linear-gradient(90deg,#6dcdd4,#9be3df)}.cin-switch i.on b{transform:translateX(18px)}
+@media (prefers-reduced-motion:reduce){.cin-text span{animation:none;opacity:1}.cin-rays{animation:none}}
+.cinema.held *{animation-play-state:paused!important}
+.cin-preroll::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.8;background-image:radial-gradient(1px 1px at 12% 18%,#fff9 50%,transparent 51%),radial-gradient(1px 1px at 72% 12%,#fffb 50%,transparent 51%),radial-gradient(1.5px 1.5px at 84% 34%,#fff8 50%,transparent 51%),radial-gradient(1px 1px at 28% 72%,#fff7 50%,transparent 51%),radial-gradient(1px 1px at 58% 84%,#fff8 50%,transparent 51%),radial-gradient(1.5px 1.5px at 40% 30%,#ffe9c2aa 50%,transparent 51%),radial-gradient(1px 1px at 90% 70%,#fff6 50%,transparent 51%),radial-gradient(1px 1px at 8% 52%,#fff7 50%,transparent 51%),radial-gradient(1px 1px at 64% 48%,#fff5 50%,transparent 51%);animation:cin-fade 3s ease both}
