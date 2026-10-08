@@ -10,7 +10,7 @@ const SECTIONS=[['🌕','s_moon'],['🌙','s_story'],['⏳','s_vest'],['📅','s
 const iso=v=>window.MoonI18n&&MoonI18n.isRTL(MoonI18n.lang)?'\u2066'+v+'\u2069':String(v);
 function params(){const m=UI.rules?UI.rules():G.MOON;
  const v=m.vestDays||G.MOON.vestDays,dd=m.referralDays||G.MOON.referralDays;
- return{s_story:{a:m.story.life1,b:m.story.life2,c:m.story.life3,v},s_vest:{v},a4:{d:dd},s_daily:{list:m.streak.slice(0,7).map(p=>iso('+'+p)).join(' · '),max:m.streak[6]},
+ return{s_story:{a:m.story.life1,b:m.story.life2,c:m.story.life3,d:m.story.life4,v},s_vest:{v},a4:{d:dd},s_daily:{list:m.streak.slice(0,7).map(p=>iso('+'+p)).join(' · '),max:m.streak[6]},
   s_social:{ch:m.channel,f:m.social.follow,d:m.social.daily,p:m.socialPending},s_codes:{def:m.code.default,max:m.code.max,fails:m.codeFails},s_friends:{n:m.referral,cap:m.referralCap,d:dd,v},...stage3()};}
 // v39: season length and pass/goal numbers (server state when online, else the defaults from season-core.js).
 function stage3(){const SC=window.MoonSeason;if(!SC)return{};const st=UI.stage3||{},len=SC.seasonLength(st.season?.length),tiers=st.season?.tiers||SC.seasonTiers(len),goal=st.goal?.reward||SC.goalReward(len);

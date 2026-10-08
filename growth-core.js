@@ -16,17 +16,19 @@ const SHARE_REWARD={crystals:2};
 // Moon Points rules (server side; shown in «Rules & Rewards»). Daily things use the UTC day.
 // v41: story and referral points vest (pending → available 1/7 per active day); the inviter is paid after the friend's
 // LIFE #1 + 3 active days, at most 3 inviter payouts per UTC day.
-const MOON={story:{life1:500,life2:500,life3:750},streak:[3,5,7,10,12,15,25],channel:5,social:{follow:5,daily:5},referral:200,referralCap:3,referralDays:3,vestDays:7,
+const MOON={story:{life1:500,life2:500,life3:750,life4:750},streak:[3,5,7,10,12,15,25],channel:5,social:{follow:5,daily:5},referral:200,referralCap:3,referralDays:3,vestDays:7,
  code:{default:10,min:1,max:50},codeFails:10,socialPending:3};
 // v41 story checkpoint journal (mirror of server/src/logic.js): the game posts these in order, the server stamps the time.
 const STORY_CHECKPOINTS=['c1_recorder','c1_cells','c1_antenna','c1_signal','life1',
  'c2_engineer','c2_tools','c2_repair','c2_navigator','c2_route','c2_scout','c2_artifact','c2_final','life2',
- 'c3_brief','c3_clues','c3_vault','c3_blueprint','life3'];
+ 'c3_brief','c3_clues','c3_vault','c3_blueprint','life3',
+ 'c4_brief','c4_engine','c4_core','c4_top','life4'];
 function storyCheckpoints(s){if(!s||typeof s!=='object')return[];const ch=Number(s.chapter)||1,len=k=>Array.isArray(s[k])?s[k].length:0,t=k=>s[k]===true;
  const ok={c1_recorder:ch>=2||t('recorder'),c1_cells:ch>=2||len('cells')>=3,c1_antenna:ch>=2||t('antenna'),c1_signal:ch>=2||t('signal'),life1:ch>=2,
   c2_engineer:ch>=3||t('engineerMet'),c2_tools:ch>=3||len('tools')>=2,c2_repair:ch>=3||t('engineerFixed'),c2_navigator:ch>=3||t('navigatorMet'),c2_route:ch>=3||t('navigatorSolved'),
   c2_scout:ch>=3||t('scoutMet'),c2_artifact:ch>=3||t('artifact'),c2_final:ch>=3||t('complete'),life2:ch>=3,
-  c3_brief:ch>=3&&t('signalBriefed'),c3_clues:ch>=3&&len('signalClues')>=3,c3_vault:ch>=3&&t('vaultOpen'),c3_blueprint:ch>=3&&t('blueprint'),life3:ch>=3&&t('chapter3Complete')};
+  c3_brief:ch>=3&&t('signalBriefed'),c3_clues:ch>=3&&len('signalClues')>=3,c3_vault:ch>=3&&t('vaultOpen'),c3_blueprint:ch>=3&&t('blueprint'),life3:ch>=3&&t('chapter3Complete'),
+  c4_brief:ch>=4&&t('rocketBriefed'),c4_engine:ch>=4&&t('engineInstalled'),c4_core:ch>=4&&t('coreInstalled'),c4_top:ch>=4&&t('topInstalled'),life4:ch>=4&&t('chapter4Complete')};
  const out=[];for(const k of STORY_CHECKPOINTS){if(!ok[k])break;out.push(k);}return out;}
 // Next checkpoints to post: what the save reached minus what the server journal already has.
 function checkpointsToSend(s,done){const have=new Set(Array.isArray(done)?done:[]);return storyCheckpoints(s).filter(k=>!have.has(k));}
@@ -90,9 +92,9 @@ function moonView(s,online){ensure(s);const m=s.growth.moon,pend=m.pending||0,ne
 function formatPoints(n){const v=Math.max(0,Math.floor(Number(n)||0));try{return new Intl.NumberFormat((typeof MoonI18n!=='undefined'&&MoonI18n.lang)||'en').format(v);}catch{return String(v);}}
 
 // Progress score for cloud-save conflicts. Story beats dominate; resources only break near-ties.
-const FLAGS=['recorder','antenna','signal','supply','engineerMet','engineerFixed','navigatorMet','navigatorSolved','scoutMet','artifact','complete','signalBriefed','vaultOpen','blueprint','chapter3Complete'];
+const FLAGS=['recorder','antenna','signal','supply','engineerMet','engineerFixed','navigatorMet','navigatorSolved','scoutMet','artifact','complete','signalBriefed','vaultOpen','blueprint','chapter3Complete','rocketBriefed','engineInstalled','coreInstalled','topInstalled','chapter4Complete'];
 function progressScore(s){if(!s||typeof s!=='object')return 0;let p=(Number(s.chapter)||1)*10000;for(const f of FLAGS)if(s[f]===true)p+=400;
- const arr=k=>Array.isArray(s[k])?s[k].length:0;p+=arr('cells')*150+arr('tools')*150+arr('beacons')*150+arr('buildings')*200+arr('signalClues')*150;
+ const arr=k=>Array.isArray(s[k])?s[k].length:0;p+=arr('cells')*150+arr('tools')*150+arr('beacons')*150+arr('buildings')*200+arr('signalClues')*150+arr('coreShards')*150+arr('rocketParts')*150;
  for(const v of Object.values(s.cards||{}))p+=Number.isFinite(v)?v*120:0;
  const ex=s.expeditions;if(ex&&ex.done&&typeof ex.done==='object')p+=Object.keys(ex.done).length*300;
  p+=Math.min(400,(Number(s.crystals)||0)+(Number(s.metal)||0));return Math.max(0,Math.floor(p));}

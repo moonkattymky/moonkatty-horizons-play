@@ -1,0 +1,30 @@
+/* v43 LIFE #4 · The Rocket: power-routing grid, ring alignment and the cliffhanger end card. */
+.power-wrap{display:grid;grid-template-columns:30px minmax(0,1fr) 30px;align-items:center;gap:6px;margin:14px 0 6px}
+.power-wrap .relay-grid{margin:0}
+.power-end{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;font-size:17px;line-height:1;background:#10283c;border:1px solid #55748c}
+.power-end.src{align-self:start;margin-top:calc(16.6% - 8px);color:#ffd27a;border-color:#e4c37a;box-shadow:0 0 12px #e4c37a55}
+.power-end.dst{align-self:end;margin-bottom:calc(16.6% - 8px);color:#9fb4c4}
+.power-wrap[data-connected=true] .power-end.dst{color:#7be7de;border-color:#88e6e1;box-shadow:0 0 14px #66dccc88}
+[dir=rtl] .power-wrap{direction:ltr}
+.align-rings{display:grid;gap:8px;margin:14px 0 6px}
+.align-row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;grid-template-areas:'dial name btn' 'dial state btn';align-items:center;column-gap:10px;row-gap:1px;padding:8px 10px;border-radius:14px;background:#10283c;border:1px solid #55748c}
+.align-row[data-aligned=true]{background:#164151;border-color:#88e6e1}
+.align-row b{grid-area:name;align-self:end;font-weight:700;min-width:0;overflow-wrap:break-word;hyphens:auto;line-height:1.2}
+.align-row .align-dial{grid-area:dial}
+.align-row button{grid-area:btn}
+.align-row small{grid-area:state;align-self:start;color:#9fb4c4;font-variant-numeric:tabular-nums;text-align:start}
+.align-row[data-aligned=true] small{color:#7be7de}
+.align-row button{min-height:40px;padding:0 14px;border-radius:12px}
+.align-dial{position:relative;width:44px;height:44px}
+.align-dial svg{position:absolute;inset:0;width:100%;height:100%;fill:none;stroke:#637f96;stroke-width:3;stroke-linecap:round}
+.align-row[data-aligned=true] .align-dial svg{stroke:#7be7de}
+.align-dial i{position:absolute;left:50%;top:50%;width:4px;height:17px;margin:-17px 0 0 -2px;border-radius:2px;background:#ffd27a;transform-origin:50% 100%;transition:transform .25s ease;box-shadow:0 0 8px #e4c37a88}
+.align-dial i{transform-origin:2px 17px}
+#end.cliffhanger{border-color:#7fb8ff66;background:radial-gradient(120% 80% at 50% 0%,#17324d 0%,#0b1726 70%);box-shadow:0 0 40px #2c7dff33}
+#end.cliffhanger #end-role{color:#9cc8ff}
+#end.cliffhanger #end-title{letter-spacing:.01em}
+#end.cliffhanger #end-text{color:#d6e4f2}
+
+/* cinema titles: keep long subtitles (e.g. the cliffhanger line) off the screen edges, keep the brand kicker readable over bright art */
+.cin-title{padding:0 18px;box-sizing:border-box}
+.cin-title small{text-shadow:0 1px 8px #000,0 0 3px #000}

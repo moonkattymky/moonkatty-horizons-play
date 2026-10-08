@@ -60,10 +60,10 @@ function normalizeCode(raw){const map={'А':'A','В':'B','Е':'E','К':'K','М':
 function addCode(s,id){const t=team(s);if(typeof id!=='string'||!/^[0-9a-f]{24}$/.test(id)||t.codes.includes(id))return false;t.codes.push(id);if(t.codes.length>500)t.codes.splice(0,t.codes.length-500);return true;}
 
 // ---------- ranks: points from overall progress (deterministic, recomputed from the save) ----------
-const STORY_FLAGS=['recorder','antenna','signal','supply','engineerMet','engineerFixed','navigatorMet','navigatorSolved','scoutMet','artifact','complete','signalBriefed','vaultOpen','blueprint','chapter3Complete'];
+const STORY_FLAGS=['recorder','antenna','signal','supply','engineerMet','engineerFixed','navigatorMet','navigatorSolved','scoutMet','artifact','complete','signalBriefed','vaultOpen','blueprint','chapter3Complete','rocketBriefed','engineInstalled','coreInstalled','topInstalled','chapter4Complete'];
 function points(s,over={}){const parts={story:0,cards:0,base:0,expeditions:0,watch:0,crew:0,friends:0,extras:0};if(!s||typeof s!=='object')return{total:0,parts};
  const arr=k=>Array.isArray(s[k])?s[k].length:0;for(const f of STORY_FLAGS)if(s[f]===true)parts.story+=100;parts.story+=(Math.min(12,arr('cells'))+Math.min(12,arr('tools'))+Math.min(12,arr('beacons'))+Math.min(12,arr('signalClues')))*40;
- const ch=Number(s.chapter)||1;if(ch>=2)parts.story+=400;if(ch>=3)parts.story+=400;
+ const ch=Number(s.chapter)||1;if(ch>=2)parts.story+=400;if(ch>=3)parts.story+=400;if(ch>=4)parts.story+=400;
  for(const v of Object.values(s.cards||{}))if(Number.isFinite(v))parts.cards+=Math.max(0,Math.min(3,v))*60;
  parts.base=Math.min(5,arr('buildings'))*80;const ex=s.expeditions&&s.expeditions.done;if(ex&&typeof ex==='object')parts.expeditions=Math.min(4,Object.keys(ex).length)*150;
  parts.watch=Math.min(over.maxDays!=null?over.maxDays:3650,3650,Math.max(0,Math.floor(Number(s.streak&&s.streak.total)||0)))*15;

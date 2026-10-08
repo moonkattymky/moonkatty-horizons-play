@@ -144,7 +144,7 @@ Game.onResult=r=>{if(r&&r.found==='crystals'&&!seen('crystal'))setTimeout(()=>{i
 const menu=$('#chapters');if(menu&&!$('#cinema-menu')){const box=document.createElement('section');box.id='cinema-menu';box.className='cinema-menu';
  box.innerHTML=`<button id="watch-intro" class="cin-watch" type="button"><span class="cin-play">▶</span><span><b>${_t('cinui.smotret_vstuplenie')}</b><small>${_t('cinui.polet_avariya')}</small></span></button><div class="cin-chips" id="cinema-chips"></div><button id="cinema-sound" class="cin-switch" type="button" role="switch"></button>`;
  const list=$('#chapter-list');(list||menu.firstChild).after(box);
- const render=()=>{const ch=S().chapter;$('#cinema-chips').innerHTML=['ch1','ch2','ch3'].map((id,k)=>`<button type="button" data-cin="${id}" ${k+1>ch?'disabled':''}>${k+1>ch?'🔒 ':''}${_t('life.n',{n:k+1})}</button>`).join('');
+ const render=()=>{const ch=S().chapter;$('#cinema-chips').innerHTML=['ch1','ch2','ch3','ch4'].map((id,k)=>`<button type="button" data-cin="${id}" ${k+1>ch?'disabled':''}>${k+1>ch?'🔒 ':''}${_t('life.n',{n:k+1})}</button>`).join('');
   const sb=$('#cinema-sound');sb.setAttribute('aria-checked',String(Sound.on));sb.innerHTML=`<span>${_t('cinui.zvuk_rolikah')}</span><i class="${Sound.on?'on':''}"><b></b></i>`;};
  render();new MutationObserver(()=>{if(menu.open)render();}).observe(menu,{attributes:true,attributeFilter:['open']});
  box.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;if(b.id==='watch-intro'){menu.close();play('intro');}else if(b.dataset.cin){menu.close();play(b.dataset.cin);}else if(b.id==='cinema-sound'){Sound.on=!Sound.on;paintSound();render();}});}
