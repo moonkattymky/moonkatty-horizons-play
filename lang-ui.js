@@ -28,7 +28,9 @@ function close(){if(dlg&&dlg.open)dlg.close();}
 function pick(id){const b=dlg.querySelector(`[data-lang-id="${id}"]`);if(b){dlg.querySelectorAll('.lp-item').forEach(x=>x.classList.toggle('on',x===b));b.classList.add('picked');}
  // v44: on the very first launch the world has not started yet — switch in place and start it, no page reload.
  if(window.MoonBoot&&window.MoonBoot.gated){I.choose(id,{reload:false});dlg.classList.add('leaving');
-  I.switchTo(id).then(()=>{relabel();first=false;dlg.classList.remove('leaving');close();window.MoonBoot.release();});return;}
+  I.switchTo(id).then(()=>{relabel();first=false;dlg.classList.remove('leaving');close();
+  // let one frame with the cover + «Loading the Moon…» paint before the world scripts take the main thread
+  const go=()=>window.MoonBoot.release();if(typeof requestAnimationFrame==='function')requestAnimationFrame(()=>setTimeout(go,0));setTimeout(go,150);});return;}
  const reloading=I.choose(id);
  if(reloading)dlg.classList.add('leaving');else setTimeout(close,140);}
 // Entry points: cover globe pill + main menu row.
