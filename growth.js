@@ -156,7 +156,7 @@ function shareStory(){const app=tg(),link=invite();if(!app?.shareToStory){shareC
 function renderShare(){const d=shareDialog,story=!!tg()?.shareToStory,claimed=S().growth.shareDay===G.utcDay();
  d.innerHTML=head(_t('growth.podelitsya'),_t('growth.rasskazhi_moonkatt'),'share')+
   `<div class="share-preview"><img src="${esc(langAsset(cfg.SHARE_CARD_IMAGE))}" alt="${_t('growth.kartinka_moonkatty')}" loading="lazy"></div>`+
-  `<p class="g-lead">${shareContext==='chapter'?_t('growth.otlichnaya_rabota'):_t('growth.kartinka_kotom')}</p>`+
+  `<p class="g-lead">${shareContext==='chapter'?_t('growth.otlichnaya_rabota'):_t(invite()===cfg.DEMO_URL?'share.demo_lead':'growth.kartinka_kotom')}</p>`+
   (story?`<button class="primary g-cta" id="share-story">${ICON.share}${_t('growth.istoriyu_telegram')}</button><button class="g-secondary" id="share-chat">${_t('growth.otpravit_chat')}</button>`:`<button class="primary g-cta" id="share-chat">${ICON.share}${_t('growth.otpravit_chat')}</button>`)+
   `<button class="g-secondary" id="share-copy">${ICON.link}${_t('growth.skopirovat_ssylku')}</button>`+
   `<div class="share-bonus ${claimed?'done':''}">${claimed?_t('growth.bonus_segodnya'):_t('growth.pervyy_raz')} ${chips(G.SHARE_REWARD,'small')}</div><p class="g-feedback" id="share-feedback" role="status"></p>`;
@@ -252,7 +252,7 @@ function streakPill(){const cover=$('#cover'),copy=cover&&cover.querySelector('.
  if(!pill){pill=document.createElement('div');pill.id='streak-pill';pill.className='streak-pill';copy.prepend(pill);if(G.shouldShowStreak(s)){G.markStreakSeen(s);Game.save();}}
  pill.innerHTML=`<span class="sp-ico" aria-hidden="true">${ICON.gift}</span><span class="sp-text" role="button" tabindex="0"><b>${_t('growth.vahta_baze')}</b>${_t('growth.den3',{n:st.day})}</span><span class="sp-chips">${chips(st.reward,'small')}</span><button type="button" id="streak-pill-claim">${_t('growth.zabrat')}</button>`;
  pill.querySelector('.sp-text').onclick=openStreak;
- $('#streak-pill-claim').onclick=async e=>{e.stopPropagation();const r=await claimStreak();if(r&&r.ok){pill.innerHTML=`<span class="sp-ico" aria-hidden="true">${ICON.check}</span><span class="sp-text"><b>${_t('growth.vahta_baze')}</b>${esc(r.text)}</span>`;pill.classList.add('done');setTimeout(()=>pill.remove(),2700);}else streakPill();};}
+ $('#streak-pill-claim').onclick=async e=>{e.stopPropagation();pill.classList.add('done');const r=await claimStreak();if(r&&r.ok){pill.innerHTML=`<span class="sp-ico" aria-hidden="true">${ICON.check}</span><span class="sp-text"><b>${_t('growth.vahta_baze')}</b>${esc(r.text)}</span>`;pill.classList.add('done');setTimeout(()=>pill.remove(),2700);}else{pill.classList.remove('done');streakPill();}};}
 // Wait briefly for telegram-web-app.js (loaded async by telegram-viewport.js) before talking to the server.
 let waited=0;(function waitTelegram(){if(tg()?.initData||waited>=2500||!API){boot();return;}waited+=250;setTimeout(waitTelegram,250);})();
 maybeShowStreak(1100);

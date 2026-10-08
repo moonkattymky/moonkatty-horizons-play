@@ -975,5 +975,6 @@
  "cover.next_goal":"Next goal: {goal}",
  "cover.demo_note":"Story demo · Lives 1–4 · free",
  "cover.share":"Share with friends",
- "share.demo_text":"MOONKATTY: New Horizons — a free story game right in Telegram 🚀 A cat astronaut, a lost crew and a rocket that won’t start. Lives 1–4 are ready — come play:"
+ "share.demo_text":"MOONKATTY: New Horizons — a free story game right in Telegram 🚀 A cat astronaut, a lost crew and a rocket that won’t start. Lives 1–4 are ready — come play:",
+ "share.demo_lead":"A cat-astronaut picture and a link to the free story demo."
 });

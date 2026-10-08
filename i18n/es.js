@@ -975,5 +975,6 @@
  "cover.next_goal":"Siguiente objetivo: {goal}",
  "cover.demo_note":"Demo de la historia · Vidas 1–4 · gratis",
  "cover.share":"Compartir con amigos",
- "share.demo_text":"MOONKATTY: New Horizons — un juego de historia gratis dentro de Telegram 🚀 Un gato astronauta, una tripulación perdida y un cohete que no arranca. Las vidas 1–4 ya están listas — ven a jugar:"
+ "share.demo_text":"MOONKATTY: New Horizons — un juego de historia gratis dentro de Telegram 🚀 Un gato astronauta, una tripulación perdida y un cohete que no arranca. Las vidas 1–4 ya están listas — ven a jugar:",
+ "share.demo_lead":"Una imagen del gato astronauta y un enlace a la demo gratuita de la historia."
 });

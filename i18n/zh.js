@@ -975,5 +975,6 @@
  "cover.next_goal":"下一个目标：{goal}",
  "cover.demo_note":"剧情试玩 · 第1–4条命 · 免费",
  "cover.share":"分享给朋友",
- "share.demo_text":"MOONKATTY: New Horizons — 在 Telegram 里直接玩的免费剧情游戏 🚀 猫咪宇航员、失踪的船员和一枚无法点火的火箭。第1–4条命已上线，快来玩："
+ "share.demo_text":"MOONKATTY: New Horizons — 在 Telegram 里直接玩的免费剧情游戏 🚀 猫咪宇航员、失踪的船员和一枚无法点火的火箭。第1–4条命已上线，快来玩：",
+ "share.demo_lead":"一张猫咪宇航员图片和免费剧情试玩的链接。"
 });

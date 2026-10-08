@@ -975,5 +975,6 @@
  "cover.next_goal":"Sıradaki hedef: {goal}",
  "cover.demo_note":"Hikâye demosu · Canlar 1–4 · ücretsiz",
  "cover.share":"Arkadaşlarınla paylaş",
- "share.demo_text":"MOONKATTY: New Horizons — doğrudan Telegram’da ücretsiz bir hikâye oyunu 🚀 Astronot bir kedi, kayıp bir mürettebat ve çalışmayan bir roket. Canlar 1–4 hazır — gel oyna:"
+ "share.demo_text":"MOONKATTY: New Horizons — doğrudan Telegram’da ücretsiz bir hikâye oyunu 🚀 Astronot bir kedi, kayıp bir mürettebat ve çalışmayan bir roket. Canlar 1–4 hazır — gel oyna:",
+ "share.demo_lead":"Astronot kedi görseli ve ücretsiz hikâye demosunun bağlantısı."
 });
