@@ -7,7 +7,7 @@ window.MoonGrowthConfig=Object.assign({
  MINIAPP_SHORTNAME:'Play',          // short name from BotFather /newapp, e.g. 'play' → https://t.me/MoonkattyHorizonsBot/play?startapp=ref_<id>
  CHANNEL_USERNAME:'moonkattymkty',             // channel username without @, e.g. 'moonkattymkty'. Empty = channel task hidden
  CHAT_USERNAME:'moonkattymkty_chat',  // community chat username without @. Empty = chat task hidden
- SOCIAL:{youtube:'https://www.youtube.com/@moonkattymky',tiktok:'https://www.tiktok.com/@moonkattymky',instagram:'https://www.instagram.com/moonkattymky/',x:'https://x.com/moonkattymky'},  // full https:// links; empty = task hidden
+ SOCIAL:{youtube:'https://www.youtube.com/@moonkattymky',tiktok:'https://www.tiktok.com/@moonkattymky',instagram:'https://www.instagram.com/moonkattymky/',x:'https://x.com/moonkattymky'},  // full https:// links; empty = task hidden. v45: instagram is a plain link only — it has NO reward task
  SHARE_STORY_IMAGE:'assets/share/story-{lang}.jpg',
  SHARE_CARD_IMAGE:'assets/share/card-{lang}.jpg'
 },window.MoonGrowthConfig||{});

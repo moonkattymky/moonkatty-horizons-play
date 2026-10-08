@@ -33,9 +33,13 @@ function storyCheckpoints(s){if(!s||typeof s!=='object')return[];const ch=Number
 // Next checkpoints to post: what the save reached minus what the server journal already has.
 function checkpointsToSend(s,done){const have=new Set(Array.isArray(done)?done:[]);return storyCheckpoints(s).filter(k=>!have.has(k));}
 const streakPoints=run=>MOON.streak[Math.max(1,Math.min(7,Math.floor(run)||1))-1];
-// Social tasks: personal code MKTY-XXXX in a post/comment + link → team review. The community chat is a plain link (no reward).
-const SOCIAL_PLATFORMS=['x','tiktok','instagram','youtube'];
-const SOCIAL_NAMES={x:'X',tiktok:'TikTok',instagram:'Instagram',youtube:'YouTube'};
+// Social tasks (v45, subscription only): follow → nickname + moderator card in the bot (TikTok, X; YouTube without Google) or the
+// Google check (YouTube); a post/comment with the personal code MKTY-XXXX → team review. Instagram has NO reward task (link only).
+// The community chat is a plain link (no reward).
+const SOCIAL_PLATFORMS=['x','tiktok','youtube'];
+const SOCIAL_NAMES={x:'X',tiktok:'TikTok',youtube:'YouTube'};
+// Nickname typed in the follow form: «@nick», «＠nick», «nick» → «@nick»; profile links are sent as they are (the server normalizes).
+function nickProof(raw){const v=String(raw||'').trim().replace(/^[@\uff20]+/,'');return !v?'':v.includes('/')?v:'@'+v;}
 const BADGE_NAMES={watch7:_t('gcore.vahta_7'),channel:_t('gcore.svyazist'),crew1:_t('gcore.pervyy_ekipazhe'),crew5:_t('gcore.komandir_ekipazha'),season:_t('season.badge_season'),beacon:_t('season.badge_beacon')};
 
 // v37: the day changes at 00:00 UTC for everyone (same as the server).
@@ -125,4 +129,4 @@ function progressScore(s){if(!s||typeof s!=='object')return 0;let p=(Number(s.ch
 function pickSave(local,remote){if(!remote)return'local';if(!local)return'remote';const lr=local.growth?.resetAt||0,rr=remote.growth?.resetAt||0;if(lr!==rr)return lr>rr?'local':'remote';
  const a=progressScore(local),b=progressScore(remote);if(a!==b)return a>b?'local':'remote';return(local.updatedAt||0)>=(remote.updatedAt||0)?'local':'remote';}
 
-return{DAY_MS,STREAK_REWARDS,REFERRAL_REWARDS,CHANNEL_REWARD,SHARE_REWARD,MOON,STORY_CHECKPOINTS,storyCheckpoints,checkpointsToSend,SHIELD_DAYS,SOCIAL_PLATFORMS,SOCIAL_NAMES,BADGE_NAMES,streakPoints,utcDay,localDay,dayIndex,streakStatus,applyReward,rewardText,gotText,claimStreak,shouldShowStreak,markStreakSeen,parseStartParam,inviteLink,shareUrl,linkPlan,bridgeEvent,claimShare,applyServerReward,setMoon,moonView,formatPoints,progressScore,pickSave};});
+return{DAY_MS,STREAK_REWARDS,REFERRAL_REWARDS,CHANNEL_REWARD,SHARE_REWARD,MOON,STORY_CHECKPOINTS,storyCheckpoints,checkpointsToSend,SHIELD_DAYS,SOCIAL_PLATFORMS,SOCIAL_NAMES,nickProof,BADGE_NAMES,streakPoints,utcDay,localDay,dayIndex,streakStatus,applyReward,rewardText,gotText,claimStreak,shouldShowStreak,markStreakSeen,parseStartParam,inviteLink,shareUrl,linkPlan,bridgeEvent,claimShare,applyServerReward,setMoon,moonView,formatPoints,progressScore,pickSave};});

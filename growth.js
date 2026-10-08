@@ -189,9 +189,17 @@ document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('.mc
 const tasksDialog=dialog('tasks','tasks-dialog');let channelBusy=false,channelMsg='',socOpen='',socKind={},socDraft={},socMsg={},socBusy=false;
 function socialUrl(id){if(id==='chat'){const c=String(cfg.CHAT_USERNAME||'').trim().replace(/^@/,'');return /^[A-Za-z0-9_]{4,}$/.test(c)?'https://t.me/'+c:'';}return String(cfg.SOCIAL?.[id]||'');}
 function socialPlatforms(){return G.SOCIAL_PLATFORMS.filter(id=>/^https:\/\//.test(socialUrl(id)));}
-const SOC_TITLE={x:'gcore.chitay_moonkatty',tiktok:'gcore.podpishis_tiktok',instagram:'gcore.podpishis_instagra',youtube:'gcore.podpishis_youtube'};
+const SOC_TITLE={x:'gcore.chitay_moonkatty',tiktok:'gcore.podpishis_tiktok',youtube:'gcore.podpishis_youtube'};   // v45: no Instagram reward task
 function socWord(state,n){return state==='pending'?_t('soc.s_pending'):state==='approved'?_t('soc.s_approved'):state==='rejected'?_t('soc.s_rejected'):'🌕+'+n;}
-function socError(e,id){const name=G.SOCIAL_NAMES[id]||id,c=e&&e.code;return c==='bad_proof'?_t('soc.e_bad_proof',{platform:name}):c==='already'?_t('soc.e_already',{platform:name}):c==='daily_limit'?_t('soc.e_daily_limit',{platform:name}):c==='pending_limit'?_t('soc.e_pending_limit',{n:M().socialPending}):c==='duplicate_proof'?_t('soc.e_duplicate'):_t('growth.net_svyazi');}
+function socError(e,id,kind){const name=G.SOCIAL_NAMES[id]||id,c=e&&e.code,follow=kind==='follow';
+ return c==='bad_proof'&&follow?_t('soc.e_nick',{platform:name}):c==='duplicate_proof'&&follow?_t('soc.e_nick_taken'):c==='use_google'?_t('soc.e_use_google'):c==='rate_limited'||c==='daily_max'?_t('soc.e_rate'):c==='bad_proof'?_t('soc.e_bad_proof',{platform:name}):c==='already'?_t('soc.e_already',{platform:name}):c==='daily_limit'?_t('soc.e_daily_limit',{platform:name}):c==='pending_limit'?_t('soc.e_pending_limit',{n:M().socialPending}):c==='duplicate_proof'?_t('soc.e_duplicate'):_t('growth.net_svyazi');}
+// v45 follow form: subscription only. YouTube with Google OAuth on → «Check with Google»; otherwise «@nickname» + «I followed»
+// → a moderator card in the bot. Pending / approved states replace the form.
+function followForm(id,state,m){const name=G.SOCIAL_NAMES[id]||id;
+ if(state==='approved')return`<p class="soc-state ok">${ICON.check}${_t('soc.done_follow')}</p>`;
+ if(state==='pending')return`<p class="soc-state">${_t('soc.wait_follow')}</p>`;
+ if(id==='youtube'&&social?.oauth?.youtube)return`<p class="soc-hint">${_t('soc.yt_hint',{n:m.social.follow})}</p><button type="button" class="primary soc-google" data-yt-google ${socBusy?'disabled':''}>${ICON.youtube||''}<span>${_t('soc.yt_google')}</span></button>`;
+ return`<p class="soc-hint">${_t('soc.nick_hint',{platform:name,n:m.social.follow})}</p><div class="soc-input nick"><span class="soc-nick"><i aria-hidden="true">@</i><input name="proof" dir="ltr" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="60" value="${esc(socDraft[id]||'')}" placeholder="${esc(_t('soc.ph_follow'))}" aria-label="${esc(_t('soc.e_nick',{platform:name}))}"></span><button class="primary" type="submit" ${socBusy?'disabled':''}>${_t('soc.i_followed')}</button></div>`;}
 function socialHtml(){const ids=socialPlatforms(),chat=socialUrl('chat'),m=M();if(!ids.length&&!chat)return'';
  const code=online&&social?`<div class="soc-code"><span class="sc-text"><small>${_t('soc.code_title')}</small><b dir="ltr">${esc(social.code)}</b></span><button type="button" id="soc-copy">${_t('growth.kopirovat')}</button><p>${_t('soc.code_hint')}</p></div>`
   :`<div class="soc-code pending"><span class="sc-text"><small>${_t('soc.code_title')}</small><b dir="ltr">MKTY-····</b></span><p>${_t('soc.code_offline')}</p></div>`;
@@ -199,7 +207,7 @@ function socialHtml(){const ids=socialPlatforms(),chat=socialUrl('chat'),m=M();i
   const done=st.follow==='approved'&&st.daily==='approved',sub=online?_t('soc.line',{follow:socWord(st.follow,m.social.follow),daily:socWord(st.daily,m.social.daily)}):G.SOCIAL_NAMES[id]+' · MOONKATTY';
   return`<div class="task-row soc-row ${done?'claimed':''} ${open?'open':''}"><span class="tr-icon">${ICON[id]}</span><span class="tr-text"><b>${_t(SOC_TITLE[id])}</b><small>${sub}</small></span><span class="tr-side"><button type="button" class="tr-btn" data-soc-open="${id}">${_t('growth.otkryt')}</button>${online?`<button class="tr-btn gold" data-soc-form="${id}" aria-expanded="${open}">${_t('soc.send')}</button>`:''}</span></div>`+
    (open?`<form class="soc-form" data-soc-submit="${id}" autocomplete="off"><div class="soc-kinds" role="tablist"><button type="button" role="tab" data-soc-kind="follow" class="${kind==='follow'?'on':''}">${_t('soc.follow')} · ${ICON.moon}+${m.social.follow}</button><button type="button" role="tab" data-soc-kind="daily" class="${kind==='daily'?'on':''}">${_t('soc.daily')} · ${ICON.moon}+${m.social.daily}</button></div>`+
-    `<div class="soc-input"><input name="proof" dir="ltr" inputmode="url" autocapitalize="off" spellcheck="false" maxlength="300" value="${esc(socDraft[id]||'')}" placeholder="${esc(_t(kind==='follow'?'soc.ph_follow':'soc.ph_daily'))}" aria-label="${esc(_t(kind==='follow'?'soc.ph_follow':'soc.ph_daily'))}"><button class="primary" type="submit" ${socBusy?'disabled':''}>${_t('soc.send_btn')}</button></div>`+
+    (kind==='follow'?followForm(id,st.follow,m):`<div class="soc-input"><input name="proof" dir="ltr" inputmode="url" autocapitalize="off" spellcheck="false" maxlength="300" value="${esc(socDraft[id]||'')}" placeholder="${esc(_t('soc.ph_daily'))}" aria-label="${esc(_t('soc.ph_daily'))}"><button class="primary" type="submit" ${socBusy?'disabled':''}>${_t('soc.send_btn')}</button></div>`)+
     `<p class="soc-msg ${msg?.ok?'ok':''}" role="status">${esc(msg?.text||'')}</p></form>`:'');}).join('');
  const chatRow=chat?`<div class="task-row chat-row"><span class="tr-icon">${ICON.telegram}</span><span class="tr-text"><b>${_t('gcore.vstupi_chat')}</b><small>${_t('soc.chat_sub')}</small></span><span class="tr-side"><button type="button" class="tr-btn" data-soc-open="chat">${_t('growth.otkryt')}</button></span></div>`:'';
  return`<h3 class="g-sub">${_t('growth.my_sotssetyah')}</h3>${code}<p class="soc-steps">${_t('soc.steps',{n:m.social.follow})}</p><div class="task-list">${rows}${chatRow}</div><p class="g-note">${online?_t('growth.zadaniya_sotssetey'):_t('soc.offline')}</p>`;}
@@ -220,18 +228,31 @@ function renderTasks(){const d=tasksDialog,s=S(),m=M(),ch=String(cfg.CHANNEL_USE
  d.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>({streak:openStreak,crew:openCrew,share:()=>openShare('invite'),season:OPEN.season})[b.dataset.go]());
  d.querySelectorAll('[data-soc-open]').forEach(b=>b.onclick=()=>openUrl(socialUrl(b.dataset.socOpen)));
  d.querySelectorAll('[data-soc-form]').forEach(b=>b.onclick=()=>{const id=b.dataset.socForm;socOpen=socOpen===id?'':id;renderTasks();if(socOpen)setTimeout(()=>d.querySelector('.soc-form input')?.focus({preventScroll:true}),30);});
- d.querySelectorAll('.soc-form').forEach(f=>{const id=f.dataset.socSubmit,inp=f.querySelector('input');inp.oninput=()=>{socDraft[id]=inp.value;};
+ d.querySelectorAll('.soc-form').forEach(f=>{const id=f.dataset.socSubmit,inp=f.querySelector('input[name=proof]');if(inp)inp.oninput=()=>{socDraft[id]=inp.value;};
   f.querySelectorAll('[data-soc-kind]').forEach(b=>b.onclick=()=>{socKind[id]=b.dataset.socKind;socMsg[id]=null;renderTasks();});
-  f.onsubmit=e=>{e.preventDefault();submitSocial(id,socKind[id]||f.querySelector('[data-soc-kind].on')?.dataset.socKind||'follow',inp.value);};});
+  const kindOf=()=>socKind[id]||f.querySelector('[data-soc-kind].on')?.dataset.socKind||'follow';
+  if(inp&&inp.closest('.nick'))inp.oninput=()=>{const v=inp.value.replace(/^\s*[@\uff20]+/,'');if(v!==inp.value)inp.value=v;socDraft[id]=v;};
+  const yt=f.querySelector('[data-yt-google]');if(yt)yt.onclick=youtubeGoogle;
+  f.onsubmit=e=>{e.preventDefault();if(!inp)return;const kind=kindOf();submitSocial(id,kind,kind==='follow'?G.nickProof(inp.value):inp.value);};});
  if(focus)d.querySelector('.soc-form input')?.focus({preventScroll:true});
  const cp=$('#soc-copy');if(cp)cp.onclick=async()=>{const ok=await copy(social?.code||'');if(ok){haptic();toast(_t('soc.code_copied'));}};
  if($('#channel-open'))$('#channel-open').onclick=()=>{openUrl('https://t.me/'+ch);channelMsg=online?_t('growth.podpisalsya_nazhmi'):_t('growth.spasibo_proverka');renderTasks();};
  if($('#channel-check'))$('#channel-check').onclick=checkChannel;window.MoonTeamUI?.wireCode?.(d);}
-async function submitSocial(id,kind,proof){if(socBusy||!online)return;socBusy=true;socMsg[id]=null;renderTasks();
- try{const r=await api('/api/social/submit',{platform:id,kind,proof:String(proof||'').trim()});social=r.social||social;socMsg[id]={ok:true,text:_t('soc.sent')};socDraft[id]='';haptic();}
- catch(e){socMsg[id]={ok:false,text:socError(e,id)};haptic('warning');}socBusy=false;renderTasks();}
-async function refreshSocial(){if(!online)return;try{const r=await api('/api/social/status',{});social=r.social||social;if(tasksDialog.open)renderTasks();}catch{}}
-async function checkChannel(){if(channelBusy||!online)return;channelBusy=true;renderTasks();try{const r=await api('/api/channel/check',{});if(r.member){channelInfo.rewarded=true;S().growth.channel=true;if(r.reward)applyServerRewards([r.reward]);else commit();channelMsg='';haptic();}else{channelMsg=r.error==='channel_not_configured'?_t('growth.proverka_kanala'):_t('growth.poka_vidim');haptic('warning');}}catch{channelMsg=_t('growth.net_svyazi');}channelBusy=false;renderTasks();}
+async function submitSocial(id,kind,proof){if(socBusy||!online)return;if(!String(proof||'').trim()){socMsg[id]={ok:false,text:socError({code:'bad_proof'},id,kind)};renderTasks();return;}socBusy=true;socMsg[id]=null;renderTasks();
+ try{const r=await api('/api/social/submit',{platform:id,kind,proof:String(proof||'').trim()});social=r.social||social;socMsg[id]={ok:true,text:_t(kind==='follow'?'soc.wait_follow':'soc.sent')};socDraft[id]='';haptic();}
+ catch(e){socMsg[id]={ok:false,text:socError(e,id,kind)};haptic('warning');}socBusy=false;renderTasks();}
+// v45 YouTube: the server signs a short-lived Google sign-in link; it opens outside the game (Telegram openLink), the result page
+// says «go back to the game», and the status is refreshed when the game becomes visible again.
+async function youtubeGoogle(){if(socBusy||!online)return;socBusy=true;socMsg.youtube=null;renderTasks();
+ try{const r=await api('/api/social/youtube/start',{});if(r.social)social=r.social;
+  if(r.url){openUrl(r.url);socMsg.youtube={ok:true,text:_t('soc.yt_opened')};}else if(r.already)socMsg.youtube={ok:true,text:_t('soc.done_follow')};haptic();}
+ catch(e){socMsg.youtube={ok:false,text:socError(e,'youtube','follow')};haptic('warning');}socBusy=false;renderTasks();}
+const followsDone=v=>Object.values(v?.platforms||{}).filter(p=>p.follow==='approved').length;
+async function refreshSocial(){if(!online)return;try{const before=followsDone(social),r=await api('/api/social/status',{});social=r.social||social;
+ if(followsDone(social)>before){try{const c=await api('/api/rewards/claim',{});applyServerRewards(c.rewards);}catch{}}if(tasksDialog.open)renderTasks();}catch{}}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&tasksDialog.open)refreshSocial();});
+async function checkChannel(){if(channelBusy||!online)return;channelBusy=true;renderTasks();try{const r=await api('/api/channel/check',{});if(r.member){channelInfo.rewarded=true;S().growth.channel=true;if(r.reward)applyServerRewards([r.reward]);else commit();channelMsg='';haptic();}else{channelMsg=r.error==='channel_not_configured'?_t('growth.proverka_kanala'):_t('growth.poka_vidim');haptic('warning');
+  const ch=String(cfg.CHANNEL_USERNAME||'').replace(/^@/,'');if(!r.error&&/^\w{4,}$/.test(ch))setTimeout(()=>openUrl('https://t.me/'+ch),700);/* v45: not subscribed → open the channel */}}catch(e){channelMsg=e&&e.code==='rate_limited'?_t('soc.e_rate'):_t('growth.net_svyazi');}channelBusy=false;renderTasks();}
 function openTasks(){renderTasks();open('tasks');refreshSocial();}
 
 // ---------- entry points ----------

@@ -49,6 +49,16 @@ html[dir=rtl] .soc-code b{text-align:right}
 .soc-input input:focus{border-color:#7fd8ff;box-shadow:0 0 0 3px #4fb6ff33}.soc-input input::placeholder{color:#6f8ea2}
 html[dir=rtl] .soc-input input:placeholder-shown{direction:rtl}
 .soc-input button{width:auto!important;margin:0!important;min-height:40px!important;padding:0 14px!important;border-radius:10px!important;font-size:13px!important}
+/* v45 follow form: «@» + nickname, «Check with Google», waiting / confirmed states */
+.soc-hint{margin:0 0 8px;font-size:12px;line-height:1.45;color:#c4d7e1}
+.soc-nick{position:relative;display:flex;min-width:0}
+.soc-nick i{position:absolute;inset-inline-start:0;top:0;bottom:0;width:30px;display:flex;align-items:center;justify-content:center;font:800 15px/1 ui-monospace,Menlo,Consolas,monospace;font-style:normal;color:#ffe4b5;pointer-events:none}
+.soc-nick input{flex:1;padding-inline-start:28px!important;font-weight:700}
+html[dir=rtl] .soc-nick{direction:ltr}html[dir=rtl] .soc-nick i{left:0;right:auto}html[dir=rtl] .soc-nick input{padding-left:28px!important;padding-right:10px!important;text-align:left}
+.soc-google{display:flex!important;align-items:center;justify-content:center;gap:8px;width:100%!important;margin:0!important;min-height:42px!important;border-radius:11px!important;font-size:14px!important}
+.soc-google svg{width:20px;height:20px;flex:none}
+.soc-state{display:flex;align-items:center;gap:6px;margin:2px 0 0;padding:9px 10px;border-radius:10px;font-size:12.5px;line-height:1.4;background:#12334c;color:#f2cd8a}
+.soc-state.ok{color:#8ee4df}.soc-state svg{width:16px;height:16px;flex:none}
 .soc-msg{margin:7px 0 0;font-size:12px;line-height:1.4;color:#f2cd8a}.soc-msg.ok{color:#8ee4df}.soc-msg:empty{display:none}
 .task-row.chat-row{opacity:.92}
 .task-list+.task-list{margin-top:8px}
