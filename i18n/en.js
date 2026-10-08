@@ -970,5 +970,10 @@
  "ch4.cover_text":"The blueprint is ready. Now the Crew builds the rocket — piece by piece, engine by engine.",
  "ch4.btn_take":"Take",
  "ch4.btn_install":"Install",
- "ch4.btn_ignite":"Ignition check"
+ "ch4.btn_ignite":"Ignition check",
+ "boot.loading":"Loading the Moon…",
+ "cover.next_goal":"Next goal: {goal}",
+ "cover.demo_note":"Story demo · Lives 1–4 · free",
+ "cover.share":"Share with friends",
+ "share.demo_text":"MOONKATTY: New Horizons — a free story game right in Telegram 🚀 A cat astronaut, a lost crew and a rocket that won’t start. Lives 1–4 are ready — come play:"
 });

@@ -26,6 +26,9 @@ function fitNames(){if(!dlg)return;dlg.querySelectorAll('.lp-name').forEach(el=>
 addEventListener('resize',()=>{if(dlg&&dlg.open)fitNames();});
 function close(){if(dlg&&dlg.open)dlg.close();}
 function pick(id){const b=dlg.querySelector(`[data-lang-id="${id}"]`);if(b){dlg.querySelectorAll('.lp-item').forEach(x=>x.classList.toggle('on',x===b));b.classList.add('picked');}
+ // v44: on the very first launch the world has not started yet — switch in place and start it, no page reload.
+ if(window.MoonBoot&&window.MoonBoot.gated){I.choose(id,{reload:false});dlg.classList.add('leaving');
+  I.switchTo(id).then(()=>{relabel();first=false;dlg.classList.remove('leaving');close();window.MoonBoot.release();});return;}
  const reloading=I.choose(id);
  if(reloading)dlg.classList.add('leaving');else setTimeout(close,140);}
 // Entry points: cover globe pill + main menu row.
@@ -38,6 +41,8 @@ function mount(){const cover=document.getElementById('cover');
  if(quality&&!document.getElementById('menu-lang')){const b=document.createElement('button');b.type='button';b.id='menu-lang';b.className='menu-lang';
   b.innerHTML=`<span>🌐 ${esc(_t('lang.menu'))}</span><b>${label()}</b>`;b.addEventListener('click',()=>open());quality.before(b);}}
 mount();
+function relabel(){const c=document.getElementById('cover-lang');if(c){c.setAttribute('aria-label',_t('lang.menu'));const b=c.querySelector('b');if(b)b.textContent=I.lang.toUpperCase();}
+ const m=document.getElementById('menu-lang');if(m)m.innerHTML=`<span>🌐 ${esc(_t('lang.menu'))}</span><b>${label()}</b>`;}
 // Long words (German, Italian…) on the small HUD action labels: shrink the type a little instead of cutting the word.
 function over(el){if(el.scrollWidth>el.clientWidth)return true;const r=document.createRange();r.selectNodeContents(el);const cs=getComputedStyle(el);return r.getBoundingClientRect().width>el.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight)+.25;}
 function fit(el){el.style.fontSize='';if(!el.clientWidth)return;let fs=parseFloat(getComputedStyle(el).fontSize)||12;let n=0;while(over(el)&&fs>8.5&&n++<12){fs-=.5;el.style.fontSize=fs+'px';}}

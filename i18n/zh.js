@@ -970,5 +970,10 @@
  "ch4.cover_text":"图纸已经备好。现在船员要造出火箭——一个零件接一个零件，一台发动机接一台发动机。",
  "ch4.btn_take":"拿取",
  "ch4.btn_install":"安装",
- "ch4.btn_ignite":"点火检查"
+ "ch4.btn_ignite":"点火检查",
+ "boot.loading":"正在加载月球…",
+ "cover.next_goal":"下一个目标：{goal}",
+ "cover.demo_note":"剧情试玩 · 第1–4条命 · 免费",
+ "cover.share":"分享给朋友",
+ "share.demo_text":"MOONKATTY: New Horizons — 在 Telegram 里直接玩的免费剧情游戏 🚀 猫咪宇航员、失踪的船员和一枚无法点火的火箭。第1–4条命已上线，快来玩："
 });

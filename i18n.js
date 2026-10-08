@@ -47,7 +47,12 @@ const api={LANGS,IDS,RTL,SAVE_KEY,PREF_KEY,normalize,detect,telegramLanguage,add
   if(!reload||id===lang)return false;
   // A ?lang= override would win over the saved choice after the reload, so drop it.
   try{const u=new URL(root.location.href);if(u.searchParams.has('lang')){u.searchParams.delete('lang');root.location.replace(u.toString());return true;}}catch{}
-  root.location.reload();return true;}};
+  root.location.reload();return true;},
+ // v44 first launch: switch the language in place (no reload) before the world scripts start. Resolves with the language id.
+ switchTo(id){id=normalize(id)||'en';const doc=root.document;
+  const done=()=>{setLang(id);const html=doc&&doc.documentElement;if(html){html.lang=lang;html.dir=isRTL()?'rtl':'ltr';if(html.dataset)html.dataset.lang=lang;}applyDom(doc);return lang;};
+  if(dicts[id]||!doc||!doc.head)return Promise.resolve(done());
+  return new Promise(res=>{const s=doc.createElement('script');s.src=base+id+'.js'+(q?'?'+q:'');s.onload=s.onerror=()=>res(done());doc.head.appendChild(s);});}};
 root.MoonI18n=api;root._t=t;
 if(typeof module==='object'&&module.exports){add('ru',require('./i18n/ru.js'));setLang('ru');module.exports=api;return;}
 // ---- browser boot ----

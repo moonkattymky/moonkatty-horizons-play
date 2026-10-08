@@ -1,5 +1,5 @@
 /* Soft boot impressions conform to the terrain. One buffer per chapter, 40 live prints. */
-(function(root){'use strict';const R=root.MoonRenderer.prototype,old=R.scene,C=root.MoonCore,IMAGE='assets/lunar-bootprint-v16.png';
+(function(root){'use strict';const R=root.MoonRenderer.prototype,old=R.scene,C=root.MoonCore,IMAGE='assets/lunar-bootprint-v44.webp';
 function stamp(out,x,z,yaw,ch){const co=Math.cos(yaw),si=Math.sin(yaw),point=(u,v,s,t)=>{const xx=x+u*co+v*si,zz=z-u*si+v*co;return[xx,C.height(xx,zz,ch)+.016,zz,s,t];};
  const a=point(-.31,.36,0,0),b=point(-.31,-.36,0,1),c=point(.31,-.36,1,1),d=point(.31,.36,1,0);out.push(...a,...b,...c,...a,...c,...d);
 }

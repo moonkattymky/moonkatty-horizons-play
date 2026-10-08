@@ -121,3 +121,4 @@
 
 .st-tile.done .st-reward .gchip{opacity:.85}
 .st-tile small svg{width:10px;height:10px;margin-right:3px;vertical-align:-1px;color:#ffd98c}.st-tile.done small{color:#ffd98c}
+.gchip.mp.later{opacity:.8;font-weight:650;letter-spacing:.4px;font-size:10.5px;border-style:dashed}

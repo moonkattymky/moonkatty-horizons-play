@@ -970,5 +970,10 @@
  "ch4.cover_text":"설계도가 준비됐어요. 이제 크루가 로켓을 만들어요. 부품 하나하나, 엔진 하나하나.",
  "ch4.btn_take":"가져가기",
  "ch4.btn_install":"장착하기",
- "ch4.btn_ignite":"점화 점검"
+ "ch4.btn_ignite":"점화 점검",
+ "boot.loading":"달을 불러오는 중…",
+ "cover.next_goal":"다음 목표: {goal}",
+ "cover.demo_note":"스토리 데모 · 목숨 1–4 · 무료",
+ "cover.share":"친구에게 공유",
+ "share.demo_text":"MOONKATTY: New Horizons — 텔레그램에서 바로 즐기는 무료 스토리 게임 🚀 고양이 우주비행사, 사라진 승무원, 시동이 걸리지 않는 로켓. 목숨 1–4 준비 완료 — 함께 플레이하세요:"
 });

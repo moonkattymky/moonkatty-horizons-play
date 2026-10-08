@@ -970,5 +970,10 @@
  "ch4.cover_text":"Le plan est prêt. Maintenant, l’équipage construit la fusée, pièce par pièce, moteur par moteur.",
  "ch4.btn_take":"Prendre",
  "ch4.btn_install":"Installer",
- "ch4.btn_ignite":"Test d’allumage"
+ "ch4.btn_ignite":"Test d’allumage",
+ "boot.loading":"Chargement de la Lune…",
+ "cover.next_goal":"Prochain objectif : {goal}",
+ "cover.demo_note":"Démo de l’histoire · Vies 1–4 · gratuite",
+ "cover.share":"Partager avec des amis",
+ "share.demo_text":"MOONKATTY : New Horizons — un jeu narratif gratuit directement dans Telegram 🚀 Un chat astronaute, un équipage disparu et une fusée qui refuse de démarrer. Les vies 1–4 sont prêtes — viens jouer :"
 });

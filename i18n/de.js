@@ -970,5 +970,10 @@
  "ch4.cover_text":"Der Bauplan ist fertig. Jetzt baut die Crew die Rakete – Teil für Teil, Triebwerk für Triebwerk.",
  "ch4.btn_take":"Mitnehmen",
  "ch4.btn_install":"Einbauen",
- "ch4.btn_ignite":"Zündtest"
+ "ch4.btn_ignite":"Zündtest",
+ "boot.loading":"Der Mond lädt…",
+ "cover.next_goal":"Nächstes Ziel: {goal}",
+ "cover.demo_note":"Story-Demo · Leben 1–4 · kostenlos",
+ "cover.share":"Mit Freunden teilen",
+ "share.demo_text":"MOONKATTY: New Horizons — ein kostenloses Story-Spiel direkt in Telegram 🚀 Ein Katzen-Astronaut, eine verschollene Crew und eine Rakete, die nicht zündet. Leben 1–4 sind fertig — spiel mit:"
 });

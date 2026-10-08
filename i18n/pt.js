@@ -970,5 +970,10 @@
  "ch4.cover_text":"O projeto está pronto. Agora a tripulação constrói o foguete — peça por peça, motor por motor.",
  "ch4.btn_take":"Pegar",
  "ch4.btn_install":"Instalar",
- "ch4.btn_ignite":"Teste de ignição"
+ "ch4.btn_ignite":"Teste de ignição",
+ "boot.loading":"Carregando a Lua…",
+ "cover.next_goal":"Próximo objetivo: {goal}",
+ "cover.demo_note":"Demo da história · Vidas 1–4 · grátis",
+ "cover.share":"Compartilhar com amigos",
+ "share.demo_text":"MOONKATTY: New Horizons — um jogo de história grátis dentro do Telegram 🚀 Um gato astronauta, uma tripulação perdida e um foguete que não liga. As vidas 1–4 já estão prontas — vem jogar:"
 });

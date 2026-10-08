@@ -970,5 +970,10 @@
  "ch4.cover_text":"Plan hazır. Şimdi mürettebat roketi inşa ediyor — parça parça, motor motor.",
  "ch4.btn_take":"Al",
  "ch4.btn_install":"Tak",
- "ch4.btn_ignite":"Ateşleme testi"
+ "ch4.btn_ignite":"Ateşleme testi",
+ "boot.loading":"Ay yükleniyor…",
+ "cover.next_goal":"Sıradaki hedef: {goal}",
+ "cover.demo_note":"Hikâye demosu · Canlar 1–4 · ücretsiz",
+ "cover.share":"Arkadaşlarınla paylaş",
+ "share.demo_text":"MOONKATTY: New Horizons — doğrudan Telegram’da ücretsiz bir hikâye oyunu 🚀 Astronot bir kedi, kayıp bir mürettebat ve çalışmayan bir roket. Canlar 1–4 hazır — gel oyna:"
 });
