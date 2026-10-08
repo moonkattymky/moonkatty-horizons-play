@@ -5,13 +5,20 @@
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.MoonSeason=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
 'use strict';
 const DAY_MS=86400000;
+const seasonLength=v=>v==='month'?'month':'week';
 const SEASON_TIERS=[{need:30,reward:{crystals:20,metal:10}},{need:100,reward:{points:15}},{need:200,reward:{item:'frame_aurora'}},{need:350,reward:{points:25}},
  {need:550,reward:{crystals:40,metal:30}},{need:800,reward:{points:40}},{need:1100,reward:{badge:'season'}},{need:1500,reward:{points:60,item:'frame_gold'}}];
-const WEEK_DIVISOR=4,WEEK_NEEDS=[10,25,50,90,140,200,275,375],SEASON_SCORE_SKIP=['story','season','goal'];
-const GOAL_BEACONS={streak:1,story:3,ref_invitee:5},GOAL_TARGET={month:10000,week:2500},GOAL_REWARD={points:50,badge:'beacon'},GOAL_CLAIM_DAYS=7;
+const WEEK_DIVISOR=4,WEEK_NEEDS=[10,25,50,90,140,200,275,375],SEASON_SCORE_SKIP=['story','season','goal','vest_story'];
+const GOAL_BEACONS={streak:1,story:3,ref_invitee:5},GOAL_REWARD={points:50,badge:'beacon'},GOAL_CLAIM_DAYS=7;
+// v41: the goal target follows the last season (~110% of its beacons) between a minimum and a maximum; GOAL_TARGET = the maximum.
+// A share of the reward needs at least GOAL_MIN_BEACONS own beacons; the bar shows milestones at 25/50/75/100%.
+const GOAL_TARGET_MIN={week:200,month:800},GOAL_TARGET_MAX={week:2500,month:10000},GOAL_GROWTH=1.1,GOAL_TARGET=GOAL_TARGET_MAX,GOAL_MIN_BEACONS=3,GOAL_MILESTONES=[25,50,75,100];
+function goalTargetFrom(prevProgress,length='week'){const k=seasonLength(length),lo=GOAL_TARGET_MIN[k],hi=GOAL_TARGET_MAX[k];
+ if(!Number.isFinite(prevProgress)||prevProgress<=0)return lo;return Math.max(lo,Math.min(hi,Math.round(prevProgress*GOAL_GROWTH)));}
+// v41: pass rewards stay claimable SEASON_GRACE_DAYS after the season; a pass frame you already own gives these supplies instead.
+const SEASON_GRACE_DAYS=3,FRAME_SUBSTITUTE={frame_aurora:{crystals:25,metal:25},frame_gold:{crystals:60,metal:60}};
 const COSMETICS={frame_aurora:{kind:'frame',source:'season'},frame_gold:{kind:'frame',source:'season'},frame_nebula:{kind:'frame',stars:30},frame_comet:{kind:'frame',stars:30},badge_patron:{kind:'badge',stars:60},cargo_bay:{kind:'boost',stars:40}};
 const CARGO_HOURS=3,FRAMES=Object.keys(COSMETICS).filter(id=>COSMETICS[id].kind==='frame');
-const seasonLength=v=>v==='month'?'month':'week';
 function seasonOf(now,length='week'){
  if(seasonLength(length)==='week'){const day=Math.floor(now/DAY_MS),dow=(new Date(day*DAY_MS).getUTCDay()+6)%7,startDay=day-dow,thu=new Date((startDay+3)*DAY_MS),y=thu.getUTCFullYear();
   const week=Math.floor(((startDay+3)*DAY_MS-Date.UTC(y,0,1))/DAY_MS/7)+1;return{id:`W${y}-${String(week).padStart(2,'0')}`,length:'week',start:startDay*DAY_MS,end:(startDay+7)*DAY_MS,week};}
@@ -25,9 +32,19 @@ function timeLeft(end,now=Date.now()){const ms=Math.max(0,end-now);return ms>=DA
 // Progress of the pass track as 0..1 between tiers, for the bar.
 function trackFill(score,tiers){const last=tiers[tiers.length-1].need;return Math.max(0,Math.min(1,(Number(score)||0)/last));}
 function nextTier(score,tiers){return tiers.find(t=>score<t.need)||null;}
+// v41 «N rewards expire in X»: the most urgent unclaimed pass rewards (last season during the grace days, else this season).
+// Shown when the deadline is within `within` ms. Returns {n,ms,season} or null.
+function expiring(season,now=Date.now(),within=4*DAY_MS){if(!season)return null;const list=[];
+ if(season.prev&&season.prev.unclaimed>0)list.push(season.prev);if(season.unclaimed>0)list.push(season);
+ for(const s of list){const until=s.claimUntil||s.end+SEASON_GRACE_DAYS*DAY_MS,ms=until-now;if(ms>0&&ms<=within)return{n:s.unclaimed,ms,season:s.id};}return null;}
+// Hours (under 2 days) or whole days, for the expiry banner.
+function expiryUnits(ms){const h=Math.max(1,Math.ceil(ms/3600000));return h<48?{unit:'hours',n:h}:{unit:'days',n:Math.ceil(ms/DAY_MS)};}
+const readyCount=season=>season&&Array.isArray(season.tiers)?season.tiers.filter(t=>t.ready&&!t.claimed).length:0;
+// Milestones of the shared goal bar: {pct, reached}.
+const goalMilestones=(progress,target)=>GOAL_MILESTONES.map(p=>({pct:p,reached:(Number(progress)||0)>=Math.ceil((Number(target)||1)*p/100)}));
 // Offline view (no server): the real calendar, the real pass, zero progress. Nothing can be claimed.
 function offlineView(now=Date.now(),length='week'){const s=seasonOf(now,length);
- return{season:{...s,score:0,tiers:seasonTiers(s.length).map(t=>({...t,claimed:false,ready:false}))},goal:{id:s.id,length:s.length,end:s.end,progress:0,target:GOAL_TARGET[s.length],reached:false,mine:0,claimed:false,claimable:false,reward:goalReward(s.length),prev:null},
+ return{season:{...s,score:0,tiers:seasonTiers(s.length).map(t=>({...t,claimed:false,ready:false}))},goal:{id:s.id,length:s.length,end:s.end,progress:0,target:GOAL_TARGET_MIN[s.length],reached:false,mine:0,minBeacons:GOAL_MIN_BEACONS,milestones:GOAL_MILESTONES,claimed:false,claimable:false,reward:goalReward(s.length),prev:null},
   shop:{enabled:false,items:shopItems().map(i=>({...i,owned:false})),owned:[],frame:'',cargoHours:CARGO_HOURS}};}
 // ---------- owned cosmetics cache (growth.cos in the save; the server list always wins when online) ----------
 function cleanCos(raw){const owned=Array.isArray(raw&&raw.owned)?[...new Set(raw.owned.filter(id=>typeof id==='string'&&COSMETICS[id]))]:[];const frame=raw&&typeof raw.frame==='string'&&owned.includes(raw.frame)&&COSMETICS[raw.frame].kind==='frame'?raw.frame:'';return{owned,frame};}
@@ -35,4 +52,4 @@ function setCos(s,shop){if(!s||!s.growth||!shop||!Array.isArray(shop.owned))retu
  const same=prev.frame===next.frame&&prev.owned.length===next.owned.length&&prev.owned.every((x,i)=>x===next.owned[i]);s.growth.cos=next;return!same;}
 const owns=(s,id)=>!!(s&&s.growth&&s.growth.cos&&Array.isArray(s.growth.cos.owned)&&s.growth.cos.owned.includes(id));
 const cargoHours=s=>owns(s,'cargo_bay')?CARGO_HOURS:0;
-return{DAY_MS,SEASON_TIERS,WEEK_DIVISOR,WEEK_NEEDS,SEASON_SCORE_SKIP,GOAL_BEACONS,GOAL_TARGET,GOAL_REWARD,GOAL_CLAIM_DAYS,COSMETICS,CARGO_HOURS,FRAMES,seasonLength,seasonOf,seasonTiers,goalReward,shopItems,timeLeft,trackFill,nextTier,offlineView,cleanCos,setCos,owns,cargoHours};});
+return{DAY_MS,SEASON_TIERS,WEEK_DIVISOR,WEEK_NEEDS,SEASON_SCORE_SKIP,GOAL_BEACONS,GOAL_TARGET,GOAL_TARGET_MIN,GOAL_TARGET_MAX,GOAL_GROWTH,GOAL_MIN_BEACONS,GOAL_MILESTONES,goalTargetFrom,SEASON_GRACE_DAYS,FRAME_SUBSTITUTE,expiring,expiryUnits,readyCount,goalMilestones,GOAL_REWARD,GOAL_CLAIM_DAYS,COSMETICS,CARGO_HOURS,FRAMES,seasonLength,seasonOf,seasonTiers,goalReward,shopItems,timeLeft,trackFill,nextTier,offlineView,cleanCos,setCos,owns,cargoHours};});

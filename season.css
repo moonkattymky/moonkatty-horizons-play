@@ -79,3 +79,47 @@ html[dir=rtl] .cos-frame_comet{background:linear-gradient(270deg,#0b2133,#123a55
 #chapters .menu-season{margin-top:10px}#chapters .menu-season b{font-size:20px;line-height:1}#chapters .menu-season small{font-weight:600;color:#a9c3d2;margin-inline-start:6px;font-size:12px}
 html[dir=rtl] #chapters .menu-season b{transform:scaleX(-1)}
 .season-row .tr-icon svg{width:22px;height:22px;color:#ffd69f}
+/* ---------- v41: Moon Points coin / season cup icons, pending Moon Points, claim-all, expiry, last season, goal milestones, purchase terms ---------- */
+.gchip.mp.pend{color:#ffd99a;opacity:.92}.gchip.mp.pend i{font-style:normal;font-size:.85em;margin-inline-start:1px}
+.gchip.cup{color:#ffe7a3}
+.moon-card .mc-star .gi-moon{width:34px;height:34px;filter:drop-shadow(0 1px 2px #0006)}
+.moon-card .mc-star{font-size:0}
+.moon-card .mc-pend{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;margin-top:1px}
+.moon-card .mc-pend b{font-size:13px!important;line-height:1.3!important;font-weight:800;color:#ffd99a!important}
+.moon-card .mc-pend i{font-style:normal;font-size:11.5px;color:#a9c3d2}
+.stm-label .gi-moon{width:14px;height:14px;vertical-align:-2px}
+.sn-val .gi-cup{width:20px;height:20px;vertical-align:-3px}
+.soc-kinds .gi-moon{width:13px;height:13px;vertical-align:-2px}
+.lb-val .gi{width:14px;height:14px;vertical-align:-2px;margin-inline-end:3px}
+.sn-expire{display:flex;align-items:center;gap:8px;margin:0 0 10px;padding:9px 12px;border-radius:12px;border:1px solid #ffb35a88;background:linear-gradient(90deg,#5a330f99,#2a1a0b66);color:#ffe2b8;font-size:13px}
+.sn-expire span{font-size:16px}.sn-expire b{font-weight:800}
+.sn-all{margin:0 0 10px!important}
+.sn-prev{margin:0 0 14px;padding:10px 10px 4px;border-radius:14px;border:1px dashed #ffd36b66;background:#2a2410a0}
+.snp-head{display:flex;flex-direction:column;gap:2px;margin:0 2px 8px}.snp-head b{font-size:14px;color:#ffe7a3}.snp-head small{font-size:12px;color:#c9dce6}
+.sn-prev .sp-track{margin-bottom:6px}
+.sp-sub{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px;margin-inline-start:6px}.sp-sub small{font-size:11px;font-weight:750;color:#9fe3b1}
+.owned-sub s{opacity:.55;text-decoration-thickness:2px}
+.gl-mark{position:absolute;top:3px;bottom:3px;width:2px;margin-inline-start:-1px;background:#ffffff40;border-radius:2px}.gl-mark.on{background:#fff8}
+.gl-marks{position:relative;height:16px;margin:0 0 4px}
+.gl-marks em{position:absolute;top:0;transform:translateX(-50%);font-style:normal;font-size:10.5px;font-weight:750;color:#86a7ba;white-space:nowrap;direction:ltr}
+html[dir=rtl] .gl-marks em{transform:translateX(50%)}
+.gl-marks em:last-child{transform:translateX(-100%)}html[dir=rtl] .gl-marks em:last-child{transform:translateX(100%)}
+.gl-marks em.on{color:#ffe7a3}
+.gl-target{margin:-2px 0 8px;font-size:11.5px;line-height:1.4;color:#86a7ba}
+.gl-need{color:#ffd99a!important}
+.gl-invite{display:flex;align-items:center;gap:10px;margin:10px 0 2px;padding:9px 10px;border-radius:12px;background:#0b2a40;border:1px solid #86cdd933}
+.gl-invite>span{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#164766;color:#9fe0ff}.gl-invite>span svg{width:18px;height:18px}
+.gl-invite p{flex:1;margin:0;font-size:12px;line-height:1.4;color:#d7e9f2}.gl-invite .tr-btn{flex:none}
+.link-btn{display:inline!important;width:auto!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;color:#8fd8ff!important;font:inherit!important;font-weight:750!important;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.sh-terms{margin:10px 0 2px;font-size:12.5px;line-height:1.45;color:#d7e9f2}
+.sh-support{margin-top:4px!important}
+.shop-sheet .ss-item{display:flex;align-items:center;gap:12px;margin:6px 0 12px;padding:12px;border-radius:14px;background:#0b2a40;border:1px solid #86cdd933}
+.shop-sheet .ss-item .sh-art{flex:none;min-width:96px}.shop-sheet .ss-item p{margin:0;font-size:13px;line-height:1.45;color:#d7e9f2}
+.shop-sheet .ss-agree{margin:0 0 10px;font-size:13px;line-height:1.45;color:#eaf6ff;text-align:center}
+.shop-sheet .ss-pay{display:flex;align-items:center;justify-content:center;gap:8px}.shop-sheet .ss-pay .tg-star{width:20px;height:20px}
+.terms-list{margin:8px 0 10px;padding-inline-start:22px;display:flex;flex-direction:column;gap:8px}.terms-list li{font-size:13.5px;line-height:1.5;color:#e3f1f8}
+.lb-snap{opacity:.8}
+/* v41: social rows — the two buttons go under the text, so long titles (ru, de, uk…) never squeeze into one word per line */
+.task-row.soc-row{flex-wrap:wrap;row-gap:8px}
+.task-row.soc-row .tr-text{flex:1 1 calc(100% - 56px)}
+.task-row.soc-row .tr-side{flex:1 1 100%;justify-content:flex-end;padding-inline-start:46px}

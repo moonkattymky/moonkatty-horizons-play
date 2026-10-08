@@ -14,8 +14,22 @@ const REFERRAL_REWARDS={full:{crystals:15,metal:10}};
 const CHANNEL_REWARD={crystals:10,metal:5,badge:'channel'};
 const SHARE_REWARD={crystals:2};
 // Moon Points rules (server side; shown in «Rules & Rewards»). Daily things use the UTC day.
-const MOON={story:{life1:500,life2:500,life3:750},streak:[3,5,7,10,12,15,25],channel:5,social:{follow:5,daily:5},referral:200,referralCap:20,
+// v41: story and referral points vest (pending → available 1/7 per active day); the inviter is paid after the friend's
+// LIFE #1 + 3 active days, at most 3 inviter payouts per UTC day.
+const MOON={story:{life1:500,life2:500,life3:750},streak:[3,5,7,10,12,15,25],channel:5,social:{follow:5,daily:5},referral:200,referralCap:3,referralDays:3,vestDays:7,
  code:{default:10,min:1,max:50},codeFails:10,socialPending:3};
+// v41 story checkpoint journal (mirror of server/src/logic.js): the game posts these in order, the server stamps the time.
+const STORY_CHECKPOINTS=['c1_recorder','c1_cells','c1_antenna','c1_signal','life1',
+ 'c2_engineer','c2_tools','c2_repair','c2_navigator','c2_route','c2_scout','c2_artifact','c2_final','life2',
+ 'c3_brief','c3_clues','c3_vault','c3_blueprint','life3'];
+function storyCheckpoints(s){if(!s||typeof s!=='object')return[];const ch=Number(s.chapter)||1,len=k=>Array.isArray(s[k])?s[k].length:0,t=k=>s[k]===true;
+ const ok={c1_recorder:ch>=2||t('recorder'),c1_cells:ch>=2||len('cells')>=3,c1_antenna:ch>=2||t('antenna'),c1_signal:ch>=2||t('signal'),life1:ch>=2,
+  c2_engineer:ch>=3||t('engineerMet'),c2_tools:ch>=3||len('tools')>=2,c2_repair:ch>=3||t('engineerFixed'),c2_navigator:ch>=3||t('navigatorMet'),c2_route:ch>=3||t('navigatorSolved'),
+  c2_scout:ch>=3||t('scoutMet'),c2_artifact:ch>=3||t('artifact'),c2_final:ch>=3||t('complete'),life2:ch>=3,
+  c3_brief:ch>=3&&t('signalBriefed'),c3_clues:ch>=3&&len('signalClues')>=3,c3_vault:ch>=3&&t('vaultOpen'),c3_blueprint:ch>=3&&t('blueprint'),life3:ch>=3&&t('chapter3Complete')};
+ const out=[];for(const k of STORY_CHECKPOINTS){if(!ok[k])break;out.push(k);}return out;}
+// Next checkpoints to post: what the save reached minus what the server journal already has.
+function checkpointsToSend(s,done){const have=new Set(Array.isArray(done)?done:[]);return storyCheckpoints(s).filter(k=>!have.has(k));}
 const streakPoints=run=>MOON.streak[Math.max(1,Math.min(7,Math.floor(run)||1))-1];
 // Social tasks: personal code MKTY-XXXX in a post/comment + link → team review. The community chat is a plain link (no reward).
 const SOCIAL_PLATFORMS=['x','tiktok','instagram','youtube'];
@@ -45,7 +59,8 @@ function applyReward(s,reward){ensure(s);const got={crystals:0,metal:0,energy:0,
  let energyLeft=Math.max(0,Math.floor(reward.energy||0));const e=Math.min(energyLeft,Math.floor(room(s,'energy')));s.energy+=e;got.energy=e;energyLeft-=e;got.converted=energyLeft;
  for(const key of['crystals','metal']){let want=Math.max(0,Math.floor(reward[key]||0));if(key==='metal')want+=energyLeft;const give=Math.min(want,room(s,key));s[key]+=give;got[key]=give;got.lost+=want-give;}
  if(reward.badge&&!s.growth.badges.includes(reward.badge))s.growth.badges.push(reward.badge);return got;}
-function rewardText(r){if(!r)return'';const parts=[];if(r.points)parts.push('+'+r.points+' ⭐');if(r.crystals)parts.push('+'+r.crystals+' ◆');if(r.metal)parts.push('+'+r.metal+' ▣');if(r.energy)parts.push('+'+r.energy+' ϟ');return parts.join(' · ');}
+// v41 icons: 🌕 = Moon Points (⭐ is only for Telegram Stars). Vesting points show with ⏳.
+function rewardText(r){if(!r)return'';const parts=[];if(r.points)parts.push('+'+r.points+' 🌕');if(r.pending)parts.push('+'+r.pending+' 🌕⏳');if(r.crystals)parts.push('+'+r.crystals+' ◆');if(r.metal)parts.push('+'+r.metal+' ▣');if(r.energy)parts.push('+'+r.energy+' ϟ');return parts.join(' · ');}
 function gotText(got){const t=rewardText(got);return(t||_t('gcore.ryukzak_polon'))+(got.converted?' '+_t('gcore.energiya_stala'):'')+(got.lost?' · '+_t('gcore.vlezlo',{n:got.lost}):'');}
 
 function claimStreak(s,now=Date.now()){const st=streakStatus(s,now);if(st.claimed)return{ok:false,status:st,text:st.locked?_t('gcore.chasy_ustroystva'):_t('gcore.nagrada_segodnya')};
@@ -65,11 +80,13 @@ function claimShare(s,now=Date.now()){ensure(s);const day=utcDay(now);if(s.growt
 // Server ledger rewards are applied once per id, even if the response is replayed.
 // Moon Points in the reward are NOT added here: the balance always comes from the server (setMoon); `got.points` is only for the toast.
 function applyServerReward(s,r){ensure(s);if(!r||!r.id||s.growth.applied.includes(r.id))return null;s.growth.applied.push(r.id);if(s.growth.applied.length>300)s.growth.applied.splice(0,s.growth.applied.length-300);if(r.kind==='channel')s.growth.channel=true;
- const got=applyReward(s,r);got.points=Math.max(0,Math.floor(r.points||0));return got;}
+ const got=applyReward(s,r);got.points=Math.max(0,Math.floor(r.points||0));got.pending=Math.max(0,Math.floor(r.pending||0));return got;}
 // ---------- Moon Points cache ----------
-function setMoon(s,moon,now=Date.now()){ensure(s);const p=moon&&typeof moon.points==='number'?moon.points:NaN;if(!Number.isFinite(p)||p<0)return false;s.growth.moon={points:Math.floor(p),at:now};return true;}
+// v41: pending = vesting points (not spendable yet); next = how many become available on the next active day.
+function setMoon(s,moon,now=Date.now()){ensure(s);const p=moon&&typeof moon.points==='number'?moon.points:NaN;if(!Number.isFinite(p)||p<0)return false;const n=v=>Math.max(0,Math.floor(Number(v)||0));
+ s.growth.moon={points:Math.floor(p),pending:n(moon.pending),next:n(moon.next),at:now};return true;}
 // online: balance from the server (fresh); cached: last known server balance while the connection is down; pending: no server yet.
-function moonView(s,online){ensure(s);const m=s.growth.moon;if(online&&m.at)return{state:'online',points:m.points,at:m.at};if(m.at)return{state:'cached',points:m.points,at:m.at};return{state:'pending',points:null,at:0};}
+function moonView(s,online){ensure(s);const m=s.growth.moon,pend=m.pending||0,next=m.next||0;if(online&&m.at)return{state:'online',points:m.points,pending:pend,next,at:m.at};if(m.at)return{state:'cached',points:m.points,pending:pend,next,at:m.at};return{state:'pending',points:null,pending:0,next:0,at:0};}
 function formatPoints(n){const v=Math.max(0,Math.floor(Number(n)||0));try{return new Intl.NumberFormat((typeof MoonI18n!=='undefined'&&MoonI18n.lang)||'en').format(v);}catch{return String(v);}}
 
 // Progress score for cloud-save conflicts. Story beats dominate; resources only break near-ties.
@@ -83,4 +100,4 @@ function progressScore(s){if(!s||typeof s!=='object')return 0;let p=(Number(s.ch
 function pickSave(local,remote){if(!remote)return'local';if(!local)return'remote';const lr=local.growth?.resetAt||0,rr=remote.growth?.resetAt||0;if(lr!==rr)return lr>rr?'local':'remote';
  const a=progressScore(local),b=progressScore(remote);if(a!==b)return a>b?'local':'remote';return(local.updatedAt||0)>=(remote.updatedAt||0)?'local':'remote';}
 
-return{DAY_MS,STREAK_REWARDS,REFERRAL_REWARDS,CHANNEL_REWARD,SHARE_REWARD,MOON,SHIELD_DAYS,SOCIAL_PLATFORMS,SOCIAL_NAMES,BADGE_NAMES,streakPoints,utcDay,localDay,dayIndex,streakStatus,applyReward,rewardText,gotText,claimStreak,shouldShowStreak,markStreakSeen,parseStartParam,inviteLink,shareUrl,claimShare,applyServerReward,setMoon,moonView,formatPoints,progressScore,pickSave};});
+return{DAY_MS,STREAK_REWARDS,REFERRAL_REWARDS,CHANNEL_REWARD,SHARE_REWARD,MOON,STORY_CHECKPOINTS,storyCheckpoints,checkpointsToSend,SHIELD_DAYS,SOCIAL_PLATFORMS,SOCIAL_NAMES,BADGE_NAMES,streakPoints,utcDay,localDay,dayIndex,streakStatus,applyReward,rewardText,gotText,claimStreak,shouldShowStreak,markStreakSeen,parseStartParam,inviteLink,shareUrl,claimShare,applyServerReward,setMoon,moonView,formatPoints,progressScore,pickSave};});
