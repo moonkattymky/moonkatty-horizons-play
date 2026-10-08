@@ -1,3 +1,4 @@
+if(typeof _t==='undefined'&&typeof require==='function')require('./i18n.js');
 /* Growth stage 1 rules shared by the game (browser) and the node tests: daily login streak «Вахта на базе»,
    reward application, referral links, social honor tasks and cloud-save conflict resolution.
    No DOM access here. The server (server/src/logic.js) mirrors the same constants; tests check they match. */
@@ -11,12 +12,12 @@ const CHANNEL_REWARD={crystals:10,metal:5,badge:'channel'};
 const SHARE_REWARD={crystals:2};
 const SOCIAL_WAIT_MS=30000;
 const SOCIAL_TASKS=[
- {id:'youtube',name:'YouTube',title:'Подпишись на YouTube',reward:{crystals:2}},
- {id:'tiktok',name:'TikTok',title:'Подпишись в TikTok',reward:{crystals:2}},
- {id:'instagram',name:'Instagram',title:'Подпишись в Instagram',reward:{crystals:2}},
- {id:'x',name:'X',title:'Читай MOONKATTY в X',reward:{crystals:2}},
- {id:'chat',name:'Telegram',title:'Вступи в чат экипажа',reward:{crystals:2}}];
-const BADGE_NAMES={watch7:'Вахта · 7 дней',channel:'Связист',crew1:'Первый в экипаже',crew5:'Командир экипажа'};
+ {id:'youtube',name:'YouTube',title:_t('gcore.podpishis_youtube'),reward:{crystals:2}},
+ {id:'tiktok',name:'TikTok',title:_t('gcore.podpishis_tiktok'),reward:{crystals:2}},
+ {id:'instagram',name:'Instagram',title:_t('gcore.podpishis_instagra'),reward:{crystals:2}},
+ {id:'x',name:'X',title:_t('gcore.chitay_moonkatty'),reward:{crystals:2}},
+ {id:'chat',name:'Telegram',title:_t('gcore.vstupi_chat'),reward:{crystals:2}}];
+const BADGE_NAMES={watch7:_t('gcore.vahta_7'),channel:_t('gcore.svyazist'),crew1:_t('gcore.pervyy_ekipazhe'),crew5:_t('gcore.komandir_ekipazha')};
 
 function localDay(now=Date.now()){const d=new Date(now);return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function dayIndex(key){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(key||'');return m?Math.round(Date.UTC(+m[1],+m[2]-1,+m[3])/DAY_MS):NaN;}
@@ -38,11 +39,11 @@ function applyReward(s,reward){ensure(s);const got={crystals:0,metal:0,energy:0,
  for(const key of['crystals','metal']){let want=Math.max(0,Math.floor(reward[key]||0));if(key==='metal')want+=energyLeft;const give=Math.min(want,room(s,key));s[key]+=give;got[key]=give;got.lost+=want-give;}
  if(reward.badge&&!s.growth.badges.includes(reward.badge))s.growth.badges.push(reward.badge);return got;}
 function rewardText(r){if(!r)return'';const parts=[];if(r.crystals)parts.push('+'+r.crystals+' ◆');if(r.metal)parts.push('+'+r.metal+' ▣');if(r.energy)parts.push('+'+r.energy+' ϟ');return parts.join(' · ');}
-function gotText(got){const t=rewardText(got);return(t||'Рюкзак полон')+(got.converted?' (энергия стала металлом — нужна солнечная станция)':'')+(got.lost?' · не влезло: '+got.lost+' (улучши рюкзак)':'');}
+function gotText(got){const t=rewardText(got);return(t||_t('gcore.ryukzak_polon'))+(got.converted?' '+_t('gcore.energiya_stala'):'')+(got.lost?' · '+_t('gcore.vlezlo',{n:got.lost}):'');}
 
-function claimStreak(s,now=Date.now()){const st=streakStatus(s,now);if(st.claimed)return{ok:false,status:st,text:st.locked?'Часы устройства переведены назад. Награда откроется в следующий день.':'Награда за сегодня уже получена. Возвращайся завтра!'};
+function claimStreak(s,now=Date.now()){const st=streakStatus(s,now);if(st.claimed)return{ok:false,status:st,text:st.locked?_t('gcore.chasy_ustroystva'):_t('gcore.nagrada_segodnya')};
  const got=applyReward(s,st.reward);s.streak={day:st.today,count:st.day,run:st.run,best:Math.max(s.streak.best||0,st.run),total:(s.streak.total||0)+1};
- return{ok:true,status:streakStatus(s,now),day:st.day,got,text:'Вахта · день '+st.day+': '+gotText(got)};}
+ return{ok:true,status:streakStatus(s,now),day:st.day,got,text:_t('gcore.vahta_den',{day:st.day})+': '+gotText(got)};}
 // The daily modal opens once per calendar day, only while today's reward is waiting.
 function shouldShowStreak(s,now=Date.now()){ensure(s);const st=streakStatus(s,now);return!st.claimed&&s.growth.seen!==st.today;}
 function markStreakSeen(s,now=Date.now()){ensure(s).growth.seen=localDay(now);}
@@ -55,10 +56,10 @@ function shareUrl(url,text){return'https://t.me/share/url?url='+encodeURICompone
 
 function socialState(s,id,now=Date.now()){ensure(s);const t=s.growth.social[id];if(!t||!t.openedAt)return{state:'open',left:0};if(t.claimed)return{state:'claimed',left:0};const left=Math.max(0,SOCIAL_WAIT_MS-(now-t.openedAt));return left>0?{state:'waiting',left}:{state:'ready',left:0};}
 function startSocial(s,id,now=Date.now()){ensure(s);if(!SOCIAL_TASKS.some(t=>t.id===id))return false;const t=s.growth.social[id];if(t?.claimed)return false;if(!t||!t.openedAt||now<t.openedAt)s.growth.social[id]={openedAt:now,claimed:false};return true;}
-function claimSocial(s,id,now=Date.now()){const task=SOCIAL_TASKS.find(t=>t.id===id);if(!task)return{ok:false,text:'Неизвестное задание.'};const st=socialState(s,id,now);
- if(st.state==='claimed')return{ok:false,text:'Награда уже получена.'};if(st.state!=='ready')return{ok:false,text:st.state==='open'?'Сначала открой страницу.':'Проверяем… осталось '+Math.ceil(st.left/1000)+' сек.'};
+function claimSocial(s,id,now=Date.now()){const task=SOCIAL_TASKS.find(t=>t.id===id);if(!task)return{ok:false,text:_t('gcore.neizvestnoe_zadani')};const st=socialState(s,id,now);
+ if(st.state==='claimed')return{ok:false,text:_t('exp.nagrada_uzhe')};if(st.state!=='ready')return{ok:false,text:st.state==='open'?_t('gcore.snachala_otkroy'):_t('gcore.proveryaem_ostalos',{sec:Math.ceil(st.left/1000)})};
  const got=applyReward(s,task.reward);s.growth.social[id].claimed=true;return{ok:true,got,text:task.name+': '+gotText(got)};}
-function claimShare(s,now=Date.now()){ensure(s);const day=localDay(now);if(s.growth.shareDay===day)return{ok:false,text:''};s.growth.shareDay=day;const got=applyReward(s,SHARE_REWARD);return{ok:true,got,text:'Спасибо, что делишься! '+gotText(got)};}
+function claimShare(s,now=Date.now()){ensure(s);const day=localDay(now);if(s.growth.shareDay===day)return{ok:false,text:''};s.growth.shareDay=day;const got=applyReward(s,SHARE_REWARD);return{ok:true,got,text:_t('gcore.spasibo_chto')+' '+gotText(got)};}
 // Server ledger rewards are applied once per id, even if the response is replayed.
 function applyServerReward(s,r){ensure(s);if(!r||!r.id||s.growth.applied.includes(r.id))return null;s.growth.applied.push(r.id);if(s.growth.applied.length>300)s.growth.applied.splice(0,s.growth.applied.length-300);if(r.kind==='channel')s.growth.channel=true;return applyReward(s,r);}
 

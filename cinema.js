@@ -42,19 +42,19 @@ const Sound={ctx:null,master:null,nodes:[],timer:0,mood:'',
 // ---------- DOM ----------
 const ICON={on:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.6 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
  off:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'};
-const d=document.createElement('dialog');d.id='cinema';d.className='cinema';d.setAttribute('aria-label','Ролик экспедиции');
+const d=document.createElement('dialog');d.id='cinema';d.className='cinema';d.setAttribute('aria-label',_t('cinui.rolik_ekspeditsii'));
 d.innerHTML=`<div class="cin-stage"><div class="cin-slides"></div><canvas class="cin-fx" aria-hidden="true"></canvas><div class="cin-alarm"></div><div class="cin-lids" aria-hidden="true"><i></i><i></i></div><div class="cin-vignette"></div><div class="cin-flash"></div></div>
 <div class="cin-burst" aria-hidden="true"><div class="cin-rays"></div><img class="cin-crystal" alt=""></div>
 <div class="cin-title" aria-live="polite"><small>MOONKATTY · NEW HORIZONS</small><h2></h2><p></p></div>
-<div class="cin-sub"><span class="cin-kicker"></span><p class="cin-text"></p><span class="cin-hint">Нажми, чтобы продолжить <b>›</b></span></div>
-<div class="cin-top"><div class="cin-bars"></div><div class="cin-row"><button class="cin-sound" type="button"></button><button class="cin-skip" type="button">Пропустить <b>›</b></button></div></div>
-<div class="cin-preroll"><div class="cin-logo">MOONKATTY</div><small>NEW HORIZONS · ДЕВЯТЬ ЖИЗНЕЙ</small><button class="cin-start" type="button"><span>▶</span> Смотреть вступление</button><button class="cin-later" type="button">Пропустить</button></div>
+<div class="cin-sub"><span class="cin-kicker"></span><p class="cin-text"></p><span class="cin-hint">${_t('cinui.nazhmi_chtoby')} <b>›</b></span></div>
+<div class="cin-top"><div class="cin-bars"></div><div class="cin-row"><button class="cin-sound" type="button"></button><button class="cin-skip" type="button">${_t('cinui.propustit')} <b>›</b></button></div></div>
+<div class="cin-preroll"><div class="cin-logo">MOONKATTY</div><small dir="ltr">${_t('cinui.new_horizons')}</small><button class="cin-start" type="button"><span>▶</span> ${_t('cinui.smotret_vstuplenie')}</button><button class="cin-later" type="button">${_t('cinui.propustit')}</button></div>
 <div class="cin-loading" aria-hidden="true"></div>`;
 (document.getElementById('app-viewport')||document.body).append(d);
 const stage=d.querySelector('.cin-stage'),slides=d.querySelector('.cin-slides'),canvas=d.querySelector('.cin-fx'),ctx2=canvas.getContext('2d'),bars=d.querySelector('.cin-bars'),
  sub=d.querySelector('.cin-sub'),kick=d.querySelector('.cin-kicker'),text=d.querySelector('.cin-text'),titleBox=d.querySelector('.cin-title'),soundBtn=d.querySelector('.cin-sound'),
  flashEl=d.querySelector('.cin-flash'),preroll=d.querySelector('.cin-preroll'),burst=d.querySelector('.cin-burst');
-function paintSound(){const on=Sound.on;soundBtn.innerHTML=on?ICON.on:ICON.off;soundBtn.setAttribute('aria-label',on?'Выключить звук':'Включить звук');soundBtn.classList.toggle('muted',!on);}
+function paintSound(){const on=Sound.on;soundBtn.innerHTML=on?ICON.on:ICON.off;soundBtn.setAttribute('aria-label',on?_t('cinui.vyklyuchit_zvuk'):_t('cinui.vklyuchit_zvuk'));soundBtn.classList.toggle('muted',!on);}
 paintSound();
 
 // ---------- playback ----------
@@ -142,10 +142,10 @@ const begin=$('#begin');if(begin&&begin.onclick){const original=begin.onclick;be
 Game.onResult=r=>{if(r&&r.found==='crystals'&&!seen('crystal'))setTimeout(()=>{if(!seen('crystal')&&!document.querySelector('dialog[open]'))play('crystal');},420);};
 // Main menu: replay the intro and chapter openers; sound switch.
 const menu=$('#chapters');if(menu&&!$('#cinema-menu')){const box=document.createElement('section');box.id='cinema-menu';box.className='cinema-menu';
- box.innerHTML=`<button id="watch-intro" class="cin-watch" type="button"><span class="cin-play">▶</span><span><b>Смотреть вступление</b><small>Полёт, авария и первый взгляд на Землю</small></span></button><div class="cin-chips" id="cinema-chips"></div><button id="cinema-sound" class="cin-switch" type="button" role="switch"></button>`;
+ box.innerHTML=`<button id="watch-intro" class="cin-watch" type="button"><span class="cin-play">▶</span><span><b>${_t('cinui.smotret_vstuplenie')}</b><small>${_t('cinui.polet_avariya')}</small></span></button><div class="cin-chips" id="cinema-chips"></div><button id="cinema-sound" class="cin-switch" type="button" role="switch"></button>`;
  const list=$('#chapter-list');(list||menu.firstChild).after(box);
- const render=()=>{const ch=S().chapter;$('#cinema-chips').innerHTML=['ch1','ch2','ch3'].map((id,k)=>`<button type="button" data-cin="${id}" ${k+1>ch?'disabled':''}>${k+1>ch?'🔒 ':''}Жизнь #${k+1}</button>`).join('');
-  const sb=$('#cinema-sound');sb.setAttribute('aria-checked',String(Sound.on));sb.innerHTML=`<span>Звук в роликах</span><i class="${Sound.on?'on':''}"><b></b></i>`;};
+ const render=()=>{const ch=S().chapter;$('#cinema-chips').innerHTML=['ch1','ch2','ch3'].map((id,k)=>`<button type="button" data-cin="${id}" ${k+1>ch?'disabled':''}>${k+1>ch?'🔒 ':''}${_t('life.n',{n:k+1})}</button>`).join('');
+  const sb=$('#cinema-sound');sb.setAttribute('aria-checked',String(Sound.on));sb.innerHTML=`<span>${_t('cinui.zvuk_rolikah')}</span><i class="${Sound.on?'on':''}"><b></b></i>`;};
  render();new MutationObserver(()=>{if(menu.open)render();}).observe(menu,{attributes:true,attributeFilter:['open']});
  box.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;if(b.id==='watch-intro'){menu.close();play('intro');}else if(b.dataset.cin){menu.close();play(b.dataset.cin);}else if(b.id==='cinema-sound'){Sound.on=!Sound.on;paintSound();render();}});}
 // Small control surface (menu, QA screenshots): hold/release freeze the timeline and CSS animations.

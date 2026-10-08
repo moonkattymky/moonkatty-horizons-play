@@ -1,3 +1,4 @@
+if(typeof _t==='undefined'&&typeof require==='function')require('./i18n.js');
 /* v35 growth stage 2 rules (no DOM): crew cats with hourly income that accrues while the game is closed,
    secret «Код сигнала» codes (stored only as hashes), ranks Кадет → Адмирал Луны. Shared by the game and node tests.
    Server mirror of the rank points: server/src/logic.js (tests compare). */
@@ -5,18 +6,18 @@
 const HOUR=3600000;
 // income[res][level-1] per hour. Story cats join for free when you meet them; two are hired for resources; rare cats come with friends.
 const CREW=[
- {id:'geologist',name:'Геолог Кварц',role:'Геолог',rarity:'common',income:{crystals:[2,3,5,7,9]},unlock:{story:'antenna'},hire:{crystals:3,metal:4},how:'Восстанови антенну в жизни #1 — геолог услышит сигнал.',bio:'Чует кристаллы сквозь лунную пыль.'},
- {id:'engineer',name:'Инженер Болтик',role:'Инженер',rarity:'common',income:{metal:[3,5,7,10,13]},unlock:{story:'engineerMet'},how:'Найди инженера в жизни #2.',bio:'Чинит всё, что сломалось, и то, что ещё не успело.'},
- {id:'navigator',name:'Штурман Звёздочка',role:'Штурман',rarity:'common',income:{crystals:[2,3,5,6,8],metal:[1,2,2,3,4]},unlock:{story:'navigatorMet'},how:'Поговори со штурманом в жизни #2.',bio:'Прокладывает путь по звёздам и маякам.'},
- {id:'scout',name:'Разведчик Уголёк',role:'Разведчик',rarity:'common',income:{crystals:[1,2,2,3,4],metal:[2,3,5,6,8]},unlock:{story:'scoutMet'},how:'Найди разведчика в жизни #2.',bio:'Первым находит то, что спрятано за горизонтом.'},
- {id:'botanist',name:'Ботаник Мята',role:'Ботаник',rarity:'common',income:{crystals:[2,3,4,6,8],metal:[2,3,4,6,8]},unlock:{story:'habitat'},hire:{crystals:6,metal:6},how:'Построй жилой модуль — ботаник переедет в оранжерею.',bio:'Выращивает первый лунный сад.'},
- {id:'pilot',name:'Пилот Комета',role:'Пилот',rarity:'rare',income:{crystals:[3,5,7,10,13],metal:[3,5,7,10,13]},unlock:{friends:3},how:'Пригласи 3 друзей в экипаж.',bio:'Посадит ракету даже в метеоритный дождь.'},
- {id:'doctor',name:'Доктор Лапкин',role:'Доктор',rarity:'rare',income:{crystals:[4,6,9,12,16],metal:[3,5,7,10,13]},unlock:{friends:5},how:'Пригласи 5 друзей в экипаж.',bio:'Лечит ушибы, хандру и тоску по Земле.'},
- {id:'captain',name:'Капитан Луна',role:'Капитан',rarity:'legend',income:{crystals:[6,9,13,18,24],metal:[6,9,13,18,24]},unlock:{friends:10},how:'Пригласи 10 друзей в экипаж.',bio:'Легенда первой лунной экспедиции.'}];
+ {id:'geologist',name:_t('tcore.geolog_kvarts'),role:_t('tcore.geolog'),rarity:'common',income:{crystals:[2,3,5,7,9]},unlock:{story:'antenna'},hire:{crystals:3,metal:4},how:_t('tcore.vosstanovi_antennu'),bio:_t('tcore.chuet_kristally')},
+ {id:'engineer',name:_t('tcore.inzhener_boltik'),role:_t('tcore.inzhener'),rarity:'common',income:{metal:[3,5,7,10,13]},unlock:{story:'engineerMet'},how:_t('tcore.naydi_inzhenera'),bio:_t('tcore.chinit_vse')},
+ {id:'navigator',name:_t('tcore.shturman_zvezdochk'),role:_t('tcore.shturman'),rarity:'common',income:{crystals:[2,3,5,6,8],metal:[1,2,2,3,4]},unlock:{story:'navigatorMet'},how:_t('tcore.pogovori_so'),bio:_t('tcore.prokladyvaet_put')},
+ {id:'scout',name:_t('tcore.razvedchik_ugolek'),role:_t('tcore.razvedchik'),rarity:'common',income:{crystals:[1,2,2,3,4],metal:[2,3,5,6,8]},unlock:{story:'scoutMet'},how:_t('tcore.naydi_razvedchika'),bio:_t('tcore.pervym_nahodit')},
+ {id:'botanist',name:_t('tcore.botanik_myata'),role:_t('tcore.botanik'),rarity:'common',income:{crystals:[2,3,4,6,8],metal:[2,3,4,6,8]},unlock:{story:'habitat'},hire:{crystals:6,metal:6},how:_t('tcore.postroy_zhiloy'),bio:_t('tcore.vyraschivaet_pervy')},
+ {id:'pilot',name:_t('tcore.pilot_kometa'),role:_t('tcore.pilot'),rarity:'rare',income:{crystals:[3,5,7,10,13],metal:[3,5,7,10,13]},unlock:{friends:3},how:_t('tcore.priglasi_3'),bio:_t('tcore.posadit_raketu')},
+ {id:'doctor',name:_t('tcore.doktor_lapkin'),role:_t('tcore.doktor'),rarity:'rare',income:{crystals:[4,6,9,12,16],metal:[3,5,7,10,13]},unlock:{friends:5},how:_t('tcore.priglasi_5'),bio:_t('tcore.lechit_ushiby')},
+ {id:'captain',name:_t('tcore.kapitan_luna'),role:_t('tcore.kapitan'),rarity:'legend',income:{crystals:[6,9,13,18,24],metal:[6,9,13,18,24]},unlock:{friends:10},how:_t('tcore.priglasi_10'),bio:_t('tcore.legenda_pervoy')}];
 const MAX_LEVEL=5,UPGRADE=[[4,5],[8,10],[14,18],[22,28]],RARITY_COST={common:1,rare:1.5,legend:2};
 const STORAGE=[{hours:3},{hours:5,cost:[8,10]},{hours:8,cost:[16,20]}];
 const WELCOME_AWAY_MS=15*60000;
-const RANKS=[{id:'cadet',name:'Кадет',min:0},{id:'pilot',name:'Пилот',min:700},{id:'navigator',name:'Штурман',min:1800},{id:'commander',name:'Командир',min:3500},{id:'admiral',name:'Адмирал Луны',min:6500}];
+const RANKS=[{id:'cadet',name:_t('rank.cadet'),min:0},{id:'pilot',name:_t('rank.pilot'),min:700},{id:'navigator',name:_t('rank.navigator'),min:1800},{id:'commander',name:_t('rank.commander'),min:3500},{id:'admiral',name:_t('rank.admiral'),min:6500}];
 const byId=id=>CREW.find(c=>c.id===id);
 function team(s){if(!s.team||typeof s.team!=='object')s.team=Core.initial().team;return s.team;}
 function level(s,id){return team(s).levels[id]||0;}
@@ -37,17 +38,17 @@ function stored(s){const t=team(s);return{crystals:Math.floor(t.store.crystals||
 // Move whole units into the backpack (capacity respected); what does not fit stays in the store.
 function claim(s,now=Date.now()){accrue(s,now);const t=team(s),cap=Core.capacity(s),got={crystals:0,metal:0},left={crystals:0,metal:0};
  for(const r of['crystals','metal']){const whole=Math.floor(t.store[r]||0),fit=Math.max(0,Math.min(whole,cap-s[r]));s[r]+=fit;t.store[r]=Math.round(((t.store[r]||0)-fit)*1e4)/1e4;got[r]=fit;left[r]=whole-fit;}
- t.welcomeAt=now;return{ok:got.crystals+got.metal>0,got,left,text:got.crystals+got.metal?`Склад станции: +${got.crystals} ◆ · +${got.metal} ▣`+(left.crystals+left.metal?' · не влезло в рюкзак: '+(left.crystals+left.metal):''):(left.crystals+left.metal?'Рюкзак полон — улучши рюкзак или потрать ресурсы.':'Склад пока пуст.')};}
+ t.welcomeAt=now;return{ok:got.crystals+got.metal>0,got,left,text:got.crystals+got.metal?`${_t('tcore.sklad_stantsii',{crystals:got.crystals,metal:got.metal})}`+(left.crystals+left.metal?' · '+_t('tcore.vlezlo_ryukzak',{n:left.crystals+left.metal}):''):(left.crystals+left.metal?_t('tcore.ryukzak_polon'):_t('tcore.sklad_poka'))};}
 function welcomeInfo(s,away){const st=stored(s);return{show:away>=WELCOME_AWAY_MS&&st.crystals+st.metal>=2,hours:Math.min(away,capHours(s)*HOUR)/HOUR,full:away>=capHours(s)*HOUR,stored:st};}
 function costOf(c,l){const k=RARITY_COST[c.rarity]||1,b=UPGRADE[l-1];return b?{crystals:Math.round(b[0]*k),metal:Math.round(b[1]*k)}:null;}
 function canPay(s,c){return s.crystals>=(c.crystals||0)&&s.metal>=(c.metal||0);}
 function pay(s,c){s.crystals-=c.crystals||0;s.metal-=c.metal||0;}
-function hire(s,id,now=Date.now()){const c=byId(id);if(!c||!c.hire)return{ok:false,text:'Этого члена команды нельзя нанять.'};if(level(s,id))return{ok:false,text:'Уже в команде.'};if(!unlocked(s,c))return{ok:false,text:c.how};
- if(!canPay(s,c.hire))return{ok:false,text:`Нужно ${c.hire.crystals} ◆ и ${c.hire.metal} ▣.`};accrue(s,now);pay(s,c.hire);team(s).levels[id]=1;return{ok:true,text:c.name+' в команде! Доход уже идёт.'};}
-function upgrade(s,id,now=Date.now()){const c=byId(id),l=level(s,id);if(!c||!l)return{ok:false,text:'Сначала добавь в команду.'};if(l>=MAX_LEVEL)return{ok:false,text:'Максимальный уровень.'};const cost=costOf(c,l);
- if(!canPay(s,cost))return{ok:false,text:`Нужно ${cost.crystals} ◆ и ${cost.metal} ▣.`};accrue(s,now);pay(s,cost);team(s).levels[id]=l+1;return{ok:true,text:`${c.name} · уровень ${l+1}`};}
-function upgradeStorage(s,now=Date.now()){const t=team(s),next=STORAGE[(t.cap||0)+1];if(!next)return{ok:false,text:'Склад уже максимальный.'};const cost={crystals:next.cost[0],metal:next.cost[1]};
- if(!canPay(s,cost))return{ok:false,text:`Нужно ${cost.crystals} ◆ и ${cost.metal} ▣.`};accrue(s,now);pay(s,cost);t.cap=(t.cap||0)+1;return{ok:true,text:`Склад станции: до ${next.hours} ч дохода`};}
+function hire(s,id,now=Date.now()){const c=byId(id);if(!c||!c.hire)return{ok:false,text:_t('tcore.etogo_chlena')};if(level(s,id))return{ok:false,text:_t('tcore.uzhe_komande')};if(!unlocked(s,c))return{ok:false,text:c.how};
+ if(!canPay(s,c.hire))return{ok:false,text:`${_t('tcore.nuzhno',{crystals:c.hire.crystals,metal:c.hire.metal})}`};accrue(s,now);pay(s,c.hire);team(s).levels[id]=1;return{ok:true,text:_t('tcore.komande_dohod',{name:c.name})};}
+function upgrade(s,id,now=Date.now()){const c=byId(id),l=level(s,id);if(!c||!l)return{ok:false,text:_t('tcore.snachala_dobav')};if(l>=MAX_LEVEL)return{ok:false,text:_t('core.maksimalnyy_uroven')};const cost=costOf(c,l);
+ if(!canPay(s,cost))return{ok:false,text:`${_t('tcore.nuzhno',{crystals:cost.crystals,metal:cost.metal})}`};accrue(s,now);pay(s,cost);team(s).levels[id]=l+1;return{ok:true,text:`${_t('core.uroven',{name:c.name,v:l+1})}`};}
+function upgradeStorage(s,now=Date.now()){const t=team(s),next=STORAGE[(t.cap||0)+1];if(!next)return{ok:false,text:_t('tcore.sklad_uzhe')};const cost={crystals:next.cost[0],metal:next.cost[1]};
+ if(!canPay(s,cost))return{ok:false,text:`${_t('tcore.nuzhno',{crystals:cost.crystals,metal:cost.metal})}`};accrue(s,now);pay(s,cost);t.cap=(t.cap||0)+1;return{ok:true,text:`${_t('tcore.sklad_stantsii2',{hours:next.hours})}`};}
 function setFriends(s,n){const t=team(s),v=Math.max(0,Math.min(100000,Math.floor(Number(n)||0)));if(v>t.friends)t.friends=v;return syncCrew(s);}
 
 // ---------- «Код сигнала»: only salted SHA-256 prefixes are shipped; each code works once ----------
@@ -65,13 +66,13 @@ function normalizeCode(raw){const map={'А':'A','В':'B','Е':'E','К':'K','М':
 function codeHash(raw){return sha256(CODE_SALT+normalizeCode(raw)).slice(0,24);}
 const MAX_FAILS=5,LOCK_MS=60000;
 function redeem(s,raw,list,now=Date.now(),today=Core.today?Core.today(now):''){const t=team(s),code=normalizeCode(raw);
- if(t.lockUntil>now)return{ok:false,locked:true,wait:Math.ceil((t.lockUntil-now)/1000),text:`Слишком много попыток. Подожди ${Math.ceil((t.lockUntil-now)/1000)} с.`};
- if(code.length<4)return{ok:false,text:'Код — от 4 символов. Он показан в видео MOONKATTY.'};
+ if(t.lockUntil>now)return{ok:false,locked:true,wait:Math.ceil((t.lockUntil-now)/1000),text:`${_t('tcore.slishkom_mnogo',{now:Math.ceil((t.lockUntil-now)/1000)})}`};
+ if(code.length<4)return{ok:false,text:_t('tcore.kod_4')};
  const h=codeHash(code),entry=(Array.isArray(list)?list:[]).find(e=>e&&e.h===h);
- if(!entry){t.fails=(t.fails||0)+1;if(t.fails>=MAX_FAILS){t.fails=0;t.lockUntil=now+LOCK_MS;}return{ok:false,text:'Сигнал не распознан. Проверь код в видео.'};}
- t.fails=0;if(t.codes.includes(h))return{ok:false,already:true,text:'Этот код уже активирован.'};
- if(entry.until&&today&&today>entry.until)return{ok:false,expired:true,text:'Срок действия кода закончился. Следи за новыми видео!'};
- t.codes.push(h);return{ok:true,entry,reward:{crystals:Math.max(0,entry.reward?.crystals|0),metal:Math.max(0,entry.reward?.metal|0)},text:'Сигнал принят!'};}
+ if(!entry){t.fails=(t.fails||0)+1;if(t.fails>=MAX_FAILS){t.fails=0;t.lockUntil=now+LOCK_MS;}return{ok:false,text:_t('tcore.signal_raspoznan')};}
+ t.fails=0;if(t.codes.includes(h))return{ok:false,already:true,text:_t('tcore.etot_kod')};
+ if(entry.until&&today&&today>entry.until)return{ok:false,expired:true,text:_t('tcore.srok_deystviya')};
+ t.codes.push(h);return{ok:true,entry,reward:{crystals:Math.max(0,entry.reward?.crystals|0),metal:Math.max(0,entry.reward?.metal|0)},text:_t('tcore.signal_prinyat')};}
 
 // ---------- ranks: points from overall progress (deterministic, recomputed from the save) ----------
 const STORY_FLAGS=['recorder','antenna','signal','supply','engineerMet','engineerFixed','navigatorMet','navigatorSolved','scoutMet','artifact','complete','signalBriefed','vaultOpen','blueprint','chapter3Complete'];

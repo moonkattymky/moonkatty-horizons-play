@@ -1,0 +1,89 @@
+/* MOONKATTY v36 · languages: picker, script-aware font stacks, RTL mirroring (he/ar) and text fitting for long strings. */
+
+/* ---------- Language picker ---------- */
+#lang-picker{width:min(430px,calc(100% - 24px));max-height:calc(100dvh - 28px);padding:24px 18px 18px;border-radius:28px;border:1px solid #7f9cd04d;
+ background:radial-gradient(120% 60% at 50% -8%,#25407a 0%,#13244d 38%,#0a1430 74%,#070e22 100%);color:#eef4ff;
+ box-shadow:0 30px 90px #000c,inset 0 1px 0 #ffffff1a;overflow:auto;overscroll-behavior:contain;direction:ltr}
+#lang-picker::backdrop{background:radial-gradient(circle at 50% 30%,#0b1a3ccc,#02060fef);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+#lang-picker .lp-glow{position:absolute;inset:-40px 20% auto;height:120px;background:radial-gradient(closest-side,#5f8dff40,transparent);pointer-events:none}
+#lang-picker .lp-head{position:relative;inset:auto;display:block;text-align:center;margin:0 0 18px;padding:0;pointer-events:auto;text-shadow:none}
+#lang-picker .lp-globe{display:block;font-size:30px;line-height:1;margin:0 auto 10px;filter:drop-shadow(0 4px 14px #5d8cff88)}
+#lang-picker .lp-eyebrow{display:block;font:800 11px/1.2 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;letter-spacing:.26em;color:#9db4de}
+#lang-picker h2{margin:8px 0 0;font:800 24px/1.18 'Trebuchet MS',system-ui,-apple-system,sans-serif;color:#fff;letter-spacing:-.2px}
+#lang-picker .lp-x{position:absolute;top:-8px;right:-4px;width:38px;height:38px;margin:0;padding:0;border-radius:50%;border:1px solid #8fa9d655;background:#101d3fcc;color:#dbe6ff;font-size:22px;line-height:1}
+#lang-picker .lp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;direction:ltr}
+#lang-picker .lp-item{position:relative;display:flex;align-items:center;gap:10px;width:100%;min-width:0;min-height:56px;margin:0;padding:10px 11px;border-radius:16px;
+ border:1.5px solid #8ea8d84a;background:linear-gradient(180deg,#15254d,#0e1b3b);color:#edf3ff;font:650 16px/1.2 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans','Noto Sans Hebrew','Noto Sans Arabic','Apple SD Gothic Neo','Noto Sans KR','PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;
+ text-align:start;box-shadow:inset 0 1px 0 #ffffff0d;transition:border-color .15s,background .15s,transform .12s}
+#lang-picker .lp-item:active{transform:scale(.97)}#lang-picker .lp-item:focus{outline:none}#lang-picker .lp-item:focus-visible{outline:2px solid #8ee4df;outline-offset:2px}#lang-picker .lp-item.on:focus-visible{outline-color:#f3d084aa}
+#lang-picker .lp-item.on{border-color:#f3d084;background:linear-gradient(180deg,#2b3157,#18234a);box-shadow:0 0 0 3px #f3d08424,0 10px 26px #0007,inset 0 1px 0 #ffffff1a}
+#lang-picker .lp-item.picked{border-color:#ffe2a0;background:linear-gradient(180deg,#3b3a5c,#232a52)}
+#lang-picker .lp-flag{flex:none;width:28px;text-align:center;font-size:25px;line-height:1;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif}
+#lang-picker .lp-cc,.menu-lang .lp-cc{display:inline-grid;place-items:center;flex:none;width:30px;height:21px;border-radius:6px;background:#2a3e70;color:#d6e4ff;font:800 10.5px/1 system-ui,'Segoe UI',sans-serif;letter-spacing:.05em}
+#lang-picker .lp-name{flex:1;font-size:15.5px;letter-spacing:-.1px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+#lang-picker .lp-name[dir=rtl]{text-align:left}
+#lang-picker .lp-check{position:absolute;top:-7px;right:-7px;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:linear-gradient(180deg,#ffe3a3,#e9b95c);color:#1a2346;font:900 12px/1 system-ui,sans-serif;font-style:normal;box-shadow:0 3px 10px #0008,0 0 0 2px #0d1838}
+#lang-picker .lp-hint{margin:16px 4px 2px;text-align:center;color:#8fa4cb;font-size:12.5px;line-height:1.45}
+#lang-picker.leaving{opacity:.75;transition:opacity .2s}
+@media (max-width:370px){#lang-picker{padding:20px 12px 14px}#lang-picker .lp-item{min-height:52px;padding:9px 10px;gap:8px}#lang-picker .lp-name{font-size:15px}#lang-picker .lp-flag{font-size:22px;width:26px}#lang-picker h2{font-size:22px}}
+@media (max-height:700px){#lang-picker .lp-globe{display:none}#lang-picker .lp-item{min-height:48px}}
+
+/* Cover globe pill (mirrors the Menu pill) */
+.cover .cover-lang{position:absolute;top:max(18px,env(safe-area-inset-top));left:18px;z-index:1;display:flex;align-items:center;gap:7px;width:auto;min-height:46px;margin:0;padding:8px 14px;border-radius:14px;
+ border:1px solid #e9c67a8c;background:#0c283ee8;color:#ffe4b5;box-shadow:0 6px 24px #03122266;font-size:14px;letter-spacing:.08em}
+.cover .cover-lang span{font-size:18px;letter-spacing:0}
+@media (max-width:760px){.cover .cover-lang{top:12px;left:14px;min-height:44px;padding:8px 12px}}
+/* Main menu row */
+#chapters .menu-lang{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:22px;text-align:start}
+#chapters .menu-lang b{display:inline-flex;align-items:center;gap:7px;font-weight:700;color:#ffe4b5;white-space:nowrap}
+
+/* ---------- Script-aware font stacks (system fonts only: SF / Roboto + Noto fallbacks) ---------- */
+html[data-lang=he] body{font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI','Arial Hebrew','Noto Sans Hebrew',Arial,sans-serif}
+html[data-lang=ar] body{font-family:system-ui,-apple-system,BlinkMacSystemFont,'SF Arabic','Geeza Pro','Segoe UI','Noto Sans Arabic','Noto Naskh Arabic',Tahoma,sans-serif}
+html[data-lang=ko] body{font-family:system-ui,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR','Noto Sans CJK KR','Malgun Gothic',sans-serif;word-break:keep-all}
+html[data-lang=zh] body{font-family:system-ui,-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Noto Sans SC','Noto Sans CJK SC','Microsoft YaHei',sans-serif}
+/* Trebuchet headings have no Hebrew/Arabic/CJK glyphs: use the script stack (brand wordmarks stay Latin). */
+html:is([data-lang=he],[data-lang=ar],[data-lang=ko],[data-lang=zh]) :is(h1,h2,h3,.cin-title,.cin-chapter,.tm-title,.g-title):not(.brand):not(.cin-logo){font-family:inherit}
+/* Arabic is cursive: tracking breaks the joins. Hebrew/CJK get a lighter touch. */
+html[data-lang=ar] body *:not(.brand):not(.brand *):not(.cin-logo){letter-spacing:0!important}
+html:is([data-lang=he],[data-lang=ko],[data-lang=zh]) :is(.eyebrow,small,.lp-eyebrow){letter-spacing:.06em!important}
+html[data-lang=ar] body{line-height:1.55}
+
+/* ---------- RTL (he / ar): mirror the HTML UI; joystick + action buttons keep their places ---------- */
+html[dir=rtl] .controls,html[dir=rtl] .fuel,html[dir=rtl] #world,html[dir=rtl] #labels,html[dir=rtl] .brand{direction:ltr}
+html[dir=rtl] .controls :is(small,span){direction:rtl}
+html[dir=rtl] .cover .cover-menu{right:auto;left:18px}
+html[dir=rtl] .cover .cover-lang{left:auto;right:18px}
+@media (max-width:760px){html[dir=rtl] .cover .cover-menu{left:14px;right:auto}html[dir=rtl] .cover .cover-lang{right:14px;left:auto}}
+html[dir=rtl] #begin span,html[dir=rtl] .primary>span:last-child{display:inline-block;transform:scaleX(-1)}
+/* numbers / codes inside RTL text stay left-to-right */
+html[dir=rtl] :is(#crystals,#metal,#hud-energy,#card-count,.num,code,kbd,input,textarea){unicode-bidi:isolate;direction:ltr}
+
+/* ---------- Fitting long strings (de / fr / es / pt / it / tr ...) ---------- */
+.cover .cover-navigation button,.cover .growth-nav button{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+html:is([data-lang=de],[data-lang=fr],[data-lang=es],[data-lang=pt],[data-lang=it],[data-lang=tr],[data-lang=uk],[data-lang=ru]) .cover .cover-navigation button{font-size:11.5px;padding-inline:3px}
+html:is([data-lang=de],[data-lang=fr],[data-lang=es],[data-lang=pt],[data-lang=it],[data-lang=tr],[data-lang=uk]) .cover .growth-nav button{font-size:11px;padding-inline:2px;gap:4px}
+html:is([data-lang=de],[data-lang=fr],[data-lang=es],[data-lang=pt],[data-lang=it]) .cover h1{font-size:30px;hyphens:auto;-webkit-hyphens:auto}
+.actions button span,.joystick-wrap small{white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+#chapter-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+
+/* Cover slogan «9 Lives. One Moon.» */
+.cover .cover-slogan{margin:-8px 0 14px;font:800 12.5px/1.3 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;letter-spacing:.24em;text-transform:uppercase;color:#f3d084;text-shadow:0 2px 14px #000a}
+.cover .cover-slogan::before{content:'';display:inline-block;width:22px;height:1px;margin-inline-end:10px;vertical-align:middle;background:linear-gradient(90deg,transparent,#f3d084)}
+html[dir=rtl] .cover .cover-slogan::before{background:linear-gradient(270deg,transparent,#f3d084)}
+/* RTL: the skip chevron points the reading way; English brand lines keep their own order */
+html[dir=rtl] .cin-skip b{display:inline-block;transform:scaleX(-1)}
+html[dir=rtl] .cover-slogan bdi{unicode-bidi:isolate}
+/* RTL: signed numbers built in code ("+5", "→ +7◆") keep their sign on the left */
+html[dir=rtl] :is(.gchip:not(.badge),.tc-inc>span,.tc-next,.wb-loot b){unicode-bidi:isolate;direction:ltr}
+html[dir=rtl] .cin-hint b{scale:-1 1}
+html:is([data-lang=he],[data-lang=ko],[data-lang=zh]) .cin-kicker{letter-spacing:.08em!important}
+html:is([data-lang=he],[data-lang=ar],[data-lang=ko],[data-lang=zh]) .cin-title p{letter-spacing:.06em!important}
+html[dir=rtl] input:placeholder-shown{direction:rtl}
+html[dir=rtl] .world-label{direction:rtl;unicode-bidi:isolate}
+@media(max-width:370px){.cc-form input::placeholder{letter-spacing:.3px}}
+/* Mixed-script text: player names follow their own direction; HUD bits kept LTR still lay out RTL words correctly */
+.lb-name b,.crew-name,.lp-name{unicode-bidi:plaintext}
+html[dir=rtl] :is(.brand span,.fuel span){direction:rtl;unicode-bidi:isolate}
+/* Hints/toasts sit above the side dock so long translated tips are never covered */
+#toast{z-index:4}

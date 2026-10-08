@@ -39,6 +39,8 @@ function invite(){return G.inviteLink(cfg,myId());}
 function startParam(){let v=tg()?.initDataUnsafe?.start_param||'';if(!v){try{const q=new URLSearchParams(location.search);v=q.get('tgWebAppStartParam')||q.get('startapp')||q.get('start')||'';}catch{}}return G.parseStartParam(v);}
 function openUrl(url){const t=tg(),app=t&&t.initData&&t.platform!=='unknown'?t:null;/* outside Telegram the SDK would navigate the game tab away */try{if(app&&/^https:\/\/t\.me\//.test(url)&&app.openTelegramLink){app.openTelegramLink(url);return;}if(app?.openLink){app.openLink(url);return;}}catch{}window.open(url,'_blank','noopener');}
 function absolute(path){try{return new URL(path,location.href).href;}catch{return path;}}
+// Share pictures have their text baked in, one per language: 'assets/share/story-{lang}.jpg'.
+function langAsset(path){return String(path||'').replace('{lang}',(window.MoonI18n&&MoonI18n.lang)||'en');}
 async function copy(text){try{if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(text);return true;}}catch{}try{const t=document.createElement('textarea');t.value=text;t.style.position='fixed';t.style.opacity='0';document.body.append(t);t.select();const ok=document.execCommand('copy');t.remove();return ok;}catch{return false;}}
 
 // ---------- server (optional) ----------
@@ -47,13 +49,13 @@ function setCrew(c){if(c)crew=c;try{window.MoonTeamUI?.onCrew?.(crew);}catch{}}
 async function api(path,body={},timeout=9000){if(!API||!initData())throw new Error('offline');const ctrl=typeof AbortController==='function'?new AbortController():null,timer=setTimeout(()=>ctrl?.abort(),timeout);
  try{const r=await fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'tma '+initData()},body:JSON.stringify(body),signal:ctrl?.signal});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||('HTTP '+r.status));return data;}finally{clearTimeout(timer);}}
 const tzOffset=()=>-new Date().getTimezoneOffset();
-function applyServerRewards(list){let total={crystals:0,metal:0,energy:0},n=0;for(const r of list||[]){const got=G.applyServerReward(S(),r);if(got){n++;for(const k in total)total[k]+=got[k];}}if(n){commit();haptic();toast('Награды экипажа: '+(G.rewardText(total)||'рюкзак полон'));}return n;}
+function applyServerRewards(list){let total={crystals:0,metal:0,energy:0},n=0;for(const r of list||[]){const got=G.applyServerReward(S(),r);if(got){n++;for(const k in total)total[k]+=got[k];}}if(n){commit();haptic();toast(_t('growth.nagrady_ekipazha')+' '+(G.rewardText(total)||_t('growth.ryukzak_polon')));}return n;}
 async function claimPending(list){if(!list?.length)return;try{const r=await api('/api/rewards/claim',{ids:list.map(x=>x.id)});applyServerRewards(r.rewards);}catch{}}
 async function boot(){if(booted)return;booted=true;const ref=startParam(),s=S();
- if(ref&&ref!==myId()&&!s.growth.refBy){s.growth.refBy=ref;Game.save();setTimeout(()=>toast(online?'Ты в экипаже друга! Бонус уже в пути.':'Ты в экипаже друга! Добро пожаловать на Луну.'),2200);}
+ if(ref&&ref!==myId()&&!s.growth.refBy){s.growth.refBy=ref;Game.save();setTimeout(()=>toast(online?_t('growth.ty_ekipazhe'):_t('growth.ty_ekipazhe2')),2200);}
  if(!API||!initData()){renderAll();return;}
  try{const r=await api('/api/session',{startParam:ref?'ref_'+ref:'',tzOffset:tzOffset(),local:{updatedAt:s.updatedAt,progress:G.progressScore(s)}});online=true;serverUser=r.user||null;setCrew(r.crew);channelInfo=r.channel||channelInfo;
-  if(r.save&&r.save.data&&G.pickSave(S(),r.save.data)==='remote'&&!Game.running){if(Game.replace(r.save.data))toast('Прогресс загружен из облака.');}
+  if(r.save&&r.save.data&&G.pickSave(S(),r.save.data)==='remote'&&!Game.running){if(Game.replace(r.save.data))toast(_t('growth.progress_zagruzhen'));}
   else cloudSave(true);
   if(r.streak)syncServerStreak(r.streak,null);
   await claimPending(r.rewards);}catch(e){online=false;}
@@ -68,7 +70,7 @@ addEventListener('pagehide',flushCloud);document.addEventListener('visibilitycha
 // ---------- dialogs ----------
 function dialog(id,cls){let d=document.getElementById(id);if(d)return d;d=document.createElement('dialog');d.id=id;d.className='growth-dialog '+cls;root.append(d);d.addEventListener('click',e=>{if(e.target===d)d.close();});return d;}
 function open(id){const d=document.getElementById(id);document.querySelectorAll('dialog[open]').forEach(x=>{if(x!==d)x.close();});if(!d.open)Game.openDialog(id);}
-const head=(eyebrow,title,id)=>`<div class="g-head"><div><span class="eyebrow">${eyebrow}</span><h2>${title}</h2></div><button class="close-icon" data-gclose="${id}" aria-label="Закрыть">×</button></div>`;
+const head=(eyebrow,title,id)=>`<div class="g-head"><div><span class="eyebrow">${eyebrow}</span><h2>${title}</h2></div><button class="close-icon" data-gclose="${id}" aria-label="${_t('growth.zakryt')}">×</button></div>`;
 function wireClose(d){d.querySelectorAll('[data-gclose]').forEach(b=>b.onclick=()=>d.close());}
 
 // «Вахта на базе»
@@ -76,19 +78,19 @@ const streakDialog=dialog('streak','streak-dialog');let claiming=false;
 function renderStreak(flash=0){const s=S(),st=G.streakStatus(s),d=streakDialog;
  const tiles=G.STREAK_REWARDS.map((r,i)=>{const day=i+1,done=day<st.day||(st.claimed&&day===st.day),today=!st.claimed&&day===st.day,big=day===7;
   const icon=big?ICON.chest:r.energy?ICON.energy:r.metal&&!r.crystals?ICON.metal:ICON.crystal;
-  return`<div class="st-tile${done?' done':''}${today?' today':''}${big?' big':''}${flash===day?' flash':''}"><small>${done?ICON.check:''}${big?'ДЕНЬ 7 · ГРУЗ':'ДЕНЬ '+day}</small><div class="st-icon">${icon}</div><div class="st-reward">${chips(r)}</div></div>`;}).join('');
+  return`<div class="st-tile${done?' done':''}${today?' today':''}${big?' big':''}${flash===day?' flash':''}"><small>${done?ICON.check:''}${big?_t('growth.den_7'):_t('growth.den',{n:day})}</small><div class="st-icon">${icon}</div><div class="st-reward">${chips(r)}</div></div>`;}).join('');
  const run=st.claimed?s.streak.run:st.run-1;
- d.innerHTML=head('ЕЖЕДНЕВНАЯ НАГРАДА','Вахта на базе','streak')+
-  `<p class="g-lead">${st.claimed?(st.locked?'Часы устройства переведены назад — награда откроется, когда наступит новый день.':'Награда дня '+st.day+' получена. Возвращайся завтра — '+(st.day===7?'начнётся новая неделя вахты.':'дальше награды больше!')):st.broken?'Серия прервалась — вахта начинается заново. Заходи каждый день, чтобы дойти до груза 7-го дня.':'Заходи каждый день — награда растёт. На 7-й день прилетает грузовой контейнер и значок «Вахта».'}</p>`+
+ d.innerHTML=head(_t('growth.ezhednevnaya_nagra'),_t('growth.vahta_baze'),'streak')+
+  `<p class="g-lead">${st.claimed?(st.locked?_t('growth.chasy_ustroystva'):_t('growth.nagrada_dnya',{n:st.day})+' '+(st.day===7?_t('growth.nachnetsya_novaya'):_t('growth.dalshe_nagrady'))):st.broken?_t('growth.seriya_prervalas'):_t('growth.zahodi_kazhdyy')}</p>`+
   `<div class="st-grid">${tiles}</div>`+
-  `<div class="st-meta"><span>Серия: <b>${run} ${plural(run,'день','дня','дней')}</b> подряд</span><span>Рекорд: <b>${Math.max(s.streak.best||0,run)}</b></span></div>`+
-  `<button class="primary g-cta" id="streak-claim" ${st.claimed?'disabled':''}>${st.claimed?'Награда получена · до завтра':'Забрать награду · день '+st.day}</button>`+
-  `<p class="g-feedback" id="streak-feedback" role="status"></p><p class="g-note">Пропустишь день — вахта начнётся заново с первого дня.${online?'':' Серия хранится на этом устройстве.'}</p>`;
+  `<div class="st-meta"><span>${_t('growth.seriya',{n:run})}</span><span>${_t('growth.rekord',{n:Math.max(s.streak.best||0,run)})}</span></div>`+
+  `<button class="primary g-cta" id="streak-claim" ${st.claimed?'disabled':''}>${st.claimed?_t('growth.nagrada_poluchena'):_t('growth.zabrat_nagradu',{n:st.day})}</button>`+
+  `<p class="g-feedback" id="streak-feedback" role="status"></p><p class="g-note">${_t('growth.propustish_den')+(online?'':' '+_t('growth.seriya_hranitsya'))}</p>`;
  wireClose(d);$('#streak-claim').onclick=claimStreak;}
 function syncServerStreak(sv,reward){const s=S(),st=G.streakStatus(s);if(!sv)return;if(reward&&!st.claimed){const got=G.applyReward(s,reward);s.streak={day:st.today,count:sv.count,run:sv.run,best:Math.max(sv.best||0,s.streak.best||0),total:(s.streak.total||0)+1};return got;}
  if(sv.claimedToday&&!st.claimed){s.streak={day:st.today,count:sv.count,run:sv.run,best:Math.max(sv.best||0,s.streak.best||0),total:s.streak.total||0};}return null;}
 async function claimStreak(){if(claiming)return;claiming=true;const s=S();let text='',ok=false,day=G.streakStatus(s).day;
- try{if(online){try{const r=await api('/api/streak/claim',{tzOffset:tzOffset()});const got=syncServerStreak(r.streak,r.reward);if(got){ok=true;day=r.streak.count;text='Вахта · день '+day+': '+G.gotText(got);}else text='Награда за сегодня уже получена на другом устройстве.';}catch{const r=G.claimStreak(s);ok=r.ok;text=r.text;}}
+ try{if(online){try{const r=await api('/api/streak/claim',{tzOffset:tzOffset()});const got=syncServerStreak(r.streak,r.reward);if(got){ok=true;day=r.streak.count;text=_t('gcore.vahta_den',{day})+': '+G.gotText(got);}else text=_t('growth.nagrada_segodnya');}catch{const r=G.claimStreak(s);ok=r.ok;text=r.text;}}
   else{const r=G.claimStreak(s);ok=r.ok;text=r.text;}}finally{claiming=false;}
  if(ok){haptic();commit();renderStreak(day);toast(text);}const f=$('#streak-feedback');if(f)f.textContent=text;}
 function openStreak(){renderStreak();open('streak');}
@@ -96,40 +98,40 @@ function openStreak(){renderStreak();open('streak');}
 // «Пригласи члена экипажа»
 const crewDialog=dialog('crew','crew-dialog');
 function renderCrew(){const d=crewDialog,R=G.REFERRAL_REWARDS,link=invite(),inTg=!!tgUser(),list=crew.list||[];
- const friends=list.length?`<ul class="crew-list">${list.map(f=>`<li><span class="crew-ava">${esc((f.name||'?').slice(0,1).toUpperCase())}</span><span class="crew-name">${esc(f.name||'Член экипажа')}${f.premium?`<i class="crew-prem" title="Telegram Premium">${ICON.star}</i>`:''}<small>${f.status==='completed'?'Прошёл жизнь #1 · награда получена':'В экипаже · ждём прохождения жизни #1'}</small></span><span class="crew-st ${f.status}">${f.status==='completed'?ICON.check:'…'}</span></li>`).join('')}</ul>`
-  :online?`<div class="crew-empty"><b>Пока никого</b><span>Отправь ссылку другу — его аватар появится здесь, а ты сразу получишь ${chips(R.joinReferrer,'small')}</span></div>`
-  :`<div class="crew-soon"><span class="soon-tag">СКОРО</span><b>Награды за друзей готовятся к запуску</b><span>Сервер экипажа ещё подключается. Ссылку можно отправлять уже сейчас — когда награды заработают, друзья из твоего экипажа будут засчитаны.</span></div>`;
- d.innerHTML=head('ПРИГЛАСИ ЧЛЕНА ЭКИПАЖА','Собери свой экипаж','crew')+
-  `<div class="crew-hero" style="background-image:linear-gradient(180deg,#0b213300 45%,#0b2133e6 100%),url('${esc(cfg.CREW_HERO_IMAGE||'assets/crew-hero-v33.jpg')}')"><span class="crew-count">${ICON.crew}<b>${crew.count||0}</b> ${plural(crew.count||0,'друг','друга','друзей')} в экипаже</span></div>`+
+ const friends=list.length?`<ul class="crew-list">${list.map(f=>`<li><span class="crew-ava">${esc((f.name||'?').slice(0,1).toUpperCase())}</span><span class="crew-name">${esc(f.name||_t('growth.chlen_ekipazha'))}${f.premium?`<i class="crew-prem" title="Telegram Premium">${ICON.star}</i>`:''}<small>${f.status==='completed'?_t('growth.proshel_zhizn'):_t('growth.ekipazhe_zhdem')}</small></span><span class="crew-st ${f.status}">${f.status==='completed'?ICON.check:'…'}</span></li>`).join('')}</ul>`
+  :online?`<div class="crew-empty"><b>${_t('growth.poka_nikogo')}</b><span>${_t('growth.otprav_ssylku')} ${chips(R.joinReferrer,'small')}</span></div>`
+  :`<div class="crew-soon"><span class="soon-tag">${_t('growth.skoro')}</span><b>${_t('growth.nagrady_druzey')}</b><span>${_t('growth.server_ekipazha')}</span></div>`;
+ d.innerHTML=head(_t('growth.priglasi_chlena'),_t('growth.soberi_svoy'),'crew')+
+  `<div class="crew-hero" style="background-image:linear-gradient(180deg,#0b213300 45%,#0b2133e6 100%),url('${esc(cfg.CREW_HERO_IMAGE||'assets/crew-hero-v33.jpg')}')"><span class="crew-count">${ICON.crew}<b>${crew.count||0}</b> ${_t('growth.ekipazhe',{n:crew.count||0})}</span></div>`+
   `<div class="crew-rewards">
-    <div class="cr-row"><span class="cr-step">1</span><span class="cr-text"><b>Друг открыл игру по ссылке</b><small>Тебе сразу, другу — стартовый набор ${chips(R.joinInvitee,'small')}</small></span><span class="cr-chips">${chips(R.joinReferrer)}</span></div>
-    <div class="cr-row"><span class="cr-step">2</span><span class="cr-text"><b>Друг прошёл жизнь #1</b><small>Полная награда — вам обоим</small></span><span class="cr-chips">${chips(R.full)}</span></div>
-    <div class="cr-row prem"><span class="cr-step">${ICON.star}</span><span class="cr-text"><b>Друг с Telegram Premium</b><small>Вместо шага 2 — двойная награда обоим</small></span><span class="cr-chips">${chips(R.fullPremium)}</span></div></div>`+
-  `<div class="crew-link"><span class="cl-label">${ICON.link}${inTg?'Твоя личная ссылка':'Ссылка на игру'}</span><code>${esc(link.replace(/^https:\/\//,''))}</code><button id="crew-copy">Копировать</button></div>`+
-  (inTg?'':'<p class="g-note">Открой игру в Telegram, чтобы получить личную ссылку с наградами.</p>')+
-  `<button class="primary g-cta" id="crew-invite">${ICON.share}Отправить приглашение</button>`+
-  (tg()?.shareToStory?`<button class="g-secondary" id="crew-story">Поделиться в истории</button>`:'')+
-  `<h3 class="g-sub">Мой экипаж <span>${crew.count||0}</span></h3>${friends}<p class="g-feedback" id="crew-feedback" role="status"></p>`;
- wireClose(d);$('#crew-copy').onclick=async()=>{const ok=await copy(link);$('#crew-feedback').textContent=ok?'Ссылка скопирована. Отправь её другу!':'Не удалось скопировать — нажми «Отправить приглашение».';if(ok)haptic();};
+    <div class="cr-row"><span class="cr-step">1</span><span class="cr-text"><b>${_t('growth.drug_otkryl')}</b><small>${_t('growth.tebe_srazu')} ${chips(R.joinInvitee,'small')}</small></span><span class="cr-chips">${chips(R.joinReferrer)}</span></div>
+    <div class="cr-row"><span class="cr-step">2</span><span class="cr-text"><b>${_t('growth.drug_proshel')}</b><small>${_t('growth.polnaya_nagrada')}</small></span><span class="cr-chips">${chips(R.full)}</span></div>
+    <div class="cr-row prem"><span class="cr-step">${ICON.star}</span><span class="cr-text"><b>${_t('growth.drug_telegram')}</b><small>${_t('growth.vmesto_shaga')}</small></span><span class="cr-chips">${chips(R.fullPremium)}</span></div></div>`+
+  `<div class="crew-link"><span class="cl-label">${ICON.link}${inTg?_t('growth.tvoya_lichnaya'):_t('growth.ssylka_igru')}</span><code>${esc(link.replace(/^https:\/\//,''))}</code><button id="crew-copy">${_t('growth.kopirovat')}</button></div>`+
+  (inTg?'':'<p class="g-note">'+_t('growth.otkroy_igru')+'</p>')+
+  `<button class="primary g-cta" id="crew-invite">${ICON.share}${_t('growth.otpravit_priglashe')}</button>`+
+  (tg()?.shareToStory?`<button class="g-secondary" id="crew-story">${_t('growth.podelitsya_istorii')}</button>`:'')+
+  `<h3 class="g-sub">${_t('growth.moy_ekipazh')} <span>${crew.count||0}</span></h3>${friends}<p class="g-feedback" id="crew-feedback" role="status"></p>`;
+ wireClose(d);$('#crew-copy').onclick=async()=>{const ok=await copy(link);$('#crew-feedback').textContent=ok?_t('growth.ssylka_skopirovana'):_t('growth.udalos_skopirovat');if(ok)haptic();};
  $('#crew-invite').onclick=()=>shareChat('invite');if($('#crew-story'))$('#crew-story').onclick=shareStory;}
 function openCrew(){renderCrew();open('crew');if(online)api('/api/crew',{}).then(r=>{setCrew(r.crew);if(crewDialog.open)renderCrew();}).catch(()=>{});}
 
 // «Поделиться»
 const shareDialog=dialog('share','share-dialog');let shareContext='invite';
-function shareText(kind){const ch=S().chapter;if(kind==='chapter')return`Я прошёл «Жизнь #${Math.max(1,ch-1)}» в MOONKATTY 🌕 Кот-космонавт ищет экипаж — летишь со мной?`;return'Я исследую Луну вместе с котом-космонавтом MOONKATTY 🚀 Присоединяйся к моему экипажу — получим бонусные кристаллы!';}
+function shareText(kind){const ch=S().chapter;if(kind==='chapter')return`${_t('growth.ya_proshel',{ch:Math.max(1,ch-1)})}`;return_t('growth.ya_issleduyu');}
 function rewardShare(){const r=G.claimShare(S());if(r.ok){commit();setTimeout(()=>toast(r.text),600);}}
 function shareChat(kind=shareContext){const link=invite(),text=shareText(kind);if(tg())openUrl(G.shareUrl(link,text));else if(navigator.share)navigator.share({title:'MOONKATTY · New Horizons',text,url:link}).catch(()=>{});else openUrl(G.shareUrl(link,text));rewardShare();}
-function shareStory(){const app=tg(),link=invite();if(!app?.shareToStory){shareChat();return;}const opts={text:'Лечу на Луну с MOONKATTY 🚀 Присоединяйся к экипажу!'};if(tgUser()?.is_premium)opts.widget_link={url:link,name:'Играть в MOONKATTY'};else opts.text+=' '+link;
- try{app.shareToStory(absolute(cfg.SHARE_STORY_IMAGE),opts);rewardShare();}catch{shareChat();}}
+function shareStory(){const app=tg(),link=invite();if(!app?.shareToStory){shareChat();return;}const opts={text:_t('growth.lechu_lunu')};if(tgUser()?.is_premium)opts.widget_link={url:link,name:_t('growth.igrat_moonkatty')};else opts.text+=' '+link;
+ try{app.shareToStory(absolute(langAsset(cfg.SHARE_STORY_IMAGE)),opts);rewardShare();}catch{shareChat();}}
 function renderShare(){const d=shareDialog,story=!!tg()?.shareToStory,claimed=S().growth.shareDay===G.localDay();
- d.innerHTML=head('ПОДЕЛИТЬСЯ','Расскажи о MOONKATTY','share')+
-  `<div class="share-preview"><img src="${esc(cfg.SHARE_CARD_IMAGE)}" alt="Картинка MOONKATTY с котом-космонавтом" loading="lazy"></div>`+
-  `<p class="g-lead">${shareContext==='chapter'?'Отличная работа! Покажи друзьям, как далеко продвинулась экспедиция.':'Картинка с котом-космонавтом и твоя личная ссылка-приглашение.'}</p>`+
-  (story?`<button class="primary g-cta" id="share-story">${ICON.share}В историю Telegram</button><button class="g-secondary" id="share-chat">Отправить в чат</button>`:`<button class="primary g-cta" id="share-chat">${ICON.share}Отправить в чат</button>`)+
-  `<button class="g-secondary" id="share-copy">${ICON.link}Скопировать ссылку</button>`+
-  `<div class="share-bonus ${claimed?'done':''}">${claimed?'Бонус за сегодня получен':'Первый раз за день'} ${chips(G.SHARE_REWARD,'small')}</div><p class="g-feedback" id="share-feedback" role="status"></p>`;
+ d.innerHTML=head(_t('growth.podelitsya'),_t('growth.rasskazhi_moonkatt'),'share')+
+  `<div class="share-preview"><img src="${esc(langAsset(cfg.SHARE_CARD_IMAGE))}" alt="${_t('growth.kartinka_moonkatty')}" loading="lazy"></div>`+
+  `<p class="g-lead">${shareContext==='chapter'?_t('growth.otlichnaya_rabota'):_t('growth.kartinka_kotom')}</p>`+
+  (story?`<button class="primary g-cta" id="share-story">${ICON.share}${_t('growth.istoriyu_telegram')}</button><button class="g-secondary" id="share-chat">${_t('growth.otpravit_chat')}</button>`:`<button class="primary g-cta" id="share-chat">${ICON.share}${_t('growth.otpravit_chat')}</button>`)+
+  `<button class="g-secondary" id="share-copy">${ICON.link}${_t('growth.skopirovat_ssylku')}</button>`+
+  `<div class="share-bonus ${claimed?'done':''}">${claimed?_t('growth.bonus_segodnya'):_t('growth.pervyy_raz')} ${chips(G.SHARE_REWARD,'small')}</div><p class="g-feedback" id="share-feedback" role="status"></p>`;
  wireClose(d);if($('#share-story'))$('#share-story').onclick=()=>{shareStory();renderShare();};$('#share-chat').onclick=()=>{shareChat(shareContext);renderShare();};
- $('#share-copy').onclick=async()=>{const ok=await copy(invite());$('#share-feedback').textContent=ok?'Ссылка скопирована.':'Не удалось скопировать ссылку.';};}
+ $('#share-copy').onclick=async()=>{const ok=await copy(invite());$('#share-feedback').textContent=ok?_t('growth.ssylka_skopirovana2'):_t('growth.udalos_skopirovat2');};}
 function openShare(kind='invite'){shareContext=kind;renderShare();open('share');}
 
 // Задания: канал + соцсети
@@ -138,44 +140,44 @@ function socialUrl(id){if(id==='chat'){const c=String(cfg.CHAT_USERNAME||'').tri
 function socialTasks(){return G.SOCIAL_TASKS.filter(t=>/^https:\/\//.test(socialUrl(t.id)));}
 function renderTasks(){const d=tasksDialog,s=S(),ch=String(cfg.CHANNEL_USERNAME||'').replace(/^@/,''),st=G.streakStatus(s),shareDone=s.growth.shareDay===G.localDay();
  const channelDone=s.growth.channel||channelInfo.rewarded;
- const channel=ch?`<div class="task-hero ${channelDone?'done':''}"><div class="th-top">${ICON.telegram}<div><b>Подпишись на канал MOONKATTY</b><small>Новости экспедиции, коды сигналов и новые главы</small></div></div>
-   <div class="th-reward">${chips(G.CHANNEL_REWARD)}<span class="gchip badge">Значок «Связист»</span></div>
-   ${channelDone?`<div class="th-state ok">${ICON.check}Подписка подтверждена · награда получена</div>`:`<div class="th-actions"><button class="primary" id="channel-open">Подписаться</button><button id="channel-check" ${online?'':'disabled'}>${channelBusy?'Проверяем…':'Проверить'}</button></div><div class="th-state ${online?'':'pending'}">${esc(channelMsg)||(online?'Подпишись, затем нажми «Проверить».':'Проверка подписки скоро заработает — награда будет ждать тебя.')}</div>`}</div>`:'';
+ const channel=ch?`<div class="task-hero ${channelDone?'done':''}"><div class="th-top">${ICON.telegram}<div><b>${_t('growth.podpishis_kanal')}</b><small>${_t('growth.novosti_ekspeditsi')}</small></div></div>
+   <div class="th-reward">${chips(G.CHANNEL_REWARD)}<span class="gchip badge">${_t('growth.znachok_svyazist')}</span></div>
+   ${channelDone?`<div class="th-state ok">${ICON.check}${_t('growth.podpiska_podtverzh')}</div>`:`<div class="th-actions"><button class="primary" id="channel-open">${_t('growth.podpisatsya')}</button><button id="channel-check" ${online?'':'disabled'}>${channelBusy?_t('growth.proveryaem'):_t('growth.proverit')}</button></div><div class="th-state ${online?'':'pending'}">${esc(channelMsg)||(online?_t('growth.podpishis_zatem'):_t('growth.proverka_podpiski'))}</div>`}</div>`:'';
  const row=(icon,title,sub,reward,btn,cls='')=>`<div class="task-row ${cls}"><span class="tr-icon">${icon}</span><span class="tr-text"><b>${title}</b><small>${sub}</small></span><span class="tr-side">${reward}${btn}</span></div>`;
- const socials=socialTasks().map(t=>{const ss=G.socialState(s,t.id);const btn=ss.state==='claimed'?`<i class="tr-done">${ICON.check}</i>`:ss.state==='ready'?`<button class="tr-btn gold" data-social-claim="${t.id}">Забрать</button>`:ss.state==='waiting'?`<button class="tr-btn" disabled>0:${String(Math.ceil(ss.left/1000)).padStart(2,'0')}</button>`:`<button class="tr-btn" data-social-open="${t.id}">Открыть</button>`;
-  return row(ICON[t.id==='chat'?'telegram':t.id],t.title,ss.state==='waiting'?'Проверяем переход…':ss.state==='ready'?'Готово — забери награду':t.name+' · MOONKATTY',ss.state==='claimed'?'':chips(t.reward,'small'),btn,ss.state);}).join('');
- d.innerHTML=head('ЗАДАНИЯ · БОНУСЫ','Связь с Землёй','tasks')+
-  `<p class="g-lead">Помоги экспедиции стать известной — за каждое задание кристаллы и металл.</p>`+channel+(window.MoonTeamUI?window.MoonTeamUI.codeCard():'')+
+ const socials=socialTasks().map(t=>{const ss=G.socialState(s,t.id);const btn=ss.state==='claimed'?`<i class="tr-done">${ICON.check}</i>`:ss.state==='ready'?`<button class="tr-btn gold" data-social-claim="${t.id}">${_t('growth.zabrat')}</button>`:ss.state==='waiting'?`<button class="tr-btn" disabled>0:${String(Math.ceil(ss.left/1000)).padStart(2,'0')}</button>`:`<button class="tr-btn" data-social-open="${t.id}">${_t('growth.otkryt')}</button>`;
+  return row(ICON[t.id==='chat'?'telegram':t.id],t.title,ss.state==='waiting'?_t('growth.proveryaem_perehod'):ss.state==='ready'?_t('growth.gotovo_zaberi'):t.name+' · MOONKATTY',ss.state==='claimed'?'':chips(t.reward,'small'),btn,ss.state);}).join('');
+ d.innerHTML=head(_t('growth.zadaniya_bonusy'),_t('growth.svyaz_zemley'),'tasks')+
+  `<p class="g-lead">${_t('growth.pomogi_ekspeditsii')}</p>`+channel+(window.MoonTeamUI?window.MoonTeamUI.codeCard():'')+
   `<div class="task-list">`+
-   row(ICON.gift,'Вахта на базе',st.claimed?'День '+st.day+' из 7 · награда получена':'День '+st.day+' из 7 · награда ждёт',st.claimed?'':chips(st.reward,'small'),`<button class="tr-btn ${st.claimed?'':'gold'}" data-go="streak">${st.claimed?'Открыть':'Забрать'}</button>`,st.claimed?'claimed':'ready')+
-   row(ICON.crew,'Пригласи друга','Награда за каждого члена экипажа',chips(G.REFERRAL_REWARDS.full,'small'),'<button class="tr-btn" data-go="crew">Позвать</button>')+
-   row(ICON.share,'Поделись игрой',shareDone?'Сегодня уже поделился · спасибо!':'Раз в день · в чат или в историю',shareDone?'':chips(G.SHARE_REWARD,'small'),`<button class="tr-btn" data-go="share">${shareDone?'Ещё раз':'Поделиться'}</button>`,shareDone?'claimed':'')+
-  `</div>`+(socials?`<h3 class="g-sub">Мы в соцсетях</h3><div class="task-list">${socials}</div><p class="g-note">Задания соцсетей засчитываются через 30 секунд после перехода.</p>`:'');
+   row(ICON.gift,_t('growth.vahta_baze'),_t(st.claimed?'growth.7_nagrada':'growth.7_nagrada2',{n:st.day}),st.claimed?'':chips(st.reward,'small'),`<button class="tr-btn ${st.claimed?'':'gold'}" data-go="streak">${st.claimed?_t('growth.otkryt'):_t('growth.zabrat')}</button>`,st.claimed?'claimed':'ready')+
+   row(ICON.crew,_t('growth.priglasi_druga'),_t('growth.nagrada_kazhdogo'),chips(G.REFERRAL_REWARDS.full,'small'),'<button class="tr-btn" data-go="crew">'+_t('growth.pozvat')+'</button>')+
+   row(ICON.share,_t('growth.podelis_igroy'),shareDone?_t('growth.segodnya_uzhe'):_t('growth.raz_den'),shareDone?'':chips(G.SHARE_REWARD,'small'),`<button class="tr-btn" data-go="share">${shareDone?_t('growth.esche_raz'):_t('growth.podelitsya2')}</button>`,shareDone?'claimed':'')+
+  `</div>`+(socials?`<h3 class="g-sub">${_t('growth.my_sotssetyah')}</h3><div class="task-list">${socials}</div><p class="g-note">${_t('growth.zadaniya_sotssetey')}</p>`:'');
  wireClose(d);
  d.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>({streak:openStreak,crew:openCrew,share:()=>openShare('invite')})[b.dataset.go]());
  d.querySelectorAll('[data-social-open]').forEach(b=>b.onclick=()=>{const id=b.dataset.socialOpen;G.startSocial(S(),id);Game.save();openUrl(socialUrl(id));renderTasks();});
  d.querySelectorAll('[data-social-claim]').forEach(b=>b.onclick=()=>{const r=G.claimSocial(S(),b.dataset.socialClaim);if(r.ok){haptic();commit();}toast(r.text);renderTasks();});
- if($('#channel-open'))$('#channel-open').onclick=()=>{openUrl('https://t.me/'+ch);channelMsg=online?'Подписался? Нажми «Проверить».':'Спасибо! Проверка подписки скоро заработает — награда будет ждать тебя.';renderTasks();};
+ if($('#channel-open'))$('#channel-open').onclick=()=>{openUrl('https://t.me/'+ch);channelMsg=online?_t('growth.podpisalsya_nazhmi'):_t('growth.spasibo_proverka');renderTasks();};
  if($('#channel-check'))$('#channel-check').onclick=checkChannel;window.MoonTeamUI?.wireCode?.(d);}
-async function checkChannel(){if(channelBusy||!online)return;channelBusy=true;renderTasks();try{const r=await api('/api/channel/check',{});if(r.member){channelInfo.rewarded=true;S().growth.channel=true;if(r.reward)applyServerRewards([r.reward]);else commit();channelMsg='';haptic();}else{channelMsg=r.error==='channel_not_configured'?'Проверка канала ещё настраивается.':'Пока не видим подписку. Подпишись и нажми «Проверить» ещё раз.';haptic('warning');}}catch{channelMsg='Нет связи с сервером. Попробуй чуть позже.';}channelBusy=false;renderTasks();}
+async function checkChannel(){if(channelBusy||!online)return;channelBusy=true;renderTasks();try{const r=await api('/api/channel/check',{});if(r.member){channelInfo.rewarded=true;S().growth.channel=true;if(r.reward)applyServerRewards([r.reward]);else commit();channelMsg='';haptic();}else{channelMsg=r.error==='channel_not_configured'?_t('growth.proverka_kanala'):_t('growth.poka_vidim');haptic('warning');}}catch{channelMsg=_t('growth.net_svyazi');}channelBusy=false;renderTasks();}
 function openTasks(){renderTasks();open('tasks');}
 
 // ---------- entry points ----------
 const OPEN={streak:openStreak,crew:openCrew,tasks:openTasks,share:()=>openShare('invite')};
 function navButton(kind,label,cls){const b=document.createElement('button');b.className=cls;b.dataset.growth=kind;b.innerHTML=`<span class="gn-icon">${ICON[{streak:'gift',crew:'crew',tasks:'tasks',share:'share'}[kind]]}</span><span class="gn-label">${label}</span><i class="g-dot" hidden></i>`;b.onclick=()=>OPEN[kind]();return b;}
 function mount(){
- const coverNav=$('.cover-navigation');if(coverNav&&!$('.growth-nav')){const nav=document.createElement('nav');nav.className='growth-nav';nav.setAttribute('aria-label','Бонусы и экипаж');nav.append(navButton('streak','Вахта','gn'),navButton('crew','Экипаж','gn'),navButton('tasks','Задания','gn'));coverNav.after(nav);}
- const menuNav=$('.menu-navigation');if(menuNav&&!menuNav.querySelector('[data-growth]')){for(const[k,l]of[['streak','Вахта на базе'],['crew','Экипаж'],['tasks','Задания'],['share','Поделиться']]){const b=navButton(k,l,'gm');b.addEventListener('click',()=>$('#chapters')?.close(),true);menuNav.append(b);}}
- if(!$('#growth-dock')){const dock=document.createElement('div');dock.id='growth-dock';dock.setAttribute('aria-label','Бонусы');for(const[k,l]of[['streak','Вахта'],['crew','Экипаж'],['tasks','Задания']])dock.append(navButton(k,l,'gd'));root.append(dock);}
+ const coverNav=$('.cover-navigation');if(coverNav&&!$('.growth-nav')){const nav=document.createElement('nav');nav.className='growth-nav';nav.setAttribute('aria-label',_t('growth.bonusy_ekipazh'));nav.append(navButton('streak',_t('growth.vahta'),'gn'),navButton('crew',_t('game.ekipazh'),'gn'),navButton('tasks',_t('growth.zadaniya'),'gn'));coverNav.after(nav);}
+ const menuNav=$('.menu-navigation');if(menuNav&&!menuNav.querySelector('[data-growth]')){for(const[k,l]of[['streak',_t('growth.vahta_baze')],['crew',_t('game.ekipazh')],['tasks',_t('growth.zadaniya')],['share',_t('growth.podelitsya2')]]){const b=navButton(k,l,'gm');b.addEventListener('click',()=>$('#chapters')?.close(),true);menuNav.append(b);}}
+ if(!$('#growth-dock')){const dock=document.createElement('div');dock.id='growth-dock';dock.setAttribute('aria-label',_t('growth.bonusy'));for(const[k,l]of[['streak',_t('growth.vahta')],['crew',_t('game.ekipazh')],['tasks',_t('growth.zadaniya')]])dock.append(navButton(k,l,'gd'));root.append(dock);}
  const daily=$('.daily-panel');if(daily&&!$('#streak-strip')){const strip=document.createElement('button');strip.id='streak-strip';strip.type='button';strip.onclick=()=>{$('#cards')?.close();openStreak();};daily.parentNode.insertBefore(strip,daily);}
- const end=$('#end-next');if(end&&!$('#end-share')){const b=document.createElement('button');b.id='end-share';b.className='g-secondary';b.innerHTML=ICON.share+'Поделиться с друзьями';b.onclick=()=>{$('#end')?.close();openShare('chapter');};end.after(b);}
+ const end=$('#end-next');if(end&&!$('#end-share')){const b=document.createElement('button');b.id='end-share';b.className='g-secondary';b.innerHTML=ICON.share+_t('growth.podelitsya_druzyam');b.onclick=()=>{$('#end')?.close();openShare('chapter');};end.after(b);}
 }
 function updateBadges(){const s=S(),st=G.streakStatus(s),cover=$('#cover'),dock=$('#growth-dock');
  const socialReady=socialTasks().some(t=>G.socialState(s,t.id).state==='ready'),alerts={streak:!st.claimed,crew:false,tasks:socialReady||(!st.claimed),share:false};
  document.querySelectorAll('[data-growth]').forEach(b=>{const dot=b.querySelector('.g-dot');if(dot)dot.hidden=!alerts[b.dataset.growth];});
- document.querySelectorAll('.growth-nav [data-growth="streak"] .gn-label,#growth-dock [data-growth="streak"] .gn-label').forEach(l=>l.textContent=st.claimed?'Вахта ✓':'День '+st.day);
+ document.querySelectorAll('.growth-nav [data-growth="streak"] .gn-label,#growth-dock [data-growth="streak"] .gn-label').forEach(l=>l.textContent=st.claimed?_t('growth.vahta2'):_t('growth.den3',{n:st.day}));
  if(dock)dock.hidden=!cover||!cover.hidden;
- const strip=$('#streak-strip');if(strip){strip.className=st.claimed?'claimed':'ready';strip.innerHTML=`<span class="ss-dots">${[1,2,3,4,5,6,7].map(d=>`<i class="${d<st.day||(st.claimed&&d===st.day)?'on':d===st.day?'now':''}"></i>`).join('')}</span><span class="ss-text"><span class="eyebrow">ВАХТА НА БАЗЕ</span><b>${st.claimed?'День '+st.day+' из 7 · получено':'День '+st.day+' из 7 · награда ждёт'}</b></span><span class="ss-go">${st.claimed?'›':'Забрать'}</span>`;}}
+ const strip=$('#streak-strip');if(strip){strip.className=st.claimed?'claimed':'ready';strip.innerHTML=`<span class="ss-dots">${[1,2,3,4,5,6,7].map(d=>`<i class="${d<st.day||(st.claimed&&d===st.day)?'on':d===st.day?'now':''}"></i>`).join('')}</span><span class="ss-text"><span class="eyebrow">${_t('growth.vahta_baze2')}</span><b>${_t(st.claimed?'growth.7_polucheno':'growth.7_nagrada2',{n:st.day})}</b></span><span class="ss-go">${st.claimed?'›':_t('growth.zabrat')}</span>`;}}
 function renderAll(){updateBadges();if(streakDialog.open)renderStreak();if(crewDialog.open)renderCrew();if(tasksDialog.open)renderTasks();if(shareDialog.open)renderShare();}
 mount();updateBadges();
 setInterval(()=>{updateBadges();if(tasksDialog.open&&socialTasks().some(t=>G.socialState(S(),t.id).state==='waiting'))renderTasks();},1000);

@@ -1,3 +1,4 @@
+if(typeof _t==='undefined'&&typeof require==='function')require('./i18n.js');
 /* v34 cinematic cutscenes: scene scripts and camera maths shared by the player (cinema.js) and the node tests.
    Each frame is one full-screen illustration with a slow camera move (Ken Burns): `from`/`to` are [focusX, focusY, zoom]
    in image fractions; the camera never shows an image edge. Art lives in assets/cinema/ and can be swapped for
@@ -6,31 +7,31 @@
 const A='assets/cinema/';
 // Glow spots [x, y, radius (fraction of image width), colour] pulse softly over windows, crystals, beacons and Earth.
 const CH1={img:A+'ch1-awakening.jpg',from:[.46,.30,1.24],to:[.52,.37,1.04],sky:.27,fx:['stars','dust'],glows:[[.665,.315,.06,'blue'],[.04,.47,.07,'blue'],[.6,.485,.05,'blue'],[.8,.2,.16,'earth']],
- title:['Жизнь #1','Пробуждение'],kicker:'ЗАДАНИЕ',text:'Найди бортовой журнал у аварийной капсулы. Вдруг в нём сигнал экипажа?',mood:'title',mark:'ch1'};
+ title:[_t('life.n',{n:1}),_t('chapter.1')],kicker:_t('cine.zadanie'),text:_t('cine.naydi_bortovoy'),mood:'title',mark:'ch1'};
 const SCENES={
- intro:{name:'Вступление',frames:chapter=>[
+ intro:{name:_t('cine.vstuplenie'),frames:chapter=>[
   {img:A+'intro-1-voyage.jpg',from:[.40,.50,1.06],to:[.62,.42,1.0],sky:.8,fx:['stars','dust'],glows:[[.285,.585,.035,'amber'],[.25,.62,.03,'amber'],[.725,.25,.12,'earth'],[.10,.39,.03,'earth']],
-   kicker:'ЭКСПЕДИЦИЯ «НОВЫЕ ГОРИЗОНТЫ»',text:'Корабль «Горизонт» несёт к Луне кота-космонавта MOONKATTY и его экипаж.',mood:'space'},
+   kicker:_t('cine.ekspeditsiya_novye'),text:_t('cine.korabl_gorizont'),mood:'space'},
   {img:A+'intro-2-crash.jpg',from:[.49,.46,1.16],to:[.47,.64,1.02],sky:.25,fx:['meteors','fall','dust'],impact:{at:2400,x:.44,y:.70},glows:[[.47,.66,.05,'amber'],[.58,.45,.035,'amber'],[.64,.30,.03,'amber'],[.45,.18,.09,'earth']],
-   kicker:'ТРЕВОГА · МЕТЕОРИТНЫЙ ПОТОК',text:'Удар! Капсулу отрывает от корабля, и она падает в лунный каньон.',mood:'danger'},
+   kicker:_t('cine.trevoga_meteoritny'),text:_t('cine.udar_kapsulu'),mood:'danger'},
   {img:A+'intro-3-capsule.jpg',from:[.58,.38,1.3],to:[.55,.42,1.04],fx:['wake','alarm','dust'],glows:[[.955,.235,.025,'amber'],[.27,.04,.02,'amber'],[.12,.42,.08,'earth']],
-   kicker:'КАПСУЛА · СВЯЗИ НЕТ',text:'…Тишина. Мигает аварийный свет. Экипаж не отвечает.',mood:'alarm'},
+   kicker:_t('cine.kapsula_svyazi'),text:_t('cine.tishina_migaet'),mood:'alarm'},
   {img:A+'intro-4-earth.jpg',from:[.34,.58,1.14],to:[.66,.44,1.0],sky:.3,fx:['stars','dust'],glows:[[.085,.69,.03,'blue'],[.43,.84,.035,'blue'],[.79,.33,.2,'earth'],[.80,.78,.03,'amber']],
-   kicker:'MOONKATTY',text:'Там, над горизонтом, — Земля. Девять жизней, одна Вселенная. Пора найти своих.',mood:'hope'},
+   kicker:'MOONKATTY',text:_t('cine.tam_nad'),mood:'hope'},
   ...(chapter===1?[CH1]:[])],marks:chapter=>chapter===1?['intro','ch1']:['intro']},
- ch1:{name:'Жизнь #1 · Пробуждение',frames:()=>[CH1],marks:()=>['ch1']},
- ch2:{name:'Жизнь #2 · Экипаж',frames:()=>[
+ ch1:{name:_t('life.title',{n:1,name:_t('chapter.1')}),frames:()=>[CH1],marks:()=>['ch1']},
+ ch2:{name:_t('life.title',{n:2,name:_t('chapter.2')}),frames:()=>[
   {img:A+'ch2-crew.jpg',from:[.44,.46,1.12],to:[.76,.56,1.0],sky:.42,fx:['stars','dust'],glows:[[.27,.64,.04,'blue'],[.03,.86,.04,'blue'],[.95,.86,.04,'blue'],[.84,.33,.03,'amber'],[.12,.33,.16,'earth']],
-   kicker:'СИГНАЛ НАЙДЕН',text:'Координаты получены! Лагерь экипажа совсем рядом — за кратером.',mood:'hope'},
+   kicker:_t('cine.signal_nayden'),text:_t('cine.koordinaty_poluche'),mood:'hope'},
   {img:A+'ch2-camp.jpg',from:[.5,.30,1.26],to:[.5,.36,1.04],sky:.25,fx:['stars','dust'],glows:[[.64,.43,.04,'amber'],[.58,.44,.035,'amber'],[.875,.265,.03,'blue'],[.3,.5,.12,'violet']],
-   title:['Жизнь #2','Экипаж'],kicker:'ЗАДАНИЕ',text:'Инженер, штурман и разведчик ждут помощи. Почини ранец, зажги маяки и построй общую базу.',mood:'title',mark:'ch2'}],marks:()=>['ch2']},
- ch3:{name:'Жизнь #3 · Тайна сигнала',frames:()=>[
+   title:[_t('life.n',{n:2}),_t('chapter.2')],kicker:_t('cine.zadanie'),text:_t('cine.inzhener_shturman'),mood:'title',mark:'ch2'}],marks:()=>['ch2']},
+ ch3:{name:_t('life.title',{n:3,name:_t('chapter.3')}),frames:()=>[
   {img:A+'ch3-signal.jpg',from:[.34,.62,1.12],to:[.76,.40,1.0],sky:.4,fx:['stars','signal','dust'],signal:[.865,.16],glows:[[.33,.61,.04,'blue'],[.04,.66,.04,'blue'],[.95,.62,.04,'blue'],[.86,.67,.03,'amber']],
-   kicker:'НОЧНАЯ ПЕРЕДАЧА',text:'Ночью инженер ловит странный сигнал. Его передаёт старая обсерватория на юге.',mood:'mystery'},
+   kicker:_t('cine.nochnaya_peredacha'),text:_t('cine.nochyu_inzhener'),mood:'mystery'},
   {img:A+'ch3-observatory.jpg',from:[.5,.28,1.26],to:[.5,.36,1.04],sky:.24,fx:['stars','signal','dust'],signal:[.86,.33],glows:[[.06,.5,.06,'blue'],[.52,.33,.06,'blue'],[.78,.22,.16,'earth']],
-   title:['Жизнь #3','Тайна сигнала'],kicker:'ЗАДАНИЕ',text:'Найди три записи старой экспедиции, расшифруй архив и забери чертёж ракеты.',mood:'title',mark:'ch3'}],marks:()=>['ch3']},
- crystal:{name:'Первый кристалл',flash:true,frames:()=>[
-  {kind:'flash',img:A+'crystal.webp',dur:5600,kicker:'НАХОДКА',title:['Кристалл найден!',''],text:'Голубые кристаллы — энергия Луны. Из них строят базу и улучшают снаряжение.',mood:'chime'}],marks:()=>['crystal']}
+   title:[_t('life.n',{n:3}),_t('chapter.3')],kicker:_t('cine.zadanie'),text:_t('cine.naydi_tri'),mood:'title',mark:'ch3'}],marks:()=>['ch3']},
+ crystal:{name:_t('cine.pervyy_kristall'),flash:true,frames:()=>[
+  {kind:'flash',img:A+'crystal.webp',dur:5600,kicker:_t('cine.nahodka'),title:[_t('cine.kristall_nayden'),''],text:_t('cine.golubye_kristally'),mood:'chime'}],marks:()=>['crystal']}
 };
 const CHAR_MS=30,TYPE_DELAY=650,HOLD_MS=2600,FADE_MS=900;
 // How long a frame stays before auto-advancing: long enough to read the subtitle calmly.
