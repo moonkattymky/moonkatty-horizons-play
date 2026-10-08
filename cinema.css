@@ -57,7 +57,7 @@ dialog.cinema.out{opacity:0}
 .cin-sub.typed .cin-hint{opacity:.85}
 @keyframes cin-nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
 /* start screen (first launch: the tap unlocks sound) */
-.cin-preroll{position:absolute;inset:0;z-index:5;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:radial-gradient(ellipse at 50% 42%,#0b1d2d99 0,#050d18e6 62%,#02060c 100%),url(assets/cinema/intro-4-earth.jpg) 50% 30%/cover;cursor:default}
+.cin-preroll{position:absolute;inset:0;z-index:5;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:radial-gradient(ellipse at 50% 42%,#0b1d2d99 0,#050d18e6 62%,#02060c 100%),url(assets/cinema/intro-4-earth.jpg) 74% 40%/cover;cursor:default}
 .cin-preroll.show{display:flex}
 .cin-logo{font:800 clamp(38px,12vw,60px)/1 'Trebuchet MS',Arial,sans-serif;letter-spacing:2px;background:linear-gradient(180deg,#fff6dc,#f5d58f 45%,#c98f2f);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 24px #f0b45a66);animation:cin-logo 2.4s ease both}
 .cin-preroll small{font-size:10.5px;letter-spacing:3.4px;color:#cfe3ee;font-weight:700;animation:cin-fade 2.4s .4s ease both}

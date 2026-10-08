@@ -43,6 +43,7 @@ async function copy(text){try{if(navigator.clipboard?.writeText){await navigator
 
 // ---------- server (optional) ----------
 function initData(){return tg()?.initData||'';}
+function setCrew(c){if(c)crew=c;try{window.MoonTeamUI?.onCrew?.(crew);}catch{}}
 async function api(path,body={},timeout=9000){if(!API||!initData())throw new Error('offline');const ctrl=typeof AbortController==='function'?new AbortController():null,timer=setTimeout(()=>ctrl?.abort(),timeout);
  try{const r=await fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'tma '+initData()},body:JSON.stringify(body),signal:ctrl?.signal});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||('HTTP '+r.status));return data;}finally{clearTimeout(timer);}}
 const tzOffset=()=>-new Date().getTimezoneOffset();
@@ -51,14 +52,14 @@ async function claimPending(list){if(!list?.length)return;try{const r=await api(
 async function boot(){if(booted)return;booted=true;const ref=startParam(),s=S();
  if(ref&&ref!==myId()&&!s.growth.refBy){s.growth.refBy=ref;Game.save();setTimeout(()=>toast(online?'Ты в экипаже друга! Бонус уже в пути.':'Ты в экипаже друга! Добро пожаловать на Луну.'),2200);}
  if(!API||!initData()){renderAll();return;}
- try{const r=await api('/api/session',{startParam:ref?'ref_'+ref:'',tzOffset:tzOffset(),local:{updatedAt:s.updatedAt,progress:G.progressScore(s)}});online=true;serverUser=r.user||null;crew=r.crew||crew;channelInfo=r.channel||channelInfo;
+ try{const r=await api('/api/session',{startParam:ref?'ref_'+ref:'',tzOffset:tzOffset(),local:{updatedAt:s.updatedAt,progress:G.progressScore(s)}});online=true;serverUser=r.user||null;setCrew(r.crew);channelInfo=r.channel||channelInfo;
   if(r.save&&r.save.data&&G.pickSave(S(),r.save.data)==='remote'&&!Game.running){if(Game.replace(r.save.data))toast('Прогресс загружен из облака.');}
   else cloudSave(true);
   if(r.streak)syncServerStreak(r.streak,null);
   await claimPending(r.rewards);}catch(e){online=false;}
  renderAll();}
 function cloudSave(force=false){if(!online)return;const now=Date.now();if(!force&&now-lastCloud<15000){clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>cloudSave(true),15000-(now-lastCloud));return;}lastCloud=now;const s=S();
- api('/api/save',{data:s,updatedAt:s.updatedAt}).then(r=>{if(r.crew)crew=r.crew;if(r.rewards?.length)claimPending(r.rewards);if(r.accepted===false&&r.save?.data&&!Game.running&&G.pickSave(S(),r.save.data)==='remote')Game.replace(r.save.data);}).catch(()=>{});}
+ api('/api/save',{data:s,updatedAt:s.updatedAt}).then(r=>{if(r.crew)setCrew(r.crew);if(r.rewards?.length)claimPending(r.rewards);if(r.accepted===false&&r.save?.data&&!Game.running&&G.pickSave(S(),r.save.data)==='remote')Game.replace(r.save.data);}).catch(()=>{});}
 Game.onSave=()=>{if(online)cloudSave(false);};
 // Last chance to upload when Telegram hides or closes the Mini App (keepalive survives page unload).
 function flushCloud(){if(!online)return;try{fetch(API+'/api/save',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json','Authorization':'tma '+initData()},body:JSON.stringify({data:S(),updatedAt:S().updatedAt})}).catch(()=>{});lastCloud=Date.now();}catch{}}
@@ -111,7 +112,7 @@ function renderCrew(){const d=crewDialog,R=G.REFERRAL_REWARDS,link=invite(),inTg
   `<h3 class="g-sub">Мой экипаж <span>${crew.count||0}</span></h3>${friends}<p class="g-feedback" id="crew-feedback" role="status"></p>`;
  wireClose(d);$('#crew-copy').onclick=async()=>{const ok=await copy(link);$('#crew-feedback').textContent=ok?'Ссылка скопирована. Отправь её другу!':'Не удалось скопировать — нажми «Отправить приглашение».';if(ok)haptic();};
  $('#crew-invite').onclick=()=>shareChat('invite');if($('#crew-story'))$('#crew-story').onclick=shareStory;}
-function openCrew(){renderCrew();open('crew');if(online)api('/api/crew',{}).then(r=>{crew=r.crew||crew;if(crewDialog.open)renderCrew();}).catch(()=>{});}
+function openCrew(){renderCrew();open('crew');if(online)api('/api/crew',{}).then(r=>{setCrew(r.crew);if(crewDialog.open)renderCrew();}).catch(()=>{});}
 
 // «Поделиться»
 const shareDialog=dialog('share','share-dialog');let shareContext='invite';
@@ -143,7 +144,7 @@ function renderTasks(){const d=tasksDialog,s=S(),ch=String(cfg.CHANNEL_USERNAME|
  const socials=socialTasks().map(t=>{const ss=G.socialState(s,t.id);const btn=ss.state==='claimed'?`<i class="tr-done">${ICON.check}</i>`:ss.state==='ready'?`<button class="tr-btn gold" data-social-claim="${t.id}">Забрать</button>`:ss.state==='waiting'?`<button class="tr-btn" disabled>0:${String(Math.ceil(ss.left/1000)).padStart(2,'0')}</button>`:`<button class="tr-btn" data-social-open="${t.id}">Открыть</button>`;
   return row(ICON[t.id],t.title,ss.state==='waiting'?'Проверяем переход…':ss.state==='ready'?'Готово — забери награду':t.name+' · MOONKATTY',ss.state==='claimed'?'':chips(t.reward,'small'),btn,ss.state);}).join('');
  d.innerHTML=head('ЗАДАНИЯ · БОНУСЫ','Связь с Землёй','tasks')+
-  `<p class="g-lead">Помоги экспедиции стать известной — за каждое задание кристаллы и металл.</p>`+channel+
+  `<p class="g-lead">Помоги экспедиции стать известной — за каждое задание кристаллы и металл.</p>`+channel+(window.MoonTeamUI?window.MoonTeamUI.codeCard():'')+
   `<div class="task-list">`+
    row(ICON.gift,'Вахта на базе',st.claimed?'День '+st.day+' из 7 · награда получена':'День '+st.day+' из 7 · награда ждёт',st.claimed?'':chips(st.reward,'small'),`<button class="tr-btn ${st.claimed?'':'gold'}" data-go="streak">${st.claimed?'Открыть':'Забрать'}</button>`,st.claimed?'claimed':'ready')+
    row(ICON.crew,'Пригласи друга','Награда за каждого члена экипажа',chips(G.REFERRAL_REWARDS.full,'small'),'<button class="tr-btn" data-go="crew">Позвать</button>')+
@@ -154,7 +155,7 @@ function renderTasks(){const d=tasksDialog,s=S(),ch=String(cfg.CHANNEL_USERNAME|
  d.querySelectorAll('[data-social-open]').forEach(b=>b.onclick=()=>{const id=b.dataset.socialOpen;G.startSocial(S(),id);Game.save();openUrl(cfg.SOCIAL[id]);renderTasks();});
  d.querySelectorAll('[data-social-claim]').forEach(b=>b.onclick=()=>{const r=G.claimSocial(S(),b.dataset.socialClaim);if(r.ok){haptic();commit();}toast(r.text);renderTasks();});
  if($('#channel-open'))$('#channel-open').onclick=()=>{openUrl('https://t.me/'+ch);channelMsg='Подписался? Нажми «Проверить».';renderTasks();};
- if($('#channel-check'))$('#channel-check').onclick=checkChannel;}
+ if($('#channel-check'))$('#channel-check').onclick=checkChannel;window.MoonTeamUI?.wireCode?.(d);}
 async function checkChannel(){if(channelBusy||!online)return;channelBusy=true;renderTasks();try{const r=await api('/api/channel/check',{});if(r.member){channelInfo.rewarded=true;S().growth.channel=true;if(r.reward)applyServerRewards([r.reward]);else commit();channelMsg='';haptic();}else{channelMsg=r.error==='channel_not_configured'?'Проверка канала ещё настраивается.':'Пока не видим подписку. Подпишись и нажми «Проверить» ещё раз.';haptic('warning');}}catch{channelMsg='Нет связи с сервером. Попробуй чуть позже.';}channelBusy=false;renderTasks();}
 function openTasks(){renderTasks();open('tasks');}
 
@@ -182,5 +183,5 @@ function maybeShowStreak(delay=900){setTimeout(()=>{const s=S();if(document.quer
 // Wait briefly for telegram-web-app.js (loaded async by telegram-viewport.js) before talking to the server.
 let waited=0;(function waitTelegram(){if(tg()?.initData||waited>=2500||!API){boot();return;}waited+=250;setTimeout(waitTelegram,250);})();
 maybeShowStreak(1100);
-window.MoonGrowthUI={openStreak,openCrew,openTasks,openShare,maybeStreak:maybeShowStreak,get online(){return online;},renderAll};
+window.MoonGrowthUI={openStreak,openCrew,openTasks,openShare,maybeStreak:maybeShowStreak,api,kit:{ICON,chips,dialog,open,head,wireClose,haptic,commit,esc,plural},get crew(){return crew;},get user(){return serverUser;},get online(){return online;},renderAll};
 })();

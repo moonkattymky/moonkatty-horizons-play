@@ -9,23 +9,23 @@ const CH1={img:A+'ch1-awakening.jpg',from:[.46,.30,1.24],to:[.52,.37,1.04],sky:.
  title:['Жизнь #1','Пробуждение'],kicker:'ЗАДАНИЕ',text:'Найди бортовой журнал у аварийной капсулы. Вдруг в нём сигнал экипажа?',mood:'title',mark:'ch1'};
 const SCENES={
  intro:{name:'Вступление',frames:chapter=>[
-  {img:A+'intro-1-voyage.jpg',from:[.665,.47,1.16],to:[.44,.42,1.34],sky:1,fx:['stars','ship'],ship:{from:[.668,.448],to:[.40,.36]},glows:[[.70,.43,.09,'earth']],
+  {img:A+'intro-1-voyage.jpg',from:[.40,.50,1.06],to:[.62,.42,1.0],sky:.8,fx:['stars','dust'],glows:[[.285,.585,.035,'amber'],[.25,.62,.03,'amber'],[.725,.25,.12,'earth'],[.10,.39,.03,'earth']],
    kicker:'ЭКСПЕДИЦИЯ «НОВЫЕ ГОРИЗОНТЫ»',text:'Корабль «Горизонт» несёт к Луне кота-космонавта MOONKATTY и его экипаж.',mood:'space'},
-  {img:A+'intro-2-crash.jpg',from:[.5,.20,1.34],to:[.5,.52,1.06],sky:.3,fx:['meteors','fall','dust'],impact:{at:2400,x:.5,y:.56},glows:[[.72,.27,.05,'amber'],[.62,.25,.04,'amber'],[.26,.11,.14,'gold']],
+  {img:A+'intro-2-crash.jpg',from:[.49,.46,1.16],to:[.47,.64,1.02],sky:.25,fx:['meteors','fall','dust'],impact:{at:2400,x:.44,y:.70},glows:[[.47,.66,.05,'amber'],[.58,.45,.035,'amber'],[.64,.30,.03,'amber'],[.45,.18,.09,'earth']],
    kicker:'ТРЕВОГА · МЕТЕОРИТНЫЙ ПОТОК',text:'Удар! Капсулу отрывает от корабля, и она падает в лунный каньон.',mood:'danger'},
-  {img:A+'intro-3-capsule.jpg',from:[.5,.44,1.45],to:[.5,.44,1.14],fx:['wake','alarm','dust'],glows:[[.5,.355,.05,'gold']],
+  {img:A+'intro-3-capsule.jpg',from:[.58,.38,1.3],to:[.55,.42,1.04],fx:['wake','alarm','dust'],glows:[[.955,.235,.025,'amber'],[.27,.04,.02,'amber'],[.12,.42,.08,'earth']],
    kicker:'КАПСУЛА · СВЯЗИ НЕТ',text:'…Тишина. Мигает аварийный свет. Экипаж не отвечает.',mood:'alarm'},
-  {img:A+'intro-4-earth.jpg',from:[.40,.72,1.30],to:[.50,.34,1.03],sky:.22,fx:['stars','dust'],glows:[[.52,.865,.07,'gold'],[.17,.47,.05,'amber'],[.36,.68,.05,'gold']],
+  {img:A+'intro-4-earth.jpg',from:[.34,.58,1.14],to:[.66,.44,1.0],sky:.3,fx:['stars','dust'],glows:[[.085,.69,.03,'blue'],[.43,.84,.035,'blue'],[.79,.33,.2,'earth'],[.80,.78,.03,'amber']],
    kicker:'MOONKATTY',text:'Там, над горизонтом, — Земля. Девять жизней, одна Вселенная. Пора найти своих.',mood:'hope'},
   ...(chapter===1?[CH1]:[])],marks:chapter=>chapter===1?['intro','ch1']:['intro']},
  ch1:{name:'Жизнь #1 · Пробуждение',frames:()=>[CH1],marks:()=>['ch1']},
  ch2:{name:'Жизнь #2 · Экипаж',frames:()=>[
-  {img:A+'ch2-crew.jpg',from:[.84,.48,1.22],to:[.40,.46,1.06],sky:.42,fx:['stars','dust'],glows:[[.68,.62,.04,'amber'],[.735,.6,.035,'amber'],[.89,.27,.03,'blue'],[.42,.9,.12,'violet']],
+  {img:A+'ch2-crew.jpg',from:[.44,.46,1.12],to:[.76,.56,1.0],sky:.42,fx:['stars','dust'],glows:[[.27,.64,.04,'blue'],[.03,.86,.04,'blue'],[.95,.86,.04,'blue'],[.84,.33,.03,'amber'],[.12,.33,.16,'earth']],
    kicker:'СИГНАЛ НАЙДЕН',text:'Координаты получены! Лагерь экипажа совсем рядом — за кратером.',mood:'hope'},
   {img:A+'ch2-camp.jpg',from:[.5,.30,1.26],to:[.5,.36,1.04],sky:.25,fx:['stars','dust'],glows:[[.64,.43,.04,'amber'],[.58,.44,.035,'amber'],[.875,.265,.03,'blue'],[.3,.5,.12,'violet']],
    title:['Жизнь #2','Экипаж'],kicker:'ЗАДАНИЕ',text:'Инженер, штурман и разведчик ждут помощи. Почини ранец, зажги маяки и построй общую базу.',mood:'title',mark:'ch2'}],marks:()=>['ch2']},
  ch3:{name:'Жизнь #3 · Тайна сигнала',frames:()=>[
-  {img:A+'ch3-signal.jpg',from:[.86,.36,1.30],to:[.42,.50,1.06],sky:.4,fx:['stars','signal','dust'],signal:[.84,.40],glows:[[.07,.62,.05,'blue'],[.18,.86,.05,'blue'],[.95,.7,.04,'blue'],[.52,.40,.06,'blue']],
+  {img:A+'ch3-signal.jpg',from:[.34,.62,1.12],to:[.76,.40,1.0],sky:.4,fx:['stars','signal','dust'],signal:[.865,.16],glows:[[.33,.61,.04,'blue'],[.04,.66,.04,'blue'],[.95,.62,.04,'blue'],[.86,.67,.03,'amber']],
    kicker:'НОЧНАЯ ПЕРЕДАЧА',text:'Ночью инженер ловит странный сигнал. Его передаёт старая обсерватория на юге.',mood:'mystery'},
   {img:A+'ch3-observatory.jpg',from:[.5,.28,1.26],to:[.5,.36,1.04],sky:.24,fx:['stars','signal','dust'],signal:[.86,.33],glows:[[.06,.5,.06,'blue'],[.52,.33,.06,'blue'],[.78,.22,.16,'earth']],
    title:['Жизнь #3','Тайна сигнала'],kicker:'ЗАДАНИЕ',text:'Найди три записи старой экспедиции, расшифруй архив и забери чертёж ракеты.',mood:'title',mark:'ch3'}],marks:()=>['ch3']},
