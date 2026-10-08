@@ -1,0 +1,54 @@
+/* Expedition interface: fewer floating panels, readable touch controls. */
+header{top:max(14px,env(safe-area-inset-top));left:14px;right:14px;gap:10px}
+.brand{font-size:17px;letter-spacing:1.2px}.brand span{font-size:8px;letter-spacing:2.4px}
+.inventory span{padding:6px 7px;min-height:36px;font-size:14px}.inventory i{width:20px;height:24px;background-size:40px 48px}
+#menu{height:44px;width:40px;font-size:20px}
+#expedition-hud{top:max(73px,calc(env(safe-area-inset-top) + 62px));width:min(390px,calc(100% - 28px))}
+#expedition-hud .mission{background:linear-gradient(115deg,#103453dc,#081f36ce);padding:7px 11px;border-radius:14px}
+#chapter-title{font-size:11px;letter-spacing:.4px}.mission #objective{font-size:15px;line-height:1.35;padding-bottom:4px}
+#expedition-hud .mission p{font-size:13px;line-height:1.5;margin:4px 0 8px}
+#mission-toggle{width:44px;height:36px;background:#183e56a0}
+.quick-tools{gap:4px}.quick-tools button,.quick-tools #world-map-button{position:static;inset:auto;width:38px;height:42px;min-height:42px;border-radius:11px;padding:0;font-size:22px;margin:0;background:#0a2943ce;color:#ddf3ff}
+#expedition-hud #collection{font-size:12px;min-height:42px;padding:6px 8px;gap:5px}#collection b{font-size:12px}
+#expedition-hud #destination{font-size:11px;min-height:42px;padding:5px 7px;max-width:96px}
+.controls{bottom:max(64px,calc(env(safe-area-inset-bottom) + 43px))}
+.actions button span,.actions #interact span{font-size:13px;width:100px;left:-15px;min-height:29px;padding:5px 3px;line-height:1.25}
+.fuel{font-size:11px;width:116px;bottom:max(163px,calc(env(safe-area-inset-bottom) + 142px))}
+footer{font-size:10px;gap:7px;line-height:1.2}footer>span{padding:4px 6px}
+.world-label{font-size:13px;background:#082940df;border:1px solid #93c6de6c;color:#f1f7fc;border-radius:9px;padding:6px 9px;box-shadow:0 2px 9px #05162638}
+dialog{border-radius:20px;background:radial-gradient(ellipse at 100% 0,#204963,#0b2133 60%);border-color:#769eb266}
+dialog p,dialog button,.setting,.setting select{font-size:14px;line-height:1.5}dialog button{min-height:46px}dialog .small{font-size:12px!important}
+.chapter-card div{font-size:15px}.chapter-card small{font-size:12px}
+.equipment-card .effect{font-size:12px}.equipment-card .status{font-size:11px}.equipment-card strong{font-size:15px}
+#collection-summary,.collection-wallet,.daily-panel p,#card-condition,#card-feedback,#daily-feedback{font-size:13px}.daily-panel small{font-size:11px}
+#expeditions{width:min(720px,calc(100% - 24px));padding:22px}
+#expeditions-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.contract-card{border:1px solid #7db2cd4d;border-radius:16px;padding:16px;background:linear-gradient(135deg,#18405980,#0c273fc0)}
+.contract-card small{font-size:11px;color:#9acddb}.contract-card h3{font-size:19px;margin:9px 0}.contract-card p{font-size:13px;color:#c1d9e5;line-height:1.5;margin:8px 0}
+.contract-card .contract-status{color:#84e8e1;font-size:12px}.contract-reward{display:block;color:#f3d593;font-size:14px;margin:12px 0 4px}.contract-card button{width:100%;margin-bottom:0}
+#expeditions-feedback{color:#f2cd8a;font-size:14px}
+.relay-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:20px 0;position:relative;border-left:4px solid #64d8da;border-right:4px solid #e4c37a;padding:8px}
+.relay-grid button{aspect-ratio:1;padding:0;margin:0;position:relative;background:#10283c;border:1px solid #55748c;border-radius:12px;touch-action:manipulation}
+.relay-grid svg{width:100%;height:100%;stroke:#637f96;stroke-width:9;stroke-linecap:round;fill:none}.relay-grid [data-powered=true]{background:#164151;border-color:#88e6e1}.relay-grid [data-powered=true] svg{stroke:#7be7de;filter:drop-shadow(0 0 4px #66dccc66)}
+.relay-grid button span{position:absolute;left:7px;top:3px;color:#99b2c3;font-size:10px}
+@media(max-width:600px){#expeditions-list{grid-template-columns:1fr}#expeditions{padding:18px}}
+@media(max-width:375px){.brand{font-size:14px;letter-spacing:.8px}.brand span{letter-spacing:1.4px}.inventory span{padding:5px;font-size:12px}.inventory i{width:17px}.hud-tools{gap:4px}.quick-tools button,.quick-tools #world-map-button{width:34px}#expedition-hud #collection{font-size:11px;padding:5px}#expedition-hud #destination{font-size:10px;padding:5px}.mission #objective{font-size:14px}}
+:root[data-short-viewport=true] #expedition-hud{top:62px}
+:root[data-short-viewport=true] .mission #objective{font-size:14px}
+:root[data-short-viewport=true] #expedition-hud .mission p{font-size:12px;line-height:1.4}
+:root[data-short-viewport=true] #mission-toggle{height:32px}
+:root[data-short-viewport=true] .actions button span,:root[data-short-viewport=true] .actions #interact span{font-size:11px;width:88px;left:-16px;min-height:26px;padding:4px 2px}
+:root[data-short-viewport=true] .actions button,:root[data-short-viewport=true] .actions #interact,:root[data-short-viewport=true] .actions #fly{width:62px;height:62px;min-height:62px}
+:root[data-short-viewport=true] footer{font-size:9px}
+@media(max-height:500px){#expedition-hud{top:59px;width:310px}.mission #objective{font-size:13px}.quick-tools button,.quick-tools #world-map-button,#expedition-hud #collection{height:36px;min-height:36px}.actions button span,.actions #interact span{font-size:11px}.controls{bottom:42px}.fuel{bottom:125px}.cover h1{font-size:32px}}
+
+/* Main-screen navigation stays above the full-screen chapter artwork. */
+.cover .cover-art{pointer-events:none}
+.cover .cover-menu{position:absolute;top:max(18px,env(safe-area-inset-top));right:18px;width:auto;min-height:46px;margin:0;padding:11px 17px;display:flex;align-items:center;gap:10px;border:1px solid #e9c67a8c;background:#0c283ee8;color:#ffe4b5;box-shadow:0 6px 24px #03122266;font-size:15px;z-index:1}
+.cover .cover-copy{max-height:calc(100% - 58px);overflow-y:auto;touch-action:pan-y;overscroll-behavior:contain;width:min(540px,100%)}
+.cover-navigation,.menu-navigation{display:grid;gap:8px;grid-template-columns:repeat(3,minmax(0,1fr));max-width:340px;margin-top:12px}
+.cover .cover-navigation button{display:block;width:100%;min-height:46px;margin:0;padding:10px 5px;background:#12334cdb;border:1px solid #9dc9de66;color:#e5f3fa;font-size:12px;font-weight:600;border-radius:11px}
+.menu-navigation{grid-template-columns:repeat(2,minmax(0,1fr));max-width:none;margin:16px 0 20px}
+.menu-navigation button{margin:0;min-height:46px}
+.menu-chapters-title{font-size:13px;color:#e9c67a;margin:18px 0 4px}
+@media(max-height:500px){.cover .cover-menu{top:12px;right:14px;min-height:44px;padding:8px 13px}.cover .cover-copy{max-height:calc(100% - 48px)}.cover-navigation{margin-top:8px}}
