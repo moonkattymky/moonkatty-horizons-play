@@ -6,7 +6,11 @@ if(typeof _t==='undefined'&&typeof require==='function')require('./i18n.js');
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.MoonCinemaCore=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
 const A='assets/cinema/';
 // Glow spots [x, y, radius (fraction of image width), colour] pulse softly over windows, crystals, beacons and Earth.
-const CH1={img:A+'ch1-awakening.jpg',from:[.46,.30,1.24],to:[.52,.37,1.04],sky:.27,fx:['stars','dust'],glows:[[.665,.315,.06,'blue'],[.04,.47,.07,'blue'],[.6,.485,.05,'blue'],[.8,.2,.16,'earth']],
+// v38 chapter covers are 16:9 (1280×720). On a portrait phone only ~26% of the width is visible, so each title card pans
+// from the cat to the story object. V busts GitHub Pages / Telegram caches of the old portrait files that kept the same names.
+const V='?v=38';
+// Optional titleY (fraction of the screen height) moves the title card off the key object; default 66%.
+const CH1={img:A+'ch1-awakening.jpg'+V,from:[.355,.42,1.08],to:[.60,.62,1.1],sky:.3,fx:['stars','dust'],glows:[[.415,.51,.05,'blue'],[.60,.54,.05,'amber'],[.083,.68,.03,'blue'],[.168,.835,.035,'blue'],[.79,.85,.035,'blue'],[.915,.75,.03,'blue'],[.78,.23,.14,'earth']],
  title:[_t('life.n',{n:1}),_t('chapter.1')],kicker:_t('cine.zadanie'),text:_t('cine.naydi_bortovoy'),mood:'title',mark:'ch1'};
 const SCENES={
  intro:{name:_t('cine.vstuplenie'),frames:chapter=>[
@@ -23,12 +27,12 @@ const SCENES={
  ch2:{name:_t('life.title',{n:2,name:_t('chapter.2')}),frames:()=>[
   {img:A+'ch2-crew.jpg',from:[.44,.46,1.12],to:[.76,.56,1.0],sky:.42,fx:['stars','dust'],glows:[[.27,.64,.04,'blue'],[.03,.86,.04,'blue'],[.95,.86,.04,'blue'],[.84,.33,.03,'amber'],[.12,.33,.16,'earth']],
    kicker:_t('cine.signal_nayden'),text:_t('cine.koordinaty_poluche'),mood:'hope'},
-  {img:A+'ch2-camp.jpg',from:[.5,.30,1.26],to:[.5,.36,1.04],sky:.25,fx:['stars','dust'],glows:[[.64,.43,.04,'amber'],[.58,.44,.035,'amber'],[.875,.265,.03,'blue'],[.3,.5,.12,'violet']],
+  {img:A+'ch2-camp.jpg'+V,from:[.30,.5,1.12],to:[.635,.5,1.04],sky:.24,titleY:.3,fx:['stars','dust'],glows:[[.08,.43,.05,'amber'],[.25,.43,.045,'amber'],[.57,.62,.055,'blue'],[.855,.80,.045,'blue'],[.72,.86,.035,'blue'],[.945,.74,.03,'blue'],[.852,.125,.05,'earth'],[.5,.22,.13,'violet']],
    title:[_t('life.n',{n:2}),_t('chapter.2')],kicker:_t('cine.zadanie'),text:_t('cine.inzhener_shturman'),mood:'title',mark:'ch2'}],marks:()=>['ch2']},
  ch3:{name:_t('life.title',{n:3,name:_t('chapter.3')}),frames:()=>[
   {img:A+'ch3-signal.jpg',from:[.34,.62,1.12],to:[.76,.40,1.0],sky:.4,fx:['stars','signal','dust'],signal:[.865,.16],glows:[[.33,.61,.04,'blue'],[.04,.66,.04,'blue'],[.95,.62,.04,'blue'],[.86,.67,.03,'amber']],
    kicker:_t('cine.nochnaya_peredacha'),text:_t('cine.nochyu_inzhener'),mood:'mystery'},
-  {img:A+'ch3-observatory.jpg',from:[.5,.28,1.26],to:[.5,.36,1.04],sky:.24,fx:['stars','signal','dust'],signal:[.86,.33],glows:[[.06,.5,.06,'blue'],[.52,.33,.06,'blue'],[.78,.22,.16,'earth']],
+  {img:A+'ch3-observatory.jpg'+V,from:[.34,.95,1.07],to:[.52,.32,1.0],sky:.3,fx:['stars','signal','dust'],signal:[.615,.235],glows:[[.366,.373,.03,'blue'],[.43,.60,.06,'blue'],[.43,.82,.035,'blue'],[.08,.61,.035,'blue'],[.70,.77,.04,'blue'],[.62,.70,.03,'blue'],[.84,.165,.095,'earth']],
    title:[_t('life.n',{n:3}),_t('chapter.3')],kicker:_t('cine.zadanie'),text:_t('cine.naydi_tri'),mood:'title',mark:'ch3'}],marks:()=>['ch3']},
  crystal:{name:_t('cine.pervyy_kristall'),flash:true,frames:()=>[
   {kind:'flash',img:A+'crystal.webp',dur:5600,kicker:_t('cine.nahodka'),title:[_t('cine.kristall_nayden'),''],text:_t('cine.golubye_kristally'),mood:'chime'}],marks:()=>['crystal']}

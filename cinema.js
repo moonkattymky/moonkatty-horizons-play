@@ -85,7 +85,7 @@ async function nextFrame(){const i=P.i+1;if(i>=P.frames.length)return finish(fal
  P.start=performance.now();P.paused=0;P.dur=C.frameDuration(f);if(i>0)Sound.whoosh();Sound.setMood(f.mood);
  if(f.fx.includes('fall'))P.fall={t0:500,t1:f.impact.at,x:f.impact.x,y:f.impact.y,hit:false};
  // title card + subtitles
- titleBox.classList.remove('show');if(f.title){titleBox.querySelector('h2').textContent=f.title[0];titleBox.querySelector('p').textContent=f.title[1];setTimeout(()=>P&&P.frames[P.i]===f&&titleBox.classList.add('show'),450);}
+ titleBox.classList.remove('show');if(f.titleY)titleBox.style.setProperty('--title-y',Math.round(f.titleY*100)+'%');else titleBox.style.removeProperty('--title-y');if(f.title){titleBox.querySelector('h2').textContent=f.title[0];titleBox.querySelector('p').textContent=f.title[1];setTimeout(()=>P&&P.frames[P.i]===f&&titleBox.classList.add('show'),450);}
  subtitle(f,f.title?1300:C.TYPE_DELAY);}
 function subtitle(f,delay){sub.classList.remove('show','typed');kick.textContent=f.kicker||'';const chars=[...(f.text||'')];
  text.innerHTML=chars.map((ch,k)=>`<span style="animation-delay:${delay+k*C.CHAR_MS}ms">${ch===' '?' ':ch.replace(/[<>&]/g,'')}</span>`).join('');void sub.offsetWidth;sub.classList.add('show');
