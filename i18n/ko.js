@@ -847,5 +847,8 @@
  "rules.q6":"Moon Points를 살 수 있나요?",
  "rules.a6":"아니요. Moon Points는 게임 안에서만 벌 수 있어요: 스토리, 기지 출석, 미션, 코드, 친구. Telegram Stars로는 외형과 편의만 살 수 있어요.",
  "rules.q7":"시즌이 끝나면 어떻게 되나요?",
- "rules.a7":"시즌 포인트와 시즌 순위가 0부터 다시 시작해요. Moon Points 잔액, 프레임, 배지는 그대로 남아요. 받지 않은 패스 보상은 시즌과 함께 사라지니 제때 받으세요."
+ "rules.a7":"시즌 포인트와 시즌 순위가 0부터 다시 시작해요. Moon Points 잔액, 프레임, 배지는 그대로 남아요. 받지 않은 패스 보상은 시즌과 함께 사라지니 제때 받으세요.",
+ "season.eyebrow_week":"주간 시즌",
+ "season.title_wk":"{n}주차 · {dates}",
+ "season.task_sub_week":"주간 패스와 공동 목표"
 });

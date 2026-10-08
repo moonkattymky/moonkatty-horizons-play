@@ -847,5 +847,8 @@
  "rules.q6":"可以购买 Moon Points 吗？",
  "rules.a6":"不可以。Moon Points 只能在游戏中获得：剧情、基地签到、任务、信号码和好友。Telegram Stars 只能购买外观和便利。",
  "rules.q7":"赛季结束后会怎样？",
- "rules.a7":"赛季积分和赛季排行榜从零开始。你的 Moon Points 余额、名字框和徽章都会保留。未领取的通行证奖励会随赛季结束而失效，请及时领取。"
+ "rules.a7":"赛季积分和赛季排行榜从零开始。你的 Moon Points 余额、名字框和徽章都会保留。未领取的通行证奖励会随赛季结束而失效，请及时领取。",
+ "season.eyebrow_week":"每周赛季",
+ "season.title_wk":"第 {n} 周 · {dates}",
+ "season.task_sub_week":"每周通行证和共同目标"
 });

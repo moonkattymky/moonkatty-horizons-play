@@ -847,5 +847,8 @@
  "rules.q6":"Can I buy Moon Points?",
  "rules.a6":"No. Moon Points are earned only in the game: story, daily watch, tasks, codes and friends. Telegram Stars buy only cosmetics and comfort.",
  "rules.q7":"What happens when a season ends?",
- "rules.a7":"Season points and the season leaderboard start from zero. Your Moon Points balance, frames and badges stay with you. Unclaimed pass rewards expire with the season, so collect them in time."
+ "rules.a7":"Season points and the season leaderboard start from zero. Your Moon Points balance, frames and badges stay with you. Unclaimed pass rewards expire with the season, so collect them in time.",
+ "season.eyebrow_week":"Weekly season",
+ "season.title_wk":"Week {n} · {dates}",
+ "season.task_sub_week":"weekly pass and shared goal"
 });

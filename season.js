@@ -19,7 +19,11 @@ const IC={
 // ---------- state: server (online) or the honest offline view ----------
 function state(){const st=UI.online&&UI.stage3&&UI.stage3.season?UI.stage3:null;if(st)return{online:true,...st,shop:st.shop||SC.offlineView().shop};
  const off=SC.offlineView(Date.now());const cos=S().growth.cos||{owned:[],frame:''};off.shop.owned=cos.owned.slice();off.shop.frame=cos.frame;off.shop.items.forEach(i=>i.owned=cos.owned.includes(i.id));return{online:false,...off};}
-function seasonName(s){if(s.length==='week')return _t('season.title_week',{n:iso(s.id.slice(-2).replace(/^0/,''))});
+const weekNo=s=>iso(s.id.slice(-2).replace(/^0/,''));
+// v39.1 weekly seasons: «Week 41 · Oct 5 – 11» in the season header (dates in the player's language, UTC).
+function weekDates(s){try{const f=new Intl.DateTimeFormat(lang(),{month:'short',day:'numeric',timeZone:'UTC'});return f.formatRange?f.formatRange(new Date(s.start),new Date(s.end-1)):f.format(new Date(s.start))+' – '+f.format(new Date(s.end-1));}catch{return'';}}
+function seasonTitle(s){if(s.length!=='week')return seasonName(s);const dates=weekDates(s);return dates?_t('season.title_wk',{n:weekNo(s),dates}):seasonName(s);}
+function seasonName(s){if(s.length==='week')return _t('season.title_week',{n:weekNo(s)});
  let month=s.id;try{const parts=new Intl.DateTimeFormat(lang(),{month:'long',year:'numeric',timeZone:'UTC'}).formatToParts(new Date(s.start+86400000));
   if(parts.length&&parts[parts.length-1].type==='literal'&&/\.\s*$/.test(parts[parts.length-1].value))parts.pop();/* «октябрь 2026 г.» → «октябрь 2026» */month=parts.map(p=>p.value).join('').trim();}catch{}return _t('season.title_month',{month});}
 function leftText(s){const t=SC.timeLeft(s.end);return t.days?_t('season.left_days',{n:t.days}):_t('season.left_hours',{n:t.hours});}
@@ -62,7 +66,7 @@ function shop(st){const sh=st.shop,pay=canPay(st),owned=new Set(sh.owned||[]);
  return`<h3 class="g-sub">${_t('shop.title')}</h3><p class="sh-note">${_t('shop.note')}</p>${note?`<p class="sn-off">${note}</p>`:''}<div class="sh-grid">${items}</div>${wear}`+
   (msg.shop?`<p class="g-feedback" role="status">${esc(msg.shop)}</p>`:'')+`<p class="g-note pts-disclaimer">${_t('points.disclaimer')}</p>`;}
 function render(){const st=state(),y=d.scrollTop;
- d.innerHTML=head(_t('season.eyebrow'),esc(seasonName(st.season)),'season')+hero(st)+pass(st)+goal(st)+shop(st);d.scrollTop=y;
+ d.innerHTML=head(_t(st.season.length==='week'?'season.eyebrow_week':'season.eyebrow'),esc(seasonTitle(st.season)),'season')+hero(st)+pass(st)+goal(st)+shop(st);d.scrollTop=y;
  wireClose(d);d.querySelectorAll('[data-tier]').forEach(b=>b.onclick=()=>claimTier(Number(b.dataset.tier)));d.querySelectorAll('[data-goal]').forEach(b=>b.onclick=()=>claimGoal(b.dataset.goal));
  d.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>buy(b.dataset.buy));d.querySelectorAll('[data-frame]').forEach(b=>b.onclick=()=>wear(b.dataset.frame));
  const lb=$('#sn-board');if(lb)lb.onclick=()=>{d.close();window.MoonTeamUI?.openLeaders?.('season');};}
@@ -85,7 +89,7 @@ async function refresh(){if(!UI.online)return;try{const r=await UI.api('/api/sea
 function openSeason(){msg={};render();openDialog('season');d.scrollTop=0;refresh();}
 // ---------- entry points: cover pill, main menu row, a row in «Связь с Землёй», season tab in the leaderboard ----------
 function taskRow(){const st=state(),s=st.season,ready=st.online&&s.tiers.some(t=>t.ready&&!t.claimed)||st.online&&st.goal.claimable;
- return`<div class="task-row season-row ${ready?'ready':''}"><span class="tr-icon">${IC.trophy}</span><span class="tr-text"><b>${esc(seasonName(s))}</b><small>${leftText(s)} · ${_t('season.task_sub')}</small></span><span class="tr-side"><button class="tr-btn ${ready?'gold':''}" data-go="season">${ready?_t('season.claim'):_t('growth.otkryt')}</button></span></div>`;}
+ return`<div class="task-row season-row ${ready?'ready':''}"><span class="tr-icon">${IC.trophy}</span><span class="tr-text"><b>${esc(seasonName(s))}</b><small>${leftText(s)} · ${_t(s.length==='week'?'season.task_sub_week':'season.task_sub')}</small></span><span class="tr-side"><button class="tr-btn ${ready?'gold':''}" data-go="season">${ready?_t('season.claim'):_t('growth.otkryt')}</button></span></div>`;}
 function mount(){const tools=$('#cover .cover-tools');
  if(tools&&!$('#cover-season')){const b=document.createElement('button');b.type='button';b.id='cover-season';b.className='cover-season';b.setAttribute('aria-haspopup','dialog');b.addEventListener('click',()=>openSeason());tools.append(b);}
  const rules=$('#menu-rules');if(rules&&!$('#menu-season')){const b=document.createElement('button');b.type='button';b.id='menu-season';b.className='menu-lang menu-rules menu-season';b.addEventListener('click',()=>openSeason());rules.after(b);}

@@ -847,5 +847,8 @@
  "rules.q6":"¿Puedo comprar Moon Points?",
  "rules.a6":"No. Los Moon Points solo se ganan jugando: historia, guardia diaria, tareas, códigos y amigos. Con Telegram Stars solo se compran aspecto y comodidad.",
  "rules.q7":"¿Qué pasa cuando termina una temporada?",
- "rules.a7":"Los puntos y la clasificación de temporada vuelven a cero. Tu saldo de Moon Points, tus marcos y tus insignias se quedan contigo. Las recompensas del pase no recogidas caducan con la temporada, así que recógelas a tiempo."
+ "rules.a7":"Los puntos y la clasificación de temporada vuelven a cero. Tu saldo de Moon Points, tus marcos y tus insignias se quedan contigo. Las recompensas del pase no recogidas caducan con la temporada, así que recógelas a tiempo.",
+ "season.eyebrow_week":"Temporada semanal",
+ "season.title_wk":"Semana {n} · {dates}",
+ "season.task_sub_week":"pase semanal y meta común"
 });

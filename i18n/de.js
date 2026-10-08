@@ -847,5 +847,8 @@
  "rules.q6":"Kann ich Moon Points kaufen?",
  "rules.a6":"Nein. Moon Points verdienst du nur im Spiel: Story, Basiswache, Aufgaben, Codes und Freunde. Für Telegram Stars gibt es nur Aussehen und Komfort.",
  "rules.q7":"Was passiert, wenn eine Saison endet?",
- "rules.a7":"Saisonpunkte und Saison-Rangliste starten bei null. Dein Guthaben an Moon Points, deine Rahmen und Abzeichen bleiben dir. Nicht abgeholte Pass-Belohnungen verfallen mit der Saison – hol sie also rechtzeitig ab."
+ "rules.a7":"Saisonpunkte und Saison-Rangliste starten bei null. Dein Guthaben an Moon Points, deine Rahmen und Abzeichen bleiben dir. Nicht abgeholte Pass-Belohnungen verfallen mit der Saison – hol sie also rechtzeitig ab.",
+ "season.eyebrow_week":"Wochensaison",
+ "season.title_wk":"Woche {n} · {dates}",
+ "season.task_sub_week":"Wochenpass und gemeinsames Ziel"
 });

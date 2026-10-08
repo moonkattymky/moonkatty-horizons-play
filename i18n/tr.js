@@ -847,5 +847,8 @@
  "rules.q6":"Moon Points satın alabilir miyim?",
  "rules.a6":"Hayır. Moon Points yalnızca oyunda kazanılır: hikâye, üs nöbeti, görevler, kodlar ve arkadaşlar. Telegram Stars ile yalnızca görünüm ve kolaylık alınır.",
  "rules.q7":"Bir sezon bitince ne olur?",
- "rules.a7":"Sezon puanı ve sezon sıralaması sıfırdan başlar. Moon Points bakiyen, çerçevelerin ve rozetlerin seninle kalır. Alınmayan kart ödülleri sezonla birlikte sona erer, onları zamanında al."
+ "rules.a7":"Sezon puanı ve sezon sıralaması sıfırdan başlar. Moon Points bakiyen, çerçevelerin ve rozetlerin seninle kalır. Alınmayan kart ödülleri sezonla birlikte sona erer, onları zamanında al.",
+ "season.eyebrow_week":"Haftalık sezon",
+ "season.title_wk":"{n}. hafta · {dates}",
+ "season.task_sub_week":"haftalık kart ve ortak hedef"
 });
