@@ -14,7 +14,8 @@ const SOCIAL_TASKS=[
  {id:'youtube',name:'YouTube',title:'Подпишись на YouTube',reward:{crystals:2}},
  {id:'tiktok',name:'TikTok',title:'Подпишись в TikTok',reward:{crystals:2}},
  {id:'instagram',name:'Instagram',title:'Подпишись в Instagram',reward:{crystals:2}},
- {id:'x',name:'X',title:'Читай MOONKATTY в X',reward:{crystals:2}}];
+ {id:'x',name:'X',title:'Читай MOONKATTY в X',reward:{crystals:2}},
+ {id:'chat',name:'Telegram',title:'Вступи в чат экипажа',reward:{crystals:2}}];
 const BADGE_NAMES={watch7:'Вахта · 7 дней',channel:'Связист',crew1:'Первый в экипаже',crew5:'Командир экипажа'};
 
 function localDay(now=Date.now()){const d=new Date(now);return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}

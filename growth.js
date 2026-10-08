@@ -37,7 +37,7 @@ function tgUser(){const u=tg()?.initDataUnsafe?.user;return u&&Number.isFinite(N
 function myId(){return serverUser?.id||(tgUser()?String(tgUser().id):'');}
 function invite(){return G.inviteLink(cfg,myId());}
 function startParam(){let v=tg()?.initDataUnsafe?.start_param||'';if(!v){try{const q=new URLSearchParams(location.search);v=q.get('tgWebAppStartParam')||q.get('startapp')||q.get('start')||'';}catch{}}return G.parseStartParam(v);}
-function openUrl(url){const app=tg();try{if(app&&/^https:\/\/t\.me\//.test(url)&&app.openTelegramLink){app.openTelegramLink(url);return;}if(app?.openLink){app.openLink(url);return;}}catch{}window.open(url,'_blank','noopener');}
+function openUrl(url){const t=tg(),app=t&&t.initData&&t.platform!=='unknown'?t:null;/* outside Telegram the SDK would navigate the game tab away */try{if(app&&/^https:\/\/t\.me\//.test(url)&&app.openTelegramLink){app.openTelegramLink(url);return;}if(app?.openLink){app.openLink(url);return;}}catch{}window.open(url,'_blank','noopener');}
 function absolute(path){try{return new URL(path,location.href).href;}catch{return path;}}
 async function copy(text){try{if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(text);return true;}}catch{}try{const t=document.createElement('textarea');t.value=text;t.style.position='fixed';t.style.opacity='0';document.body.append(t);t.select();const ok=document.execCommand('copy');t.remove();return ok;}catch{return false;}}
 
@@ -134,7 +134,8 @@ function openShare(kind='invite'){shareContext=kind;renderShare();open('share');
 
 // Задания: канал + соцсети
 const tasksDialog=dialog('tasks','tasks-dialog');let channelBusy=false,channelMsg='';
-function socialTasks(){return G.SOCIAL_TASKS.filter(t=>/^https:\/\//.test(String(cfg.SOCIAL?.[t.id]||'')));}
+function socialUrl(id){if(id==='chat'){const c=String(cfg.CHAT_USERNAME||'').trim().replace(/^@/,'');return /^[A-Za-z0-9_]{4,}$/.test(c)?'https://t.me/'+c:'';}return String(cfg.SOCIAL?.[id]||'');}
+function socialTasks(){return G.SOCIAL_TASKS.filter(t=>/^https:\/\//.test(socialUrl(t.id)));}
 function renderTasks(){const d=tasksDialog,s=S(),ch=String(cfg.CHANNEL_USERNAME||'').replace(/^@/,''),st=G.streakStatus(s),shareDone=s.growth.shareDay===G.localDay();
  const channelDone=s.growth.channel||channelInfo.rewarded;
  const channel=ch?`<div class="task-hero ${channelDone?'done':''}"><div class="th-top">${ICON.telegram}<div><b>Подпишись на канал MOONKATTY</b><small>Новости экспедиции, коды сигналов и новые главы</small></div></div>
@@ -142,7 +143,7 @@ function renderTasks(){const d=tasksDialog,s=S(),ch=String(cfg.CHANNEL_USERNAME|
    ${channelDone?`<div class="th-state ok">${ICON.check}Подписка подтверждена · награда получена</div>`:`<div class="th-actions"><button class="primary" id="channel-open">Подписаться</button><button id="channel-check" ${online?'':'disabled'}>${channelBusy?'Проверяем…':'Проверить'}</button></div><div class="th-state ${online?'':'pending'}">${esc(channelMsg)||(online?'Подпишись, затем нажми «Проверить».':'Проверка подписки скоро заработает — награда будет ждать тебя.')}</div>`}</div>`:'';
  const row=(icon,title,sub,reward,btn,cls='')=>`<div class="task-row ${cls}"><span class="tr-icon">${icon}</span><span class="tr-text"><b>${title}</b><small>${sub}</small></span><span class="tr-side">${reward}${btn}</span></div>`;
  const socials=socialTasks().map(t=>{const ss=G.socialState(s,t.id);const btn=ss.state==='claimed'?`<i class="tr-done">${ICON.check}</i>`:ss.state==='ready'?`<button class="tr-btn gold" data-social-claim="${t.id}">Забрать</button>`:ss.state==='waiting'?`<button class="tr-btn" disabled>0:${String(Math.ceil(ss.left/1000)).padStart(2,'0')}</button>`:`<button class="tr-btn" data-social-open="${t.id}">Открыть</button>`;
-  return row(ICON[t.id],t.title,ss.state==='waiting'?'Проверяем переход…':ss.state==='ready'?'Готово — забери награду':t.name+' · MOONKATTY',ss.state==='claimed'?'':chips(t.reward,'small'),btn,ss.state);}).join('');
+  return row(ICON[t.id==='chat'?'telegram':t.id],t.title,ss.state==='waiting'?'Проверяем переход…':ss.state==='ready'?'Готово — забери награду':t.name+' · MOONKATTY',ss.state==='claimed'?'':chips(t.reward,'small'),btn,ss.state);}).join('');
  d.innerHTML=head('ЗАДАНИЯ · БОНУСЫ','Связь с Землёй','tasks')+
   `<p class="g-lead">Помоги экспедиции стать известной — за каждое задание кристаллы и металл.</p>`+channel+(window.MoonTeamUI?window.MoonTeamUI.codeCard():'')+
   `<div class="task-list">`+
@@ -152,9 +153,9 @@ function renderTasks(){const d=tasksDialog,s=S(),ch=String(cfg.CHANNEL_USERNAME|
   `</div>`+(socials?`<h3 class="g-sub">Мы в соцсетях</h3><div class="task-list">${socials}</div><p class="g-note">Задания соцсетей засчитываются через 30 секунд после перехода.</p>`:'');
  wireClose(d);
  d.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>({streak:openStreak,crew:openCrew,share:()=>openShare('invite')})[b.dataset.go]());
- d.querySelectorAll('[data-social-open]').forEach(b=>b.onclick=()=>{const id=b.dataset.socialOpen;G.startSocial(S(),id);Game.save();openUrl(cfg.SOCIAL[id]);renderTasks();});
+ d.querySelectorAll('[data-social-open]').forEach(b=>b.onclick=()=>{const id=b.dataset.socialOpen;G.startSocial(S(),id);Game.save();openUrl(socialUrl(id));renderTasks();});
  d.querySelectorAll('[data-social-claim]').forEach(b=>b.onclick=()=>{const r=G.claimSocial(S(),b.dataset.socialClaim);if(r.ok){haptic();commit();}toast(r.text);renderTasks();});
- if($('#channel-open'))$('#channel-open').onclick=()=>{openUrl('https://t.me/'+ch);channelMsg='Подписался? Нажми «Проверить».';renderTasks();};
+ if($('#channel-open'))$('#channel-open').onclick=()=>{openUrl('https://t.me/'+ch);channelMsg=online?'Подписался? Нажми «Проверить».':'Спасибо! Проверка подписки скоро заработает — награда будет ждать тебя.';renderTasks();};
  if($('#channel-check'))$('#channel-check').onclick=checkChannel;window.MoonTeamUI?.wireCode?.(d);}
 async function checkChannel(){if(channelBusy||!online)return;channelBusy=true;renderTasks();try{const r=await api('/api/channel/check',{});if(r.member){channelInfo.rewarded=true;S().growth.channel=true;if(r.reward)applyServerRewards([r.reward]);else commit();channelMsg='';haptic();}else{channelMsg=r.error==='channel_not_configured'?'Проверка канала ещё настраивается.':'Пока не видим подписку. Подпишись и нажми «Проверить» ещё раз.';haptic('warning');}}catch{channelMsg='Нет связи с сервером. Попробуй чуть позже.';}channelBusy=false;renderTasks();}
 function openTasks(){renderTasks();open('tasks');}

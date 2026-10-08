@@ -17,7 +17,7 @@ const BEACON_NOTES={beacon1:'Бирюзовый маяк: я начинаю пу
 function signalStrength(channel,value){return Math.max(0,Math.round(100-Math.abs(Number(value)-[32,68,45][channel])*7));}
 /* Save schema v4 (growth stage 1): daily login streak, social/referral flags, cloud-sync timestamp.
    v2/v3 saves have none of these fields and migrate to safe defaults; existing progress is untouched. */
-const SAVE_VERSION=6,CREW_IDS=['geologist','engineer','navigator','scout','botanist','pilot','doctor','captain'],CINEMA_IDS=['intro','ch1','ch2','ch3','crystal'],SOCIAL_IDS=['youtube','tiktok','instagram','x'],BADGES=['watch7','channel','crew1','crew5'];
+const SAVE_VERSION=6,CREW_IDS=['geologist','engineer','navigator','scout','botanist','pilot','doctor','captain'],CINEMA_IDS=['intro','ch1','ch2','ch3','crystal'],SOCIAL_IDS=['youtube','tiktok','instagram','x','chat'],BADGES=['watch7','channel','crew1','crew5'];
 const DAY_RE=/^\d{4}-\d{2}-\d{2}$/;
 function freshStreak(){return{day:'',count:0,run:0,best:0,total:0};}
 function freshTeam(){return{levels:{},at:0,store:{crystals:0,metal:0},cap:0,friends:0,codes:[],fails:0,lockUntil:0,rankSeen:-1,welcomeAt:0};}
