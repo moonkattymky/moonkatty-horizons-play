@@ -2,7 +2,7 @@ if(typeof _t==='undefined'&&typeof require==='function')require('./i18n.js');
 /* v35 growth stage 2 rules (no DOM): crew cats with hourly income that accrues while the game is closed,
    «Код сигнала» input rules, ranks Кадет → Адмирал Луны (rank XP is cosmetic; Moon Points live on the server). Shared by the game and node tests.
    Server mirror of the rank points: server/src/logic.js (tests compare). */
-(function(root,factory){const node=typeof module==='object'&&module.exports;const api=factory(node?require('./core.js'):root.MoonCore);if(node)module.exports=api;else root.MoonTeam=api;})(typeof globalThis!=='undefined'?globalThis:this,function(Core){
+(function(root,factory){const node=typeof module==='object'&&module.exports;const api=factory(node?require('./core.js'):root.MoonCore,node?require('./season-core.js'):root.MoonSeason);if(node)module.exports=api;else root.MoonTeam=api;})(typeof globalThis!=='undefined'?globalThis:this,function(Core,Season){
 const HOUR=3600000;
 // income[res][level-1] per hour. Story cats join for free when you meet them; two are hired for resources; rare cats come with friends.
 const CREW=[
@@ -27,7 +27,8 @@ function unlocked(s,c){return c.unlock.story?storyDone(s,c.unlock.story):team(s)
 function syncCrew(s){const t=team(s),fresh=[];for(const c of CREW)if(!t.levels[c.id]&&!c.hire&&unlocked(s,c)){t.levels[c.id]=1;fresh.push(c.id);}return fresh;}
 function incomeOf(c,l){const out={crystals:0,metal:0};if(!l)return out;for(const r of['crystals','metal'])if(c.income[r])out[r]=c.income[r][Math.min(MAX_LEVEL,l)-1];return out;}
 function rates(s){const out={crystals:0,metal:0};for(const c of CREW){const i=incomeOf(c,level(s,c.id));out.crystals+=i.crystals;out.metal+=i.metal;}return out;}
-function capHours(s){return STORAGE[Math.min(STORAGE.length-1,team(s).cap||0)].hours;}
+// v39: the «Cargo bay» (Telegram Stars convenience item) keeps +3 hours of offline income. It never touches Moon Points.
+function capHours(s){return STORAGE[Math.min(STORAGE.length-1,team(s).cap||0)].hours+(Season?Season.cargoHours(s):0);}
 function storeCap(s){const r=rates(s),h=capHours(s);return{crystals:r.crystals*h,metal:r.metal*h};}
 // Income accrues into the station store while the game is closed, up to `capHours` worth. Clock set back → no income.
 function accrue(s,now=Date.now()){const t=team(s),out={away:0,counted:0,gained:{crystals:0,metal:0}};if(!t.at||!Number.isFinite(t.at)){t.at=now;return out;}

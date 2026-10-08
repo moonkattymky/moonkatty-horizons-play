@@ -20,17 +20,19 @@ function signalStrength(channel,value){return Math.max(0,Math.round(100-Math.abs
    v2/v3 saves have none of these fields and migrate to safe defaults; existing progress is untouched. */
 /* v7 (localization): lang = chosen UI language ('' = not chosen yet → auto-detect + show the picker once). */
 const LANG_IDS=['en','ru','uk','es','pt','de','fr','it','tr','he','ar','ko','zh'];
-const SAVE_VERSION=8,CREW_IDS=['geologist','engineer','navigator','scout','botanist','pilot','doctor','captain'],CINEMA_IDS=['intro','ch1','ch2','ch3','crystal'],BADGES=['watch7','channel','crew1','crew5'];
+const SAVE_VERSION=8,CREW_IDS=['geologist','engineer','navigator','scout','botanist','pilot','doctor','captain'],CINEMA_IDS=['intro','ch1','ch2','ch3','crystal'],BADGES=['watch7','channel','crew1','crew5','season','beacon'];
 const DAY_RE=/^\d{4}-\d{2}-\d{2}$/;
 function freshStreak(){return{day:'',count:0,run:0,best:0,total:0,shield:''};}
 function freshTeam(){return{levels:{},at:0,store:{crystals:0,metal:0},cap:0,friends:0,codes:[],rankSeen:-1,welcomeAt:0};}
 // v8: Moon Points are a server currency; `moon` is only a cached copy (at=0: never seen from the server). `lbHidden` mirrors «hide me».
-function freshGrowth(){return{refBy:'',channel:false,badges:[],seen:'',applied:[],shareDay:'',resetAt:0,moon:{points:0,at:0},lbHidden:false};}
+function freshGrowth(){return{refBy:'',channel:false,badges:[],seen:'',applied:[],shareDay:'',resetAt:0,moon:{points:0,at:0},lbHidden:false,cos:{owned:[],frame:''}};}
 function clampInt(v,lo,hi,d=0){return Number.isFinite(v)?Math.max(lo,Math.min(hi,Math.floor(v))):d;}
 function migrateGrowth(raw,s){const st=raw.streak;if(st&&typeof st==='object'&&DAY_RE.test(st.day)){s.streak={day:st.day,count:clampInt(st.count,1,7,1),run:clampInt(st.run,1,100000,1),best:0,total:clampInt(st.total,1,100000,1)};s.streak.best=Math.max(s.streak.run,clampInt(st.best,0,100000));s.streak.shield=DAY_RE.test(st.shield)?st.shield:'';}
  const g=raw.growth;if(g&&typeof g==='object'){const out=s.growth;out.refBy=typeof g.refBy==='string'&&/^\d{1,15}$/.test(g.refBy)?g.refBy:'';out.channel=g.channel===true;
   // v8: the old «open a link, wait 30 s» social timers are dropped (links no longer pay; social tasks are reviewed on the server).
   const m=g.moon;if(m&&typeof m==='object'){out.moon={points:clampInt(m.points,0,1e9),at:clampInt(m.at,0,9e15)};}out.lbHidden=g.lbHidden===true;
+  // v39: owned cosmetics cache (frames, patron badge, cargo bay). The server list replaces it when online.
+  const cos=g.cos;if(cos&&typeof cos==='object'){const owned=Array.isArray(cos.owned)?[...new Set(cos.owned.filter(id=>typeof id==='string'&&/^[a-z_]{2,24}$/.test(id)))].slice(0,30):[];out.cos={owned,frame:typeof cos.frame==='string'&&owned.includes(cos.frame)&&/^frame_/.test(cos.frame)?cos.frame:''};}
   out.badges=Array.isArray(g.badges)?[...new Set(g.badges.filter(b=>BADGES.includes(b)))]:[];out.seen=DAY_RE.test(g.seen)?g.seen:'';out.shareDay=DAY_RE.test(g.shareDay)?g.shareDay:'';
   out.applied=Array.isArray(g.applied)?[...new Set(g.applied.filter(id=>typeof id==='string'&&/^[\w:.-]{1,80}$/.test(id)))].slice(-300):[];out.resetAt=clampInt(g.resetAt,0,9e15);}
  s.updatedAt=clampInt(raw.updatedAt,0,9e15);migrateCinema(raw,s);migrateTeam(raw,s);}

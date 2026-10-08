@@ -20,7 +20,7 @@ const streakPoints=run=>MOON.streak[Math.max(1,Math.min(7,Math.floor(run)||1))-1
 // Social tasks: personal code MKTY-XXXX in a post/comment + link → team review. The community chat is a plain link (no reward).
 const SOCIAL_PLATFORMS=['x','tiktok','instagram','youtube'];
 const SOCIAL_NAMES={x:'X',tiktok:'TikTok',instagram:'Instagram',youtube:'YouTube'};
-const BADGE_NAMES={watch7:_t('gcore.vahta_7'),channel:_t('gcore.svyazist'),crew1:_t('gcore.pervyy_ekipazhe'),crew5:_t('gcore.komandir_ekipazha')};
+const BADGE_NAMES={watch7:_t('gcore.vahta_7'),channel:_t('gcore.svyazist'),crew1:_t('gcore.pervyy_ekipazhe'),crew5:_t('gcore.komandir_ekipazha'),season:_t('season.badge_season'),beacon:_t('season.badge_beacon')};
 
 // v37: the day changes at 00:00 UTC for everyone (same as the server).
 function utcDay(now=Date.now()){return new Date(now).toISOString().slice(0,10);}

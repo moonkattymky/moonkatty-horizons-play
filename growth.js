@@ -11,7 +11,7 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const plural=(n,a,b,c)=>{const m10=n%10,m100=n%100;return m10===1&&m100!==11?a:m10>=2&&m10<=4&&(m100<12||m100>14)?b:c;};
 const API=String(cfg.API_BASE||'').replace(/\/+$/,'');
 let online=false,serverUser=null,crew={count:0,joined:0,list:[]},channelInfo={enabled:false,rewarded:false},lastCloud=0,cloudTimer=0,booted=false;
-let session=null,social=null,rules=null;// session: {token,exp} after /api/session; social: personal code + statuses; rules: numbers from the server
+let session=null,social=null,rules=null,stage3=null;// stage3 (v39): {season,goal,shop} from the server// session: {token,exp} after /api/session; social: personal code + statuses; rules: numbers from the server
 
 const ICON={
  crystal:'<svg class="gi gi-crystal" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.8 19.4 9 12 22.2 4.6 9Z" fill="#2f7dff"/><path d="M12 1.8 15.2 9 12 22.2 8.8 9Z" fill="#8ccaff"/><path d="M4.6 9h14.8" stroke="#e3f3ff" stroke-width="1.1"/></svg>',
@@ -57,6 +57,8 @@ function setCrew(c){if(c)crew=c;try{window.MoonTeamUI?.onCrew?.(crew);}catch{}}
 async function api(path,body={},timeout=9000){if(!API||!initData())throw new Error('offline');const ctrl=typeof AbortController==='function'?new AbortController():null,timer=setTimeout(()=>ctrl?.abort(),timeout);
  try{const r=await fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json','Authorization':path==='/api/session'?'tma '+initData():authHeader()},body:JSON.stringify(body),signal:ctrl?.signal});const data=await r.json().catch(()=>({}));
   if(r.status===401&&/session/.test(data.error||''))session=null;if(!r.ok){const e=new Error(data.error||('HTTP '+r.status));e.code=data.error||'';e.status=r.status;throw e;}gotMoon(data);return data;}finally{clearTimeout(timer);}}
+// v39 seasons / shared goal / Stars shop state (shown by season.js). Owned cosmetics are cached in the save for the cargo bay.
+function setStage3(r){stage3={...(stage3||{}),...(r.season?{season:r.season}:{}),...(r.goal?{goal:r.goal}:{}),...(r.shop?{shop:r.shop}:{})};if(r.shop&&window.MoonSeason&&MoonSeason.setCos(S(),r.shop))Game.save();try{window.MoonSeasonUI?.onState?.(stage3);}catch{}}
 const tzOffset=()=>-new Date().getTimezoneOffset();
 function applyServerRewards(list){let total={points:0,crystals:0,metal:0,energy:0},n=0;for(const r of list||[]){const got=G.applyServerReward(S(),r);if(got){n++;for(const k in total)total[k]+=got[k]||0;}}if(n){commit();haptic();toast(_t('growth.nagrady_ekipazha')+' '+(G.rewardText(total)||_t('growth.ryukzak_polon')));}return n;}
 async function claimPending(list){if(!list?.length)return;try{const r=await api('/api/rewards/claim',{ids:list.map(x=>x.id)});applyServerRewards(r.rewards);}catch{}}
@@ -65,6 +67,7 @@ async function boot(){if(booted)return;booted=true;const ref=startParam(),s=S();
  if(!API||!initData()){renderAll();return;}
  try{const r=await api('/api/session',{startParam:ref?'ref_'+ref:'',tzOffset:tzOffset(),local:{updatedAt:s.updatedAt,progress:G.progressScore(s)}});online=true;serverUser=r.user||null;session=r.session||null;social=r.social||null;rules=r.rules||null;setCrew(r.crew);channelInfo=r.channel||channelInfo;
   if(r.privacy)S().growth.lbHidden=!!r.privacy.hidden;
+  if(r.season||r.goal||r.shop)setStage3(r);
   if(r.save&&r.save.data&&G.pickSave(S(),r.save.data)==='remote'&&!Game.running){if(Game.replace(r.save.data))toast(_t('growth.progress_zagruzhen'));}
   else cloudSave(true);
   if(r.streak)syncServerStreak(r.streak,null);
@@ -180,13 +183,13 @@ function renderTasks(){const d=tasksDialog,s=S(),m=M(),ch=String(cfg.CHANNEL_USE
  const row=(icon,title,sub,reward,btn,cls='')=>`<div class="task-row ${cls}"><span class="tr-icon">${icon}</span><span class="tr-text"><b>${title}</b><small>${sub}</small></span><span class="tr-side">${reward}${btn}</span></div>`;
  d.innerHTML=head(_t('growth.zadaniya_bonusy'),_t('growth.svyaz_zemley'),'tasks')+
   `<p class="g-lead">${_t('growth.pomogi_ekspeditsii')}</p>`+moonCard()+channel+(window.MoonTeamUI?window.MoonTeamUI.codeCard():'')+
-  `<div class="task-list">`+
+  `<div class="task-list">`+(window.MoonSeasonUI?.taskRow?window.MoonSeasonUI.taskRow():'')+
    row(ICON.gift,_t('growth.vahta_baze'),_t(st.claimed?'growth.7_nagrada':'growth.7_nagrada2',{n:st.day}),st.claimed?'':chips({points:online?st.points:0,...st.reward},'small'),`<button class="tr-btn ${st.claimed?'':'gold'}" data-go="streak">${st.claimed?_t('growth.otkryt'):_t('growth.zabrat')}</button>`,st.claimed?'claimed':'ready')+
    row(ICON.crew,_t('growth.priglasi_druga'),_t('growth.nagrada_kazhdogo',{n:m.referral}),chips({points:m.referral},'small'),'<button class="tr-btn" data-go="crew">'+_t('growth.pozvat')+'</button>')+
    row(ICON.share,_t('growth.podelis_igroy'),shareDone?_t('growth.segodnya_uzhe'):_t('growth.raz_den'),shareDone?'':chips(G.SHARE_REWARD,'small'),`<button class="tr-btn" data-go="share">${shareDone?_t('growth.esche_raz'):_t('growth.podelitsya2')}</button>`,shareDone?'claimed':'')+
   `</div>`+socialHtml();
  wireClose(d);
- d.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>({streak:openStreak,crew:openCrew,share:()=>openShare('invite')})[b.dataset.go]());
+ d.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>({streak:openStreak,crew:openCrew,share:()=>openShare('invite'),season:OPEN.season})[b.dataset.go]());
  d.querySelectorAll('[data-soc-open]').forEach(b=>b.onclick=()=>openUrl(socialUrl(b.dataset.socOpen)));
  d.querySelectorAll('[data-soc-form]').forEach(b=>b.onclick=()=>{const id=b.dataset.socForm;socOpen=socOpen===id?'':id;renderTasks();if(socOpen)setTimeout(()=>d.querySelector('.soc-form input')?.focus({preventScroll:true}),30);});
  d.querySelectorAll('.soc-form').forEach(f=>{const id=f.dataset.socSubmit,inp=f.querySelector('input');inp.oninput=()=>{socDraft[id]=inp.value;};
@@ -204,7 +207,7 @@ async function checkChannel(){if(channelBusy||!online)return;channelBusy=true;re
 function openTasks(){renderTasks();open('tasks');refreshSocial();}
 
 // ---------- entry points ----------
-const OPEN={streak:openStreak,crew:openCrew,tasks:openTasks,share:()=>openShare('invite'),rules:()=>window.MoonRulesUI?.open()};
+const OPEN={streak:openStreak,crew:openCrew,tasks:openTasks,share:()=>openShare('invite'),rules:()=>window.MoonRulesUI?.open(),season:()=>window.MoonSeasonUI?.open()};
 function navButton(kind,label,cls){const b=document.createElement('button');b.className=cls;b.dataset.growth=kind;b.innerHTML=`<span class="gn-icon">${ICON[{streak:'gift',crew:'crew',tasks:'tasks',share:'share'}[kind]]}</span><span class="gn-label">${label}</span><i class="g-dot" hidden></i>`;b.onclick=()=>OPEN[kind]();return b;}
 function mount(){
  const coverNav=$('.cover-navigation');if(coverNav&&!$('.growth-nav')){const nav=document.createElement('nav');nav.className='growth-nav';nav.setAttribute('aria-label',_t('growth.bonusy_ekipazh'));nav.append(navButton('streak',_t('growth.vahta'),'gn'),navButton('crew',_t('game.ekipazh'),'gn'),navButton('tasks',_t('growth.zadaniya'),'gn'));coverNav.after(nav);}
@@ -227,5 +230,5 @@ function maybeShowStreak(delay=900){setTimeout(()=>{const s=S();if(document.quer
 // Wait briefly for telegram-web-app.js (loaded async by telegram-viewport.js) before talking to the server.
 let waited=0;(function waitTelegram(){if(tg()?.initData||waited>=2500||!API){boot();return;}waited+=250;setTimeout(waitTelegram,250);})();
 maybeShowStreak(1100);
-window.MoonGrowthUI={openStreak,openCrew,openTasks,openShare,maybeStreak:maybeShowStreak,api,moonCard,updateMoon,openUrl,rules:M,kit:{ICON,chips,dialog,open,head,wireClose,haptic,commit,esc,plural},get crew(){return crew;},get user(){return serverUser;},get online(){return online;},get channel(){return channelInfo;},renderAll};
+window.MoonGrowthUI={openStreak,openCrew,openTasks,openShare,maybeStreak:maybeShowStreak,api,moonCard,updateMoon,openUrl,rules:M,kit:{ICON,chips,dialog,open,head,wireClose,haptic,commit,esc,plural,toast,tg},setStage3,get stage3(){return stage3;},get crew(){return crew;},get user(){return serverUser;},get online(){return online;},get channel(){return channelInfo;},renderAll};
 })();

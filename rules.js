@@ -5,18 +5,21 @@
 const Game=window.MoonGame,G=window.MoonGrowth,UI=window.MoonGrowthUI;if(!Game||!G||!UI||!UI.kit)return;
 const{dialog,open:openDialog,head,wireClose,esc,haptic}=UI.kit;const $=s=>document.querySelector(s),S=()=>Game.state,cfg=window.MoonGrowthConfig||{};
 const d=dialog('rules','rules-dialog');let busy=false,tag='';
-const SECTIONS=[['⭐','s_moon'],['🌙','s_story'],['📅','s_daily'],['📡','s_social'],['🔑','s_codes'],['👥','s_friends'],['🎖️','s_ranks'],['⚖️','s_fair'],['💎','s_value']];
+const SECTIONS=[['⭐','s_moon'],['🌙','s_story'],['📅','s_daily'],['📡','s_social'],['🔑','s_codes'],['👥','s_friends'],['🏆','s_season'],['🗼','s_goal'],['🛍️','s_shop'],['🎖️','s_ranks'],['⚖️','s_fair'],['💎','s_value']];
 // Signed numbers stay intact inside Hebrew/Arabic sentences.
 const iso=v=>window.MoonI18n&&MoonI18n.isRTL(MoonI18n.lang)?'\u2066'+v+'\u2069':String(v);
 function params(){const m=UI.rules?UI.rules():G.MOON;
  return{s_story:{a:m.story.life1,b:m.story.life2,c:m.story.life3},s_daily:{list:m.streak.slice(0,7).map(p=>iso('+'+p)).join(' · '),max:m.streak[6]},
-  s_social:{ch:m.channel,f:m.social.follow,d:m.social.daily,p:m.socialPending},s_codes:{def:m.code.default,max:m.code.max,fails:m.codeFails},s_friends:{n:m.referral,cap:m.referralCap}};}
+  s_social:{ch:m.channel,f:m.social.follow,d:m.social.daily,p:m.socialPending},s_codes:{def:m.code.default,max:m.code.max,fails:m.codeFails},s_friends:{n:m.referral,cap:m.referralCap},...stage3()};}
+// v39: season length and pass/goal numbers (server state when online, else the defaults from season-core.js).
+function stage3(){const SC=window.MoonSeason;if(!SC)return{};const st=UI.stage3||{},len=SC.seasonLength(st.season?.length),tiers=st.season?.tiers||SC.seasonTiers(len),goal=st.goal?.reward||SC.goalReward(len);
+ return{s_season:{len:_t(len==='week'?'season.len_week':'season.len_month'),pts:tiers.reduce((a,t)=>a+(t.reward.points||0),0)},s_goal:{a:iso('1'),b:iso('3'),c:iso('5'),n:goal.points,d:SC.GOAL_CLAIM_DAYS},s_shop:{}};}
 function channelName(){return String(UI.channel?.username||cfg.CHANNEL_USERNAME||'').trim().replace(/^@/,'');}
 function render(){const P=params(),online=!!UI.online,hidden=!!S().growth.lbHidden,ch=channelName();
  const state=online?(hidden?_t('rules.hide_on',{name:_t('lb.callsign',{tag:tag||'····'})}):_t('rules.hide_off')):_t('moon.after_launch');
  d.innerHTML=head(_t('rules.eyebrow'),_t('rules.title'),'rules')+`<p class="g-lead">${_t('rules.lead')}</p>`+UI.moonCard()+
   `<div class="rules-list">${SECTIONS.map(([ic,k])=>`<section class="rule rule-${k}"><span class="rule-ic" aria-hidden="true">${ic}</span><div><h3>${_t('rules.'+k+'_t')}</h3><p>${_t('rules.'+k,P[k]||{})}</p></div></section>`).join('')}</div>`+
-  `<h3 class="g-sub">${_t('rules.faq')}</h3><div class="faq">${[1,2,3,4,5].map(i=>`<details><summary>${_t('rules.q'+i)}</summary><p>${_t('rules.a'+i)}</p></details>`).join('')}</div>`+
+  `<h3 class="g-sub">${_t('rules.faq')}</h3><div class="faq">${[1,2,3,4,5,6,7].map(i=>`<details><summary>${_t('rules.q'+i)}</summary><p>${_t('rules.a'+i)}</p></details>`).join('')}</div>`+
   `<h3 class="g-sub" id="rules-privacy">${_t('rules.privacy')}</h3><div class="privacy"><p>${_t('rules.p1')}</p><p>${_t('rules.p2')}</p>`+
   `<label class="pv-toggle ${online?'':'pending'}"><span class="pv-text"><b>${_t('rules.hide')}</b><small>${esc(state)}</small></span><input type="checkbox" role="switch" id="pv-hide" ${hidden?'checked':''} ${online&&!busy?'':'disabled'}><i class="pv-knob" aria-hidden="true"></i></label>`+
   `<p>${_t('rules.p3')}</p>${ch?`<button class="g-secondary" id="rules-channel">${_t('rules.channel_btn')}</button>`:''}</div>`+
