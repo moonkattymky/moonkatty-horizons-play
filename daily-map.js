@@ -47,8 +47,16 @@ function renderPanel(){const d=$('#daily-map');if(!d)return;const e=energy();
 let lastNeed=0;function renderEmpty(need){lastNeed=need;const d=$('#dm-empty');if(!d||!data)return;const e=energy(),r=data.refill;
  d.innerHTML=`<span class="eyebrow">${_t('dm.eyebrow')}</span><h2>${_t('dm.empty_title')}</h2><div class="dm-meter"><span>🔋</span><i><b style="width:${Math.round(e.value/e.max*100)}%"></b></i><em>${e.value}/${e.max}</em></div>
  ${need?`<p>${_t('dm.need',{n:need})}</p>`:''}<p class="dm-timer">${_t('dm.empty_text',{t:fmt(e.full)})}</p>
- ${cfg.ADS_ENABLED?`<button id="dm-ad">${_t('dm.ad')}</button>`:''}${r&&r.enabled?`<button class="primary" id="dm-stars">${_t('dm.stars',{n:r.stars})}</button>`:''}<button class="quiet" data-dm-close>${_t('dm.wait')}</button>`;
- d.querySelector('[data-dm-close]').onclick=()=>d.close();const s=d.querySelector('#dm-stars');if(s)s.onclick=buyRefill;const a=d.querySelector('#dm-ad');if(a)a.onclick=()=>{try{window.MoonAds?.showEnergy?.();}catch{}};}
+ ${adsOn()?`<button id="dm-ad">${_t('dm.ad')}<small class="dm-ad-left">${_t('dm.ad_left',{n:data.ads.left})}</small></button>`:''}${r&&r.enabled?`<button class="primary" id="dm-stars">${_t('dm.stars',{n:r.stars})}</button>`:''}<button class="quiet" data-dm-close>${_t('dm.wait')}</button>`;
+ d.querySelector('[data-dm-close]').onclick=()=>d.close();const s=d.querySelector('#dm-stars');if(s)s.onclick=buyRefill;const a=d.querySelector('#dm-ad');if(a)a.onclick=watchAd;}
+// v47 AdsGram rewarded ad: the SDK loads on first use; the server Reward URL adds the energy, the client only re-reads it.
+const adsOn=()=>!!(cfg.ADS_ENABLED&&cfg.ADS_BLOCK_ID&&data&&data.ads&&data.ads.enabled&&data.ads.left>0&&tg());
+let sdkP=null;function sdk(){if(window.Adsgram)return Promise.resolve(window.Adsgram);if(!sdkP)sdkP=new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://sad.adsgram.ai/js/sad.min.js';s.async=true;
+ s.onload=()=>window.Adsgram?res(window.Adsgram):rej(new Error('no_sdk'));s.onerror=()=>{sdkP=null;rej(new Error('no_sdk'));};document.head.appendChild(s);});return sdkP;}
+async function watchAd(){if(busy||!adsOn())return;busy=true;const before=energy().value;
+ try{const A=await sdk(),ctl=A.init({blockId:String(cfg.ADS_BLOCK_ID)}),r=await ctl.show();if(r&&r.done){toast(_t('dm.ad_wait'));waitAd(before,0);}else toast(_t('dm.ad_none'));}
+ catch(e){toast(_t('dm.ad_none'));}finally{busy=false;}}
+function waitAd(before,n){clearTimeout(pollT);pollT=setTimeout(async()=>{await refresh();const e=energy();if(e&&e.value>before){toast(_t('dm.ad_done',{n:data.ads.energy}));if(e.value>=lastNeed)$('#dm-empty')?.close();return;}if(n<7)waitAd(before,n+1);else toast(_t('dm.ad_late'));},n?2500:1500);}
 function openPanel(){mount();renderPanel();const d=$('#daily-map');if(d&&!d.open){Game.resetControls?.();d.showModal();}refresh();}
 function openEmpty(need){mount();renderEmpty(need);const d=$('#dm-empty');if(d&&!d.open){Game.resetControls?.();d.showModal();}}
 function errText(code){return code==='too_fast'?_t('dm.too_fast'):code==='too_far'?_t('dm.too_far'):_t('dm.error');}
@@ -83,5 +91,5 @@ mount();setInterval(loop,125);
 let tries=0;const boot=setInterval(()=>{if(UI.online){clearInterval(boot);refresh();}else if(++tries>40)clearInterval(boot);},1500);
 setInterval(()=>{if(UI.online&&Game.running&&!document.hidden)refresh();},90000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
-window.MoonDailyMap={open:openPanel,openEmpty,refresh,get data(){return data;},energy,set,fmt,goal,_tick:tick};
+window.MoonDailyMap={open:openPanel,watchAd,adsOn,openEmpty,refresh,get data(){return data;},energy,set,fmt,goal,_tick:tick};
 })();

@@ -896,7 +896,7 @@
  "shop.cancel":"Cancelar",
  "shop.support":"Não chegou ou foi cobrado duas vezes? Escreva /paysupport para o bot MOONKATTY — as estrelas são devolvidas.",
  "terms.title":"Termos de compra",
- "terms.body":"1. Na loja MOONKATTY você compra itens digitais com Telegram Stars: molduras para o nome, a estrela de patrono e o compartimento de carga. Eles mudam só o visual e o conforto.\n2. As compras nunca dão Moon Points nem ajudam a ganhá-los. Moon Points não podem ser comprados.\n3. O item entra na sua conta logo após o pagamento e continua seu. Itens não podem ser transferidos nem trocados por dinheiro.\n4. Se um item não chegou ou você pagou duas vezes pelo mesmo item, as estrelas são devolvidas — automaticamente ou após um pedido via /paysupport.\n5. Moon Points ganhos com multicontas ou trapaça podem ser cancelados.\n6. Dúvidas sobre pagamentos: /paysupport no bot MOONKATTY.",
+ "terms.body":"1. Na loja MOONKATTY você compra itens digitais com Telegram Stars: molduras para o nome, a estrela de patrono e o compartimento de carga. Eles mudam só o visual e o conforto.\n2. As compras nunca dão Moon Points nem ajudam a ganhá-los. Moon Points não podem ser comprados.\n3. O item entra na sua conta logo após o pagamento e continua seu. Itens não podem ser transferidos nem trocados por dinheiro.\n4. Se um item não chegou ou você pagou duas vezes pelo mesmo item, as estrelas são devolvidas — automaticamente ou após um pedido via /paysupport.\n5. Moon Points ganhos com multicontas ou trapaça podem ser cancelados.\n6. Dúvidas sobre pagamentos: /paysupport no bot MOONKATTY.\n7. A recarga de energia enche na hora a energia do explorador para as tarefas diárias do mapa. A energia também se recarga de graça com o tempo; a recarga é usada na hora e não é reembolsada depois de gasta.",
  "bot.start":"🌙 MOONKATTY: New Horizons — uma aventura espacial aconchegante dentro do Telegram. 9 Lives. One Moon.\n\nExplore a Lua, reúna sua Tripulação e ganhe Moon Points. Toque em «Jogar» para começar.\n\n/terms — termos de compra\n/paysupport — ajuda com um pagamento",
  "bot.play":"▶️ Jogar",
  "bot.channel":"📣 Canal MOONKATTY",
@@ -1043,5 +1043,10 @@
  "dm.error":"Não foi possível falar com o servidor. Tente de novo.",
  "dm.dist":"{m} m até o sinalizador",
  "shop.energy_refill":"Recarga de energia",
- "shop.energy_refill_d":"Enche ao máximo a energia do explorador para as tarefas diárias do mapa. Moon Points não podem ser comprados."
+ "shop.energy_refill_d":"Enche ao máximo a energia do explorador para as tarefas diárias do mapa. Moon Points não podem ser comprados.",
+ "dm.ad_left":"Restam hoje: {n}",
+ "dm.ad_wait":"Anúncio assistido! A energia chega em alguns segundos.",
+ "dm.ad_none":"Nenhum anúncio disponível agora. Tente mais tarde.",
+ "dm.ad_done":"+{n} 🔋 recebida!",
+ "dm.ad_late":"A recompensa está demorando mais que o normal — vai chegar em breve."
 });

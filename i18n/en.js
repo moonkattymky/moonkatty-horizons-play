@@ -896,7 +896,7 @@
  "shop.cancel":"Cancel",
  "shop.support":"Not delivered or charged twice? Write /paysupport to the MOONKATTY bot — the Stars are refunded.",
  "terms.title":"Terms of purchase",
- "terms.body":"1. In the MOONKATTY shop you buy digital items with Telegram Stars: name frames, the patron star and the cargo bay. They change looks and comfort only.\n2. Purchases never give Moon Points and don’t help you earn them. Moon Points can’t be bought.\n3. An item is added to your account right after payment and stays yours. Items can’t be transferred or exchanged for money.\n4. If an item wasn’t delivered or you paid twice for the same item, the Stars are refunded — automatically or after a request via /paysupport.\n5. Moon Points earned with multiple accounts or by cheating can be cancelled.\n6. Questions about payments: /paysupport in the MOONKATTY bot.",
+ "terms.body":"1. In the MOONKATTY shop you buy digital items with Telegram Stars: name frames, the patron star and the cargo bay. They change looks and comfort only.\n2. Purchases never give Moon Points and don’t help you earn them. Moon Points can’t be bought.\n3. An item is added to your account right after payment and stays yours. Items can’t be transferred or exchanged for money.\n4. If an item wasn’t delivered or you paid twice for the same item, the Stars are refunded — automatically or after a request via /paysupport.\n5. Moon Points earned with multiple accounts or by cheating can be cancelled.\n6. Questions about payments: /paysupport in the MOONKATTY bot.\n7. Energy refill fills your explorer energy for daily map tasks at once. Energy also refills for free over time; a refill is used immediately and can’t be refunded after it was spent.",
  "bot.start":"🌙 MOONKATTY: New Horizons — a cozy space adventure right in Telegram. 9 Lives. One Moon.\n\nExplore the Moon, gather your Crew and earn Moon Points. Tap «Play» to start.\n\n/terms — terms of purchase\n/paysupport — help with a payment",
  "bot.play":"▶️ Play",
  "bot.channel":"📣 MOONKATTY channel",
@@ -1043,5 +1043,10 @@
  "dm.error":"Could not reach the server. Try again.",
  "dm.dist":"{m} m to the beacon",
  "shop.energy_refill":"Energy refill",
- "shop.energy_refill_d":"Fills your explorer energy to the maximum for daily map tasks. Moon Points cannot be bought."
+ "shop.energy_refill_d":"Fills your explorer energy to the maximum for daily map tasks. Moon Points cannot be bought.",
+ "dm.ad_left":"{n} left today",
+ "dm.ad_wait":"Ad watched! Energy arrives in a few seconds.",
+ "dm.ad_none":"No ad is available right now. Try again later.",
+ "dm.ad_done":"+{n} 🔋 received!",
+ "dm.ad_late":"The reward is taking longer than usual — it will arrive shortly."
 });

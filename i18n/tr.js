@@ -896,7 +896,7 @@
  "shop.cancel":"Vazgeç",
  "shop.support":"Gelmedi mi ya da iki kez mi ödendi? MOONKATTY botuna /paysupport yaz — yıldızlar iade edilir.",
  "terms.title":"Satın alma koşulları",
- "terms.body":"1. MOONKATTY mağazasında Telegram Stars ile dijital öğeler alırsın: isim çerçeveleri, hami yıldızı ve kargo bölmesi. Bunlar yalnızca görünümü ve kolaylığı değiştirir.\n2. Satın almalar asla Moon Points vermez ve onları kazanmaya yardım etmez. Moon Points satın alınamaz.\n3. Öğe, ödemeden hemen sonra hesabına eklenir ve senin kalır. Öğeler başkasına devredilemez veya paraya çevrilemez.\n4. Bir öğe gelmediyse ya da aynı öğe için iki kez ödeme yaptıysan yıldızlar iade edilir — otomatik olarak veya /paysupport ile talep edildiğinde.\n5. Çoklu hesaplarla ya da hileyle kazanılan Moon Points iptal edilebilir.\n6. Ödemelerle ilgili sorular: MOONKATTY botunda /paysupport.",
+ "terms.body":"1. MOONKATTY mağazasında Telegram Stars ile dijital öğeler alırsın: isim çerçeveleri, hami yıldızı ve kargo bölmesi. Bunlar yalnızca görünümü ve kolaylığı değiştirir.\n2. Satın almalar asla Moon Points vermez ve onları kazanmaya yardım etmez. Moon Points satın alınamaz.\n3. Öğe, ödemeden hemen sonra hesabına eklenir ve senin kalır. Öğeler başkasına devredilemez veya paraya çevrilemez.\n4. Bir öğe gelmediyse ya da aynı öğe için iki kez ödeme yaptıysan yıldızlar iade edilir — otomatik olarak veya /paysupport ile talep edildiğinde.\n5. Çoklu hesaplarla ya da hileyle kazanılan Moon Points iptal edilebilir.\n6. Ödemelerle ilgili sorular: MOONKATTY botunda /paysupport.\n7. Enerji dolumu, haritadaki günlük görevler için kaşif enerjisini anında doldurur. Enerji zamanla ücretsiz olarak da dolar; dolum hemen kullanılır ve harcandıktan sonra iade edilmez.",
  "bot.start":"🌙 MOONKATTY: New Horizons — doğrudan Telegram’da sıcacık bir uzay macerası. 9 Lives. One Moon.\n\nAy’ı keşfet, Mürettebatını topla ve Moon Points kazan. Başlamak için «Oyna»ya dokun.\n\n/terms — satın alma koşulları\n/paysupport — ödeme yardımı",
  "bot.play":"▶️ Oyna",
  "bot.channel":"📣 MOONKATTY kanalı",
@@ -1043,5 +1043,10 @@
  "dm.error":"Sunucuya ulaşılamadı. Tekrar dene.",
  "dm.dist":"İşaretçiye {m} m",
  "shop.energy_refill":"Enerji dolumu",
- "shop.energy_refill_d":"Haritadaki günlük görevler için kaşif enerjisini tamamen doldurur. Moon Points satın alınamaz."
+ "shop.energy_refill_d":"Haritadaki günlük görevler için kaşif enerjisini tamamen doldurur. Moon Points satın alınamaz.",
+ "dm.ad_left":"Bugün kalan: {n}",
+ "dm.ad_wait":"Reklam izlendi! Enerji birkaç saniye içinde gelecek.",
+ "dm.ad_none":"Şu anda reklam yok. Daha sonra tekrar dene.",
+ "dm.ad_done":"+{n} 🔋 alındı!",
+ "dm.ad_late":"Ödül her zamankinden uzun sürüyor — birazdan gelecek."
 });

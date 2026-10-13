@@ -896,7 +896,7 @@
  "shop.cancel":"Abbrechen",
  "shop.support":"Nicht angekommen oder doppelt bezahlt? Schreib /paysupport an den MOONKATTY-Bot – du bekommst die Stars zurück.",
  "terms.title":"Kaufbedingungen",
- "terms.body":"1. Im MOONKATTY-Laden kaufst du digitale Gegenstände für Telegram Stars: Namensrahmen, den Förderstern und den Frachtraum. Sie ändern nur Aussehen und Komfort.\n2. Käufe geben nie Moon Points und helfen nicht, sie zu verdienen. Moon Points kann man nicht kaufen.\n3. Ein Gegenstand kommt direkt nach der Zahlung in dein Konto und bleibt deiner. Gegenstände können nicht übertragen oder gegen Geld getauscht werden.\n4. Wenn ein Gegenstand nicht ankam oder du denselben Gegenstand doppelt bezahlt hast, werden die Stars erstattet – automatisch oder auf Anfrage über /paysupport.\n5. Moon Points, die mit Mehrfachkonten oder durch Schummeln verdient wurden, können gestrichen werden.\n6. Fragen zu Zahlungen: /paysupport im MOONKATTY-Bot.",
+ "terms.body":"1. Im MOONKATTY-Laden kaufst du digitale Gegenstände für Telegram Stars: Namensrahmen, den Förderstern und den Frachtraum. Sie ändern nur Aussehen und Komfort.\n2. Käufe geben nie Moon Points und helfen nicht, sie zu verdienen. Moon Points kann man nicht kaufen.\n3. Ein Gegenstand kommt direkt nach der Zahlung in dein Konto und bleibt deiner. Gegenstände können nicht übertragen oder gegen Geld getauscht werden.\n4. Wenn ein Gegenstand nicht ankam oder du denselben Gegenstand doppelt bezahlt hast, werden die Stars erstattet – automatisch oder auf Anfrage über /paysupport.\n5. Moon Points, die mit Mehrfachkonten oder durch Schummeln verdient wurden, können gestrichen werden.\n6. Fragen zu Zahlungen: /paysupport im MOONKATTY-Bot.\n7. Die Energie-Auffüllung füllt die Energie deines Forschers für die Tagesaufgaben sofort auf. Energie lädt sich mit der Zeit auch kostenlos auf; eine Auffüllung wird sofort genutzt und nach dem Verbrauch nicht erstattet.",
  "bot.start":"🌙 MOONKATTY: New Horizons – ein gemütliches Weltraumabenteuer direkt in Telegram. 9 Lives. One Moon.\n\nErkunde den Mond, stell deine Crew zusammen und verdiene Moon Points. Tippe auf „Spielen“, um zu starten.\n\n/terms – Kaufbedingungen\n/paysupport – Hilfe bei einer Zahlung",
  "bot.play":"▶️ Spielen",
  "bot.channel":"📣 MOONKATTY-Kanal",
@@ -1043,5 +1043,10 @@
  "dm.error":"Server nicht erreichbar. Versuch es noch einmal.",
  "dm.dist":"{m} m bis zum Leuchtfeuer",
  "shop.energy_refill":"Energie-Auffüllung",
- "shop.energy_refill_d":"Füllt die Energie deines Forschers für die Tagesaufgaben ganz auf. Moon Points kann man nicht kaufen."
+ "shop.energy_refill_d":"Füllt die Energie deines Forschers für die Tagesaufgaben ganz auf. Moon Points kann man nicht kaufen.",
+ "dm.ad_left":"Heute noch: {n}",
+ "dm.ad_wait":"Werbung angesehen! Die Energie kommt in wenigen Sekunden.",
+ "dm.ad_none":"Gerade ist keine Werbung verfügbar. Versuch es später.",
+ "dm.ad_done":"+{n} 🔋 erhalten!",
+ "dm.ad_late":"Die Belohnung dauert länger als sonst – sie kommt gleich."
 });

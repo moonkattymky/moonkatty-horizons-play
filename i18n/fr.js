@@ -896,7 +896,7 @@
  "shop.cancel":"Annuler",
  "shop.support":"Pas reçu ou payé deux fois ? Écris /paysupport au bot MOONKATTY — les étoiles te sont remboursées.",
  "terms.title":"Conditions d’achat",
- "terms.body":"1. Dans la boutique MOONKATTY, tu achètes des objets numériques avec des Telegram Stars : des cadres pour ton nom, l’étoile de mécène et la soute à fret. Ils changent uniquement le style et le confort.\n2. Les achats ne donnent jamais de Moon Points et n’aident pas à en gagner. Les Moon Points ne s’achètent pas.\n3. L’objet est ajouté à ton compte juste après le paiement et reste à toi. Les objets ne peuvent être ni transférés ni échangés contre de l’argent.\n4. Si un objet n’a pas été livré ou si tu as payé deux fois le même objet, les étoiles sont remboursées — automatiquement ou sur demande via /paysupport.\n5. Les Moon Points gagnés avec des comptes multiples ou en trichant peuvent être annulés.\n6. Questions sur les paiements : /paysupport dans le bot MOONKATTY.",
+ "terms.body":"1. Dans la boutique MOONKATTY, tu achètes des objets numériques avec des Telegram Stars : des cadres pour ton nom, l’étoile de mécène et la soute à fret. Ils changent uniquement le style et le confort.\n2. Les achats ne donnent jamais de Moon Points et n’aident pas à en gagner. Les Moon Points ne s’achètent pas.\n3. L’objet est ajouté à ton compte juste après le paiement et reste à toi. Les objets ne peuvent être ni transférés ni échangés contre de l’argent.\n4. Si un objet n’a pas été livré ou si tu as payé deux fois le même objet, les étoiles sont remboursées — automatiquement ou sur demande via /paysupport.\n5. Les Moon Points gagnés avec des comptes multiples ou en trichant peuvent être annulés.\n6. Questions sur les paiements : /paysupport dans le bot MOONKATTY.\n7. La recharge d’énergie remplit aussitôt l’énergie de l’explorateur pour les missions du jour. L’énergie se recharge aussi gratuitement avec le temps ; une recharge est utilisée tout de suite et n’est pas remboursée une fois dépensée.",
  "bot.start":"🌙 MOONKATTY: New Horizons — une aventure spatiale douillette, directement dans Telegram. 9 Lives. One Moon.\n\nExplore la Lune, rassemble ton Équipage et gagne des Moon Points. Appuie sur « Jouer » pour commencer.\n\n/terms — conditions d’achat\n/paysupport — aide pour un paiement",
  "bot.play":"▶️ Jouer",
  "bot.channel":"📣 Chaîne MOONKATTY",
@@ -1043,5 +1043,10 @@
  "dm.error":"Impossible de joindre le serveur. Réessaie.",
  "dm.dist":"{m} m jusqu’à la balise",
  "shop.energy_refill":"Recharge d’énergie",
- "shop.energy_refill_d":"Remplit au maximum l’énergie de l’explorateur pour les missions du jour. Les Moon Points ne s’achètent pas."
+ "shop.energy_refill_d":"Remplit au maximum l’énergie de l’explorateur pour les missions du jour. Les Moon Points ne s’achètent pas.",
+ "dm.ad_left":"Restant aujourd’hui : {n}",
+ "dm.ad_wait":"Pub regardée ! L’énergie arrive dans quelques secondes.",
+ "dm.ad_none":"Aucune pub disponible pour le moment. Réessaie plus tard.",
+ "dm.ad_done":"+{n} 🔋 reçue !",
+ "dm.ad_late":"La récompense met plus de temps que d’habitude : elle arrive bientôt."
 });

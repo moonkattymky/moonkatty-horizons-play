@@ -25,3 +25,4 @@
 .dm-side button{white-space:nowrap;padding:8px 10px;min-height:36px}.dm-side em{font-style:normal;color:#7ff0b0}
 .dm-bonus{padding:8px 10px;border-radius:12px;background:#ffd36a1a;color:#ffe29a}.dm-bonus.done{color:#7ff0b0;background:#7ff0b01a}
 .dm-timer{font-weight:700}
+.dm-ad-left{display:block;font-size:11px;opacity:.75;margin-top:3px;font-weight:600}

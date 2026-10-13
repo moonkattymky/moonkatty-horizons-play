@@ -896,7 +896,7 @@
  "shop.cancel":"취소",
  "shop.support":"받지 못했거나 두 번 결제됐나요? MOONKATTY 봇에 /paysupport를 보내 주세요 — 스타를 환불해 드려요.",
  "terms.title":"구매 약관",
- "terms.body":"1. MOONKATTY 상점에서는 Telegram Stars로 디지털 아이템을 구매해요: 이름 프레임, 후원자 별, 화물칸. 외형과 편의만 바뀌어요.\n2. 구매로 Moon Points를 받을 수 없고, 포인트 획득에도 도움이 되지 않아요. Moon Points는 살 수 없어요.\n3. 아이템은 결제 직후 계정에 추가되고 계속 보유해요. 아이템은 양도하거나 현금으로 바꿀 수 없어요.\n4. 아이템을 받지 못했거나 같은 아이템을 두 번 결제했다면 스타가 환불돼요 — 자동으로, 또는 /paysupport로 요청하면.\n5. 다중 계정이나 부정행위로 얻은 Moon Points는 취소될 수 있어요.\n6. 결제 문의: MOONKATTY 봇에서 /paysupport.",
+ "terms.body":"1. MOONKATTY 상점에서는 Telegram Stars로 디지털 아이템을 구매해요: 이름 프레임, 후원자 별, 화물칸. 외형과 편의만 바뀌어요.\n2. 구매로 Moon Points를 받을 수 없고, 포인트 획득에도 도움이 되지 않아요. Moon Points는 살 수 없어요.\n3. 아이템은 결제 직후 계정에 추가되고 계속 보유해요. 아이템은 양도하거나 현금으로 바꿀 수 없어요.\n4. 아이템을 받지 못했거나 같은 아이템을 두 번 결제했다면 스타가 환불돼요 — 자동으로, 또는 /paysupport로 요청하면.\n5. 다중 계정이나 부정행위로 얻은 Moon Points는 취소될 수 있어요.\n6. 결제 문의: MOONKATTY 봇에서 /paysupport.\n7. 에너지 충전은 지도 일일 임무용 탐험가 에너지를 즉시 가득 채워요. 에너지는 시간이 지나면 무료로도 차요. 충전은 바로 사용되며 사용 후에는 환불되지 않아요.",
  "bot.start":"🌙 MOONKATTY: New Horizons — Telegram 안에서 즐기는 아늑한 우주 모험. 9 Lives. One Moon.\n\n달을 탐험하고, 크루를 모으고, Moon Points를 모아 보세요. 시작하려면 «플레이»를 누르세요.\n\n/terms — 구매 약관\n/paysupport — 결제 도움말",
  "bot.play":"▶️ 플레이",
  "bot.channel":"📣 MOONKATTY 채널",
@@ -1043,5 +1043,10 @@
  "dm.error":"서버에 연결할 수 없어요. 다시 시도하세요.",
  "dm.dist":"신호기까지 {m} m",
  "shop.energy_refill":"에너지 충전",
- "shop.energy_refill_d":"지도 일일 임무용 탐험가 에너지를 가득 채워요. Moon Points는 살 수 없어요."
+ "shop.energy_refill_d":"지도 일일 임무용 탐험가 에너지를 가득 채워요. Moon Points는 살 수 없어요.",
+ "dm.ad_left":"오늘 남은 횟수: {n}",
+ "dm.ad_wait":"광고 시청 완료! 몇 초 후 에너지가 들어와요.",
+ "dm.ad_none":"지금은 볼 수 있는 광고가 없어요. 나중에 다시 시도하세요.",
+ "dm.ad_done":"+{n} 🔋 받았어요!",
+ "dm.ad_late":"보상이 평소보다 늦어지고 있어요. 곧 들어와요."
 });

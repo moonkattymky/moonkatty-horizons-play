@@ -896,7 +896,7 @@
  "shop.cancel":"取消",
  "shop.support":"没收到或重复扣款？给 MOONKATTY 机器人发送 /paysupport——星星会退还给你。",
  "terms.title":"购买条款",
- "terms.body":"1. 在 MOONKATTY 商店，你用 Telegram Stars 购买数字物品：名字框、赞助人之星和货舱。它们只改变外观和便利。\n2. 购买永远不会获得 Moon Points，也不会帮助获得积分。Moon Points 无法购买。\n3. 付款后物品立即加入你的账号，并一直归你所有。物品不能转让，也不能兑换成钱。\n4. 如果物品没有到账，或同一物品付了两次款，星星会退还——自动退还，或通过 /paysupport 申请后退还。\n5. 通过多账号或作弊获得的 Moon Points 可能被取消。\n6. 付款问题：在 MOONKATTY 机器人中发送 /paysupport。",
+ "terms.body":"1. 在 MOONKATTY 商店，你用 Telegram Stars 购买数字物品：名字框、赞助人之星和货舱。它们只改变外观和便利。\n2. 购买永远不会获得 Moon Points，也不会帮助获得积分。Moon Points 无法购买。\n3. 付款后物品立即加入你的账号，并一直归你所有。物品不能转让，也不能兑换成钱。\n4. 如果物品没有到账，或同一物品付了两次款，星星会退还——自动退还，或通过 /paysupport 申请后退还。\n5. 通过多账号或作弊获得的 Moon Points 可能被取消。\n6. 付款问题：在 MOONKATTY 机器人中发送 /paysupport。\n7. 能量补充会立即为地图每日任务补满探险者能量。能量也会随时间免费恢复；补充会立即使用，使用后不予退款。",
  "bot.start":"🌙 MOONKATTY: New Horizons——就在 Telegram 里的温馨太空冒险。9 Lives. One Moon.\n\n探索月球，召集你的船员，赚取 Moon Points。点击「开始游戏」即可开始。\n\n/terms — 购买条款\n/paysupport — 付款帮助",
  "bot.play":"▶️ 开始游戏",
  "bot.channel":"📣 MOONKATTY 频道",
@@ -1043,5 +1043,10 @@
  "dm.error":"无法连接服务器，请重试。",
  "dm.dist":"距信标 {m} 米",
  "shop.energy_refill":"能量补充",
- "shop.energy_refill_d":"为地图每日任务把探险者能量补满。Moon Points 无法购买。"
+ "shop.energy_refill_d":"为地图每日任务把探险者能量补满。Moon Points 无法购买。",
+ "dm.ad_left":"今日剩余：{n}",
+ "dm.ad_wait":"广告已看完！能量将在几秒内到账。",
+ "dm.ad_none":"暂时没有可用广告，请稍后再试。",
+ "dm.ad_done":"已获得 +{n} 🔋！",
+ "dm.ad_late":"奖励比平时慢一些，很快就会到账。"
 });
