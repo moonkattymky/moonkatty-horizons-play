@@ -8,7 +8,7 @@ const A='assets/cinema/';
 // Glow spots [x, y, radius (fraction of image width), colour] pulse softly over windows, crystals, beacons and Earth.
 // v38 chapter covers are 16:9 (1280×720). On a portrait phone only ~26% of the width is visible, so each title card pans
 // from the cat to the story object. V busts GitHub Pages / Telegram caches of the old portrait files that kept the same names.
-const V='?v=38',V4='?v=43',V5='?v=57',V6='?v=58',V7='?v=65';
+const V='?v=38',V4='?v=43',V5='?v=57',V6='?v=58',V7='?v=65',V8='?v=67';
 // Optional titleY (fraction of the screen height) moves the title card off the key object; default 66%.
 const CH1={img:A+'ch1-awakening.jpg'+V,from:[.355,.42,1.08],to:[.60,.62,1.1],sky:.3,fx:['stars','dust'],glows:[[.415,.51,.05,'blue'],[.60,.54,.05,'amber'],[.083,.68,.03,'blue'],[.168,.835,.035,'blue'],[.79,.85,.035,'blue'],[.915,.75,.03,'blue'],[.78,.23,.14,'earth']],
  title:[_t('life.n',{n:1}),_t('chapter.1')],kicker:_t('cine.zadanie'),text:_t('cine.naydi_bortovoy'),mood:'title',mark:'ch1'};
@@ -74,6 +74,16 @@ const SCENES={
  ch7end:{name:_t('ch7.end_title'),frames:()=>[
   {img:A+'ch7-flight.jpg'+V7,from:[.5,.6,1.3],to:[.5,.42,1.02],sky:.32,titleY:.24,fx:['stars','dust'],glows:[[.55,.5,.07,'amber'],[.8,.15,.04,'violet']],
    title:[_t('ch7.end_title'),_t('ch7.end_sub')],kicker:_t('ch7.end_kicker'),text:_t('ch7.end_card'),mood:'hope'}],marks:()=>['ch7end']},
+ // v67 LIFE #8 · THE GATE. Opener: the Sky Mesa rising out of the plain at dusk → the Gate's rings on its top (title).
+ // Ending: the Gate wide awake, a far blue sky inside the rings, the Star Key in the cat's paws — LIFE #9 · A New Horizon awaits.
+ ch8:{name:_t('life.title',{n:8,name:_t('chapter.8')}),frames:()=>[
+  {img:A+'ch8-mesa.jpg'+V8,from:[.5,.62,1.2],to:[.5,.42,1.04],sky:.3,fx:['stars','dust'],glows:[[.5,.3,.06,'blue'],[.7,.2,.04,'amber']],
+   kicker:_t('ch8.cine_kicker'),text:_t('ch8.cine_text'),mood:'mystery'},
+  {img:A+'ch8-gate.jpg'+V8,from:[.5,.6,1.18],to:[.5,.45,1.02],sky:.3,titleY:.74,fx:['stars','dust'],glows:[[.5,.45,.07,'blue'],[.5,.3,.05,'amber']],
+   title:[_t('life.n',{n:8}),_t('chapter.8')],kicker:_t('cine.zadanie'),text:_t('ch8.cine_mission'),mood:'title',mark:'ch8'}],marks:()=>['ch8']},
+ ch8end:{name:_t('ch8.end_title'),frames:()=>[
+  {img:A+'ch8-open.jpg'+V8,from:[.5,.6,1.3],to:[.5,.42,1.02],sky:.32,titleY:.24,fx:['stars','dust'],glows:[[.5,.5,.08,'blue'],[.5,.7,.04,'amber']],
+   title:[_t('ch8.end_title'),_t('ch8.end_sub')],kicker:_t('ch8.end_kicker'),text:_t('ch8.end_card'),mood:'hope'}],marks:()=>['ch8end']},
  crystal:{name:_t('cine.pervyy_kristall'),flash:true,frames:()=>[
   {kind:'flash',img:A+'crystal.webp',dur:5600,kicker:_t('cine.nahodka'),title:[_t('cine.kristall_nayden'),''],text:_t('cine.golubye_kristally'),mood:'chime'}],marks:()=>['crystal']}
 };
