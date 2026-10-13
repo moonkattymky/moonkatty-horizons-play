@@ -1445,5 +1445,6 @@
  "bike.fly_land":"Land first — let go of ⤒",
  "bike.fly_title":"Bike flight",
  "bike.fly_on":"Unlocked: hold ⤒ (or Space) while riding.",
- "bike.fly_locked":"Finish Life #7 to unlock flight."
+ "bike.fly_locked":"Finish Life #7 to unlock flight.",
+ "hud.energy_help":"Station energy ϟ {energy}/{cap}. Solar panels make +{rate} per hour. Spent in the workshop: crystal −3, metal −2."
 });

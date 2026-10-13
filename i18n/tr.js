@@ -1445,5 +1445,6 @@
  "bike.fly_land":"Önce in — ⤒ tuşunu bırak",
  "bike.fly_title":"Motorla uçuş",
  "bike.fly_on":"Açık: sürerken ⤒ (ya da Boşluk) basılı tut.",
- "bike.fly_locked":"Uçuşu açmak için Can #7’yi bitir."
+ "bike.fly_locked":"Uçuşu açmak için Can #7’yi bitir.",
+ "hud.energy_help":"İstasyon enerjisi ϟ {energy}/{cap}. Güneş panelleri saatte +{rate} üretir. Atölyede harcanır: kristal −3, metal −2."
 });

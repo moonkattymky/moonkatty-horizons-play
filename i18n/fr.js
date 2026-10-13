@@ -1445,5 +1445,6 @@
  "bike.fly_land":"Atterris d’abord : relâche ⤒",
  "bike.fly_title":"Vol en moto",
  "bike.fly_on":"Débloqué : maintiens ⤒ (ou Espace) en roulant.",
- "bike.fly_locked":"Termine la Vie #7 pour débloquer le vol."
+ "bike.fly_locked":"Termine la Vie #7 pour débloquer le vol.",
+ "hud.energy_help":"Énergie de la station ϟ {energy}/{cap}. Les panneaux solaires produisent +{rate} par heure. Dépensée à l’atelier : cristal −3, métal −2."
 });

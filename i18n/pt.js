@@ -1445,5 +1445,6 @@
  "bike.fly_land":"Aterra primeiro: larga ⤒",
  "bike.fly_title":"Voo de mota",
  "bike.fly_on":"Desbloqueado: mantém ⤒ (ou Espaço) ao andar de mota.",
- "bike.fly_locked":"Termina a Vida #7 para desbloquear o voo."
+ "bike.fly_locked":"Termina a Vida #7 para desbloquear o voo.",
+ "hud.energy_help":"Energia da estação ϟ {energy}/{cap}. Os painéis solares geram +{rate} por hora. Gasta na oficina: cristal −3, metal −2."
 });

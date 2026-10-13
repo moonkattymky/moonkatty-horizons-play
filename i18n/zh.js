@@ -1445,5 +1445,6 @@
  "bike.fly_land":"先降落——松开 ⤒",
  "bike.fly_title":"摩托飞行",
  "bike.fly_on":"已解锁：骑行时按住 ⤒（或空格）。",
- "bike.fly_locked":"完成第7条命即可解锁飞行。"
+ "bike.fly_locked":"完成第7条命即可解锁飞行。",
+ "hud.energy_help":"基地能量 ϟ {energy}/{cap}。太阳能板每小时 +{rate}。在工坊消耗：水晶 −3，金属 −2。"
 });

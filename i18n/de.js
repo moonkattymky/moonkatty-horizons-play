@@ -1445,5 +1445,6 @@
  "bike.fly_land":"Erst landen — lass ⤒ los",
  "bike.fly_title":"Bike-Flug",
  "bike.fly_on":"Freigeschaltet: Halte ⤒ (oder Leertaste) beim Fahren.",
- "bike.fly_locked":"Schaff Leben #7, um das Fliegen freizuschalten."
+ "bike.fly_locked":"Schaff Leben #7, um das Fliegen freizuschalten.",
+ "hud.energy_help":"Stationsenergie ϟ {energy}/{cap}. Solarpaneele erzeugen +{rate} pro Stunde. Verbraucht in der Werkstatt: Kristall −3, Metall −2."
 });

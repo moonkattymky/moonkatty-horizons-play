@@ -1445,5 +1445,6 @@
  "bike.fly_land":"먼저 착륙하세요 — ⤒에서 손 떼기",
  "bike.fly_title":"바이크 비행",
  "bike.fly_on":"열림: 탑승 중 ⤒(또는 스페이스)를 누르고 있으세요.",
- "bike.fly_locked":"목숨 #7을 끝내면 비행이 열려요."
+ "bike.fly_locked":"목숨 #7을 끝내면 비행이 열려요.",
+ "hud.energy_help":"기지 에너지 ϟ {energy}/{cap}. 태양광 패널이 시간당 +{rate} 생산합니다. 작업장에서 사용: 크리스털 −3, 금속 −2."
 });

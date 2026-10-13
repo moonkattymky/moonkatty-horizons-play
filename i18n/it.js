@@ -1445,5 +1445,6 @@
  "bike.fly_land":"Prima atterra: lascia ⤒",
  "bike.fly_title":"Volo in moto",
  "bike.fly_on":"Sbloccato: tieni premuto ⤒ (o Spazio) in sella.",
- "bike.fly_locked":"Completa la Vita #7 per sbloccare il volo."
+ "bike.fly_locked":"Completa la Vita #7 per sbloccare il volo.",
+ "hud.energy_help":"Energia della stazione ϟ {energy}/{cap}. I pannelli solari danno +{rate} all’ora. Si spende in officina: cristallo −3, metallo −2."
 });

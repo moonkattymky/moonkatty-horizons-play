@@ -1445,5 +1445,6 @@
  "bike.fly_land":"Aterriza primero: suelta ⤒",
  "bike.fly_title":"Vuelo en moto",
  "bike.fly_on":"Desbloqueado: mantén ⤒ (o Espacio) al montar.",
- "bike.fly_locked":"Termina la Vida #7 para desbloquear el vuelo."
+ "bike.fly_locked":"Termina la Vida #7 para desbloquear el vuelo.",
+ "hud.energy_help":"Energía de la estación ϟ {energy}/{cap}. Los paneles solares dan +{rate} por hora. Se gasta en el taller: cristal −3, metal −2."
 });
