@@ -8,7 +8,7 @@ const A='assets/cinema/';
 // Glow spots [x, y, radius (fraction of image width), colour] pulse softly over windows, crystals, beacons and Earth.
 // v38 chapter covers are 16:9 (1280×720). On a portrait phone only ~26% of the width is visible, so each title card pans
 // from the cat to the story object. V busts GitHub Pages / Telegram caches of the old portrait files that kept the same names.
-const V='?v=38',V4='?v=43',V5='?v=57';
+const V='?v=38',V4='?v=43',V5='?v=57',V6='?v=58';
 // Optional titleY (fraction of the screen height) moves the title card off the key object; default 66%.
 const CH1={img:A+'ch1-awakening.jpg'+V,from:[.355,.42,1.08],to:[.60,.62,1.1],sky:.3,fx:['stars','dust'],glows:[[.415,.51,.05,'blue'],[.60,.54,.05,'amber'],[.083,.68,.03,'blue'],[.168,.835,.035,'blue'],[.79,.85,.035,'blue'],[.915,.75,.03,'blue'],[.78,.23,.14,'earth']],
  title:[_t('life.n',{n:1}),_t('chapter.1')],kicker:_t('cine.zadanie'),text:_t('cine.naydi_bortovoy'),mood:'title',mark:'ch1'};
@@ -54,6 +54,16 @@ const SCENES={
  ch5end:{name:_t('ch5.end_title'),frames:()=>[
   {img:A+'ch5-liftoff.jpg'+V5,from:[.56,.66,1.35],to:[.55,.36,1.02],sky:.32,titleY:.24,fx:['stars','dust'],glows:[[.56,.47,.07,'amber'],[.56,.6,.10,'amber']],
    title:[_t('ch5.end_title'),_t('ch5.end_sub')],kicker:_t('ch5.end_kicker'),text:_t('ch5.end_card'),mood:'hope'}],marks:()=>['ch5end']},
+ // v58 LIFE #6 · THE DEPTHS. Opener: the sunken crystal grotto seen from its rim → the Bell Altar and the Crystal Door (title).
+ // Ending: the Heart of the Depths opens a star map with the beacon of the Lost Expedition (LIFE #7 teaser).
+ ch6:{name:_t('life.title',{n:6,name:_t('chapter.6')}),frames:()=>[
+  {img:A+'ch6-echo.jpg'+V6,from:[.5,.66,1.2],to:[.5,.45,1.04],sky:.3,fx:['stars','dust'],glows:[[.51,.42,.07,'blue'],[.49,.3,.04,'violet']],
+   kicker:_t('ch6.cine_kicker'),text:_t('ch6.cine_text'),mood:'mystery'},
+  {img:A+'ch6-grotto.jpg'+V6,from:[.5,.62,1.18],to:[.5,.44,1.02],sky:.3,titleY:.74,fx:['stars','dust'],glows:[[.45,.47,.07,'blue'],[.45,.34,.05,'violet']],
+   title:[_t('life.n',{n:6}),_t('chapter.6')],kicker:_t('cine.zadanie'),text:_t('ch6.cine_mission'),mood:'title',mark:'ch6'}],marks:()=>['ch6']},
+ ch6end:{name:_t('ch6.end_title'),frames:()=>[
+  {img:A+'ch6-heart.jpg'+V6,from:[.5,.6,1.3],to:[.5,.42,1.02],sky:.32,titleY:.82,fx:['stars','dust'],glows:[[.57,.6,.07,'violet'],[.78,.13,.04,'amber']],
+   title:[_t('ch6.end_title'),_t('ch6.end_sub')],kicker:_t('ch6.end_kicker'),text:_t('ch6.end_card'),mood:'mystery'}],marks:()=>['ch6end']},
  crystal:{name:_t('cine.pervyy_kristall'),flash:true,frames:()=>[
   {kind:'flash',img:A+'crystal.webp',dur:5600,kicker:_t('cine.nahodka'),title:[_t('cine.kristall_nayden'),''],text:_t('cine.golubye_kristally'),mood:'chime'}],marks:()=>['crystal']}
 };

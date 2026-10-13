@@ -36,3 +36,19 @@
 .forge-row[data-aligned=true] .forge-sun{background:radial-gradient(circle,#fff6d6 0 24%,#ffc24a 26% 38%,#ffb84a33 40%,transparent 62%)}
 .forge-pip{position:absolute;left:50%;top:50%;width:6px;height:13px;margin:-21px 0 0 -3px;border-radius:3px;background:#5a4a62;transform-origin:3px 21px;transform:rotate(calc(var(--k) * 90deg + 45deg));transition:background .25s ease,box-shadow .25s ease}
 .forge-pip[data-on=true]{background:#ffd27a;box-shadow:0 0 8px #ffb84aaa}
+/* v58 LIFE #6 · Song of the Depths: heard notes, three slots, four crystal bells */
+.song-puzzle{display:grid;gap:12px}
+.song-heard{display:flex;gap:6px;flex-wrap:wrap}
+.song-chip{flex:1 1 0;min-width:0;padding:6px 8px;border-radius:10px;font-size:12px;font-weight:700;text-align:center;background:#1b2440;border:1px solid #3d4a72;color:#cfe2ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.song-track{display:flex;gap:10px;justify-content:center}
+.song-track i{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;color:#6f7fa8;background:#121a30;border:2px dashed #3d4a72;transition:background .2s,box-shadow .2s}
+.song-bells{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.song-bell{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border-radius:14px;background:linear-gradient(160deg,#1c2a4a,#16203a);border:1px solid #3d4a72;color:#e8f2ff;font:inherit;cursor:pointer}
+.song-bell span{width:30px;height:34px;border-radius:15px 15px 8px 8px;background:var(--bc);box-shadow:0 0 14px var(--bc)}
+.song-bell b{font-size:12px;line-height:1.1}
+.song-bell.ring span{animation:songRing .45s ease}
+@keyframes songRing{0%{transform:rotate(0)}25%{transform:rotate(14deg)}55%{transform:rotate(-10deg)}80%{transform:rotate(5deg)}100%{transform:rotate(0)}}
+.song-clear{justify-self:center;padding:6px 16px;border-radius:999px;background:transparent;border:1px solid #5a6a92;color:#cfe2ff;font:inherit;font-size:13px}
+[data-bell=teal]{--bc:#4ff0ff}[data-bell=pink]{--bc:#ff7fd6}[data-bell=violet]{--bc:#a982ff}[data-bell=gold]{--bc:#ffcf5a}
+.song-chip:not([data-bell=none]){border-color:var(--bc);color:var(--bc);box-shadow:inset 0 0 10px color-mix(in srgb,var(--bc) 25%,transparent)}
+.song-track i:not([data-bell=none]){background:var(--bc);border:2px solid #fff;box-shadow:0 0 16px var(--bc)}

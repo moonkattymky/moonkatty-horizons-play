@@ -76,9 +76,15 @@ function build(r){const main=new Map(),detail=new Map(),sparks=SPARKS.map(()=>ne
  add('main',main);add('detail',detail);add('lens',lens);add('igniter',igniter);add('pad',pad);sparks.forEach((m,i)=>add('spark'+(i+1),m));
  return{L,top,padTop:PAD?r.terrain(PAD[0],PAD[1],4):0};}
 const on=s=>!!s&&Number(s.chapter)>=5;
-// clear the base scatter boulders off the plaza and the gold path (they hid the Sun Gate from the approach)
-const scen=R.scenery;R.scenery=function(ch){if(ch<5||!this.rocks)return scen.call(this,ch);const all=this.rocks;
- this.rocks=all.filter(r=>Math.hypot(r.x-F.x,r.z-F.z)>15+r.s*.6&&!(Math.abs(r.x-F.x)<5+r.s*.6&&r.z>F.z&&r.z<F.z+26));try{return scen.call(this,ch);}finally{this.rocks=all;}};
+// v58 rock zones: a later Life can clear the base scatter boulders off its area (from its chapter on). The same filtered list is
+// seen by the scenery batch, the collisions, the camera and the shadows, so a cleared boulder is never an invisible wall.
+const ZONES=root.MoonRockZones=root.MoonRockZones||[];
+// Sun Forge: plaza and the gold path (the boulders hid the Sun Gate from the approach)
+ZONES.push({ch:5,out:r=>Math.hypot(r.x-F.x,r.z-F.z)<=15+r.s*.6||(Math.abs(r.x-F.x)<5+r.s*.6&&r.z>F.z&&r.z<F.z+26)});
+function rocksFor(self,ch){const all=self.rocks,c=(self._rockZones=self._rockZones||{})[ch];if(c&&c.src===all&&c.n===all.length)return c.list;
+ const list=all.filter(r=>!ZONES.some(z=>ch>=z.ch&&z.out(r)));self._rockZones[ch]={src:all,n:all.length,list};return list;}
+function withRocks(self,state,fn){const ch=Number(state&&state.chapter)||1;if(ch<5||!self.rocks)return fn();if(self.ensureWorldModels)self.ensureWorldModels();
+ const all=self.rocks,list=rocksFor(self,ch);if(list.length===all.length)return fn();self.rocks=list;try{return fn();}finally{self.rocks=all;}}
 R.v57Build=function(){if(this.v57)return this.v57;this.ensureWorldModels&&this.ensureWorldModels();return this.v57=build(this);};
 R.scene=function(state,p,t,...args){const out=old.scene.call(this,state,p,t,...args);if(!on(state))return out;const eye=this.eye||[0,0,0],dF=Math.hypot(eye[0]-F.x,eye[2]-F.z);
  const nearPad=root.MoonRocketWorld&&Math.hypot(eye[0]-root.MoonRocketWorld.PAD[0],eye[2]-root.MoonRocketWorld.PAD[1])<DRAW_R;if(dF>DRAW_R+20&&!nearPad)return out;
@@ -127,12 +133,18 @@ R.render=function(state,p,t,dt,yaw,pitch,scan){old.render.call(this,state,p,t,dt
     if(lit)for(let i=0;i<12;i++){const a=i*2.39996,f=((t*.14+i*.083)%1);bill(GATE.x+Math.cos(a)*pr*.8,top+.4+f*GATE.r*2.6,GATE.z+.2,.2,.2,2,i%3?[1,.82,.45]:[.85,.55,1],Math.sin(f*Math.PI)*.9);}}}
   // the Igniter at the pad: amber ring glow, and a roaring flame once LIFE #5 is complete (chapter1-style draws the base flame)
   const RW=root.MoonRocketWorld;if(state.igniterIn&&RW){const[px,pz]=RW.PAD,pt=this.v43&&this.v43.w&&this.v43.w.pad?this.v43.w.pad.top:this.terrain(px,pz,4);bill(px,pt+.6,pz,3.4,1.2,0,[1,.6,.22],.55*pul);
-   if(state.chapter5Complete&&!low)for(let i=0;i<8;i++){const f=((t*1.1+i/8)%1);bill(px+Math.sin(t*3+i)*.4*f,pt+.4+f*1.2,pz+Math.cos(t*2+i)*.4*f,.8+f*2.2,.8+f*2.2,0,[1,.75-.3*f,.35-.25*f],(1-f)*.35);}}
+   if(state.chapter5Complete&&state.chapter===5&&!low)for(let i=0;i<8;i++){const f=((t*1.1+i/8)%1);bill(px+Math.sin(t*3+i)*.4*f,pt+.4+f*1.2,pz+Math.cos(t*2+i)*.4*f,.8+f*2.2,.8+f*2.2,0,[1,.75-.3*f,.35-.25*f],(1-f)*.35);}}
   if(!Q.length)return;const data=new Float32Array(Q);
   gl.useProgram(P5.p);gl.uniformMatrix4fv(P5.vp,false,this.vp);gl.uniform1f(P5.time,t);gl.bindBuffer(gl.ARRAY_BUFFER,P5.buf);gl.bufferData(gl.ARRAY_BUFFER,data,gl.DYNAMIC_DRAW);
   gl.enable(gl.DEPTH_TEST);gl.depthMask(false);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFunc(gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
   gl.enableVertexAttribArray(P5.pos);gl.vertexAttribPointer(P5.pos,3,gl.FLOAT,false,44,0);gl.enableVertexAttribArray(P5.info);gl.vertexAttribPointer(P5.info,4,gl.FLOAT,false,44,12);gl.enableVertexAttribArray(P5.tone);gl.vertexAttribPointer(P5.tone,4,gl.FLOAT,false,44,28);
   gl.drawArrays(gl.TRIANGLES,0,data.length/11);gl.disableVertexAttribArray(P5.pos);gl.disableVertexAttribArray(P5.info);gl.disableVertexAttribArray(P5.tone);
   gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(true);gl.disable(gl.BLEND);this.v57Stats={fxQuads:data.length/66|0};}catch(e){this._v57Off=true;if(typeof console!=='undefined')console.warn('v57 fx off',e);}};
+{const w={scene:R.scene,render:R.render,blocked:R.blocked,camera:R.cameraBlocked,scenery:R.scenery};
+ R.scene=function(state,...a){return withRocks(this,state,()=>w.scene.call(this,state,...a));};
+ R.render=function(state,...a){return withRocks(this,state,()=>w.render.call(this,state,...a));};
+ R.blocked=function(x,z,state,alt=0){return withRocks(this,state,()=>w.blocked.call(this,x,z,state,alt));};
+ if(w.camera)R.cameraBlocked=function(x,z,state,alt=0){return withRocks(this,state,()=>w.camera.call(this,x,z,state,alt));};
+ R.rocksForChapter=function(ch){return this.rocks?rocksFor(this,ch):[];};}
 root.MoonIgnitionWorld={GATE,BOWL,SPARKS,SPIRES,CRYST,LAMPS,inside:inside5};
 })(typeof window!=='undefined'?window:globalThis);

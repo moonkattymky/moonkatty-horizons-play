@@ -11,7 +11,8 @@ const old={ensure:R.ensureWorldModels,scene:R.scene,render:R.render,put:R.put,bl
 const TAU=Math.PI*2,norm=v=>{const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l];},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
 function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
 function triPush(a,p,q,r,n){n=n||norm(cross([q[0]-p[0],q[1]-p[1],q[2]-p[2]],[r[0]-p[0],r[1]-p[1],r[2]-p[2]]));a.push(...p,...n,...q,...n,...r,...n);}
-const clearOf=(x,z,pad)=>{for(const k in Core.POINTS){const p=Core.POINTS[k];if(Math.hypot(x-p[0],z-p[1])<pad+2.6)return false;}for(const r of Core.resources)if(Math.hypot(x-r.x,z-r.z)<pad+2.2)return false;return true;};
+const LATE=new Set(Core.LATE_POINTS||[]);/* v58: LIFE #6 points live in their own sinkhole (depths-world.js clears it) and must not reshuffle the older boulder layout */
+const clearOf=(x,z,pad)=>{for(const k in Core.POINTS){if(LATE.has(k))continue;const p=Core.POINTS[k];if(Math.hypot(x-p[0],z-p[1])<pad+2.6)return false;}for(const r of Core.resources)if(Math.hypot(x-r.x,z-r.z)<pad+2.2)return false;return true;};
 // ---------- far ridges: three hazy layers of jagged crests, centred on the camera ----------
 function ridgeData(){const a=[],S=168;
  const layers=[[138,20,6,13,11],[168,26,10,20,23]];
