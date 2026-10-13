@@ -118,9 +118,9 @@ R.scene=function(state,p,t,...args){const out=old.scene.call(this,state,p,t,...a
  for(const k of['house','workshop','garden','house2','solar','tower']){const idx=STEPS.indexOf(k);if(st>idx)draw(k,POS[k][0],POS[k][1],k==='solar'?0:0,-.05);else if(st===idx)draw('scaffold',POS[k][0],POS[k][1],0,-.05);}
  for(let l=2;l<=Math.min(4,lvl);l++)draw('lvl'+l,0,0,0,-.04);
  // robo-cats
- for(const q of this.v59Poses(t)){const{b}=q,yb=(q.hop||0)+(q.moving?Math.abs(Math.sin(t*9+q.x))*.06:0)-(q.sit?.1:0),sc=b.source==='stars'?1.04:1;
+ for(const q of this.v59Poses(t)){const{b}=q,yb=(q.hop||0)+(q.moving?Math.abs(Math.sin(t*9+q.x))*.06:0)-(q.sit?.1:0),sc=b.source==='stars'?1.42:1.36;
   draw('bot_'+b.prof,q.x,q.z,q.yaw,yb,sc);
-  if(b.prof!=='courier'&&v.L['tool_'+b.prof]){const c=Math.cos(q.yaw),s=Math.sin(q.yaw),hx=q.x+c*.36+s*.18,hz=q.z-s*.36+c*.18;const sw=q.work?q.swing:0;draw('tool_'+b.prof,hx,hz,q.yaw,.62+yb+(q.work?.08:0),1,q.work?-.6+sw*.75:-1.3,0);}}
+  if(b.prof!=='courier'&&v.L['tool_'+b.prof]){const c=Math.cos(q.yaw),s=Math.sin(q.yaw),hx=q.x+(c*.36+s*.18)*sc,hz=q.z+(-s*.36+c*.18)*sc;const sw=q.work?q.swing:0;draw('tool_'+b.prof,hx,hz,q.yaw,(.62+(q.work?.08:0))*sc+yb,sc,q.work?-.6+sw*.75:-1.3,0);}}
  return out;};
 // ---------- collisions (finished buildings, gate posts, vein, tower) ----------
 function insideHome(x,z,state){const lx=x-H.x,lz=z-H.z;if(Math.hypot(lx,lz)>FENCE_R+1)return false;const st=stageOf(state);

@@ -8,7 +8,7 @@ const DAY_MS=86400000;
 const seasonLength=v=>v==='month'?'month':'week';
 const SEASON_TIERS=[{need:30,reward:{crystals:20,metal:10}},{need:100,reward:{points:15}},{need:200,reward:{item:'frame_aurora'}},{need:350,reward:{points:25}},
  {need:550,reward:{crystals:40,metal:30}},{need:800,reward:{points:40}},{need:1100,reward:{badge:'season'}},{need:1500,reward:{points:60,item:'frame_gold'}}];
-const WEEK_DIVISOR=4,WEEK_NEEDS=[10,25,50,90,140,200,275,375],SEASON_SCORE_SKIP=['story','season','goal','vest_story','botbuy'];
+const WEEK_DIVISOR=4,WEEK_NEEDS=[10,25,50,90,140,200,275,375],SEASON_SCORE_SKIP=['story','season','goal','vest_story','botbuy','bikebuy'];
 const GOAL_BEACONS={streak:1,story:3,ref_invitee:5},GOAL_REWARD={points:50,badge:'beacon'},GOAL_CLAIM_DAYS=7;
 // v41: the goal target follows the last season (~110% of its beacons) between a minimum and a maximum; GOAL_TARGET = the maximum.
 // A share of the reward needs at least GOAL_MIN_BEACONS own beacons; the bar shows milestones at 25/50/75/100%.
