@@ -1048,5 +1048,11 @@
  "dm.ad_wait":"Pubblicità vista! L’energia arriva tra pochi secondi.",
  "dm.ad_none":"Al momento non ci sono pubblicità. Riprova più tardi.",
  "dm.ad_done":"+{n} 🔋 ricevuta!",
- "dm.ad_late":"La ricompensa ci mette più del solito: arriverà a breve."
+ "dm.ad_late":"La ricompensa ci mette più del solito: arriverà a breve.",
+ "adtask.title":"Missione partner",
+ "adtask.left":"Rimaste oggi: {n} · +{p} Moon Points ciascuna",
+ "adtask.go":"Vai",
+ "adtask.claim":"Ritira",
+ "adtask.done":"Fatto",
+ "adtask.wait":"Missione fatta! I Moon Points arrivano tra pochi secondi."
 });

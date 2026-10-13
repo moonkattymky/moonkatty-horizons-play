@@ -9,7 +9,8 @@ window.MoonGrowthConfig=Object.assign({
  CHAT_USERNAME:'moonkattymkty_chat',  // community chat username without @. Empty = chat task hidden
  SOCIAL:{youtube:'https://www.youtube.com/@moonkattymky',tiktok:'https://www.tiktok.com/@moonkattymky',instagram:'https://www.instagram.com/moonkattymky/',x:'https://x.com/moonkattymky'},  // full https:// links; empty = task hidden. v45: instagram is a plain link only — it has NO reward task
  ADS_ENABLED:true,                // v47: AdsGram rewarded ad on the «out of energy» screen (+50 energy, granted by the server Reward URL). false = hidden
- ADS_BLOCK_ID:'53665',            // AdsGram Reward block «Energy» (platform 50838); Reward blocks use a plain numeric id
+ ADS_BLOCK_ID:'53665',
+ ADS_TASK_BLOCK_ID:'task-53671',   // v48: AdsGram Task block in «Задания» (+Moon Points via the server Reward URL with type=task). '' = hidden            // AdsGram Reward block «Energy» (platform 50838); Reward blocks use a plain numeric id
  SHARE_STORY_IMAGE:'assets/share/story-{lang}.jpg',
  SHARE_CARD_IMAGE:'assets/share/card-{lang}.jpg'
 },window.MoonGrowthConfig||{});

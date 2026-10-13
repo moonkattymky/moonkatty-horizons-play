@@ -1048,5 +1048,11 @@
  "dm.ad_wait":"Ad watched! Energy arrives in a few seconds.",
  "dm.ad_none":"No ad is available right now. Try again later.",
  "dm.ad_done":"+{n} 🔋 received!",
- "dm.ad_late":"The reward is taking longer than usual — it will arrive shortly."
+ "dm.ad_late":"The reward is taking longer than usual — it will arrive shortly.",
+ "adtask.title":"Partner task",
+ "adtask.left":"{n} left today · +{p} Moon Points each",
+ "adtask.go":"Go",
+ "adtask.claim":"Claim",
+ "adtask.done":"Done",
+ "adtask.wait":"Task done! Moon Points arrive in a few seconds."
 });

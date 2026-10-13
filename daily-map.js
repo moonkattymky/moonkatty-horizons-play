@@ -91,5 +91,5 @@ mount();setInterval(loop,125);
 let tries=0;const boot=setInterval(()=>{if(UI.online){clearInterval(boot);refresh();}else if(++tries>40)clearInterval(boot);},1500);
 setInterval(()=>{if(UI.online&&Game.running&&!document.hidden)refresh();},90000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
-window.MoonDailyMap={open:openPanel,watchAd,adsOn,openEmpty,refresh,get data(){return data;},energy,set,fmt,goal,_tick:tick};
+window.MoonDailyMap={open:openPanel,watchAd,adsOn,sdk,openEmpty,refresh,get data(){return data;},energy,set,fmt,goal,_tick:tick};
 })();

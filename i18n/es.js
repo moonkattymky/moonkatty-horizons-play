@@ -1048,5 +1048,11 @@
  "dm.ad_wait":"¡Anuncio visto! La energía llegará en unos segundos.",
  "dm.ad_none":"Ahora no hay anuncios disponibles. Inténtalo más tarde.",
  "dm.ad_done":"¡+{n} 🔋 recibida!",
- "dm.ad_late":"La recompensa tarda más de lo normal: llegará en breve."
+ "dm.ad_late":"La recompensa tarda más de lo normal: llegará en breve.",
+ "adtask.title":"Tarea de un socio",
+ "adtask.left":"Quedan hoy: {n} · +{p} Moon Points cada una",
+ "adtask.go":"Ir",
+ "adtask.claim":"Recoger",
+ "adtask.done":"Hecho",
+ "adtask.wait":"¡Tarea hecha! Los Moon Points llegarán en unos segundos."
 });

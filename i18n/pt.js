@@ -1048,5 +1048,11 @@
  "dm.ad_wait":"Anúncio assistido! A energia chega em alguns segundos.",
  "dm.ad_none":"Nenhum anúncio disponível agora. Tente mais tarde.",
  "dm.ad_done":"+{n} 🔋 recebida!",
- "dm.ad_late":"A recompensa está demorando mais que o normal — vai chegar em breve."
+ "dm.ad_late":"A recompensa está demorando mais que o normal — vai chegar em breve.",
+ "adtask.title":"Tarefa de parceiro",
+ "adtask.left":"Restam hoje: {n} · +{p} Moon Points cada",
+ "adtask.go":"Ir",
+ "adtask.claim":"Pegar",
+ "adtask.done":"Feito",
+ "adtask.wait":"Tarefa feita! Os Moon Points chegam em alguns segundos."
 });

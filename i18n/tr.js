@@ -1048,5 +1048,11 @@
  "dm.ad_wait":"Reklam izlendi! Enerji birkaç saniye içinde gelecek.",
  "dm.ad_none":"Şu anda reklam yok. Daha sonra tekrar dene.",
  "dm.ad_done":"+{n} 🔋 alındı!",
- "dm.ad_late":"Ödül her zamankinden uzun sürüyor — birazdan gelecek."
+ "dm.ad_late":"Ödül her zamankinden uzun sürüyor — birazdan gelecek.",
+ "adtask.title":"Partner görevi",
+ "adtask.left":"Bugün kalan: {n} · her biri +{p} Moon Points",
+ "adtask.go":"Git",
+ "adtask.claim":"Al",
+ "adtask.done":"Tamam",
+ "adtask.wait":"Görev tamam! Moon Points birkaç saniye içinde gelecek."
 });

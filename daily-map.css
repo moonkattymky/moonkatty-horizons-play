@@ -26,3 +26,8 @@
 .dm-bonus{padding:8px 10px;border-radius:12px;background:#ffd36a1a;color:#ffe29a}.dm-bonus.done{color:#7ff0b0;background:#7ff0b01a}
 .dm-timer{font-weight:700}
 .dm-ad-left{display:block;font-size:11px;opacity:.75;margin-top:3px;font-weight:600}
+/* v48 AdsGram Task row in «Задания» */
+.ad-task-row{flex-direction:column;align-items:stretch;gap:6px;border-color:#ffd36a55}
+.adt-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.adt-head small{opacity:.75;font-size:12px}
+.mk-adtask{--adsgram-task-font-size:14px;--adsgram-task-icon-size:40px;--adsgram-task-icon-title-gap:10px;--adsgram-task-button-width:88px;--adsgram-task-icon-border-radius:10px;display:block;color:#e6f7ff}
+.adt-reward{color:#ffd36a;font-weight:700;font-size:13px}.adt-done{color:#7ff0b0;font-weight:700}.adt-btn,.adt-claim{white-space:nowrap}

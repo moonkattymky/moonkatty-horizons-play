@@ -1048,5 +1048,11 @@
  "dm.ad_wait":"Werbung angesehen! Die Energie kommt in wenigen Sekunden.",
  "dm.ad_none":"Gerade ist keine Werbung verfügbar. Versuch es später.",
  "dm.ad_done":"+{n} 🔋 erhalten!",
- "dm.ad_late":"Die Belohnung dauert länger als sonst – sie kommt gleich."
+ "dm.ad_late":"Die Belohnung dauert länger als sonst – sie kommt gleich.",
+ "adtask.title":"Partner-Aufgabe",
+ "adtask.left":"Heute noch {n} · je +{p} Moon Points",
+ "adtask.go":"Los",
+ "adtask.claim":"Abholen",
+ "adtask.done":"Erledigt",
+ "adtask.wait":"Aufgabe erledigt! Die Moon Points kommen in wenigen Sekunden."
 });

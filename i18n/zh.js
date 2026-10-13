@@ -1048,5 +1048,11 @@
  "dm.ad_wait":"广告已看完！能量将在几秒内到账。",
  "dm.ad_none":"暂时没有可用广告，请稍后再试。",
  "dm.ad_done":"已获得 +{n} 🔋！",
- "dm.ad_late":"奖励比平时慢一些，很快就会到账。"
+ "dm.ad_late":"奖励比平时慢一些，很快就会到账。",
+ "adtask.title":"合作伙伴任务",
+ "adtask.left":"今日剩余：{n} · 每次 +{p} Moon Points",
+ "adtask.go":"前往",
+ "adtask.claim":"领取",
+ "adtask.done":"完成",
+ "adtask.wait":"任务完成！Moon Points 将在几秒内到账。"
 });

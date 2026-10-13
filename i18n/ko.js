@@ -1048,5 +1048,11 @@
  "dm.ad_wait":"광고 시청 완료! 몇 초 후 에너지가 들어와요.",
  "dm.ad_none":"지금은 볼 수 있는 광고가 없어요. 나중에 다시 시도하세요.",
  "dm.ad_done":"+{n} 🔋 받았어요!",
- "dm.ad_late":"보상이 평소보다 늦어지고 있어요. 곧 들어와요."
+ "dm.ad_late":"보상이 평소보다 늦어지고 있어요. 곧 들어와요.",
+ "adtask.title":"파트너 임무",
+ "adtask.left":"오늘 남은 횟수: {n} · 회당 +{p} Moon Points",
+ "adtask.go":"이동",
+ "adtask.claim":"받기",
+ "adtask.done":"완료",
+ "adtask.wait":"임무 완료! 몇 초 후 Moon Points가 들어와요."
 });
