@@ -12,8 +12,8 @@ const old={scene:R.scene,blocked:R.blocked,camera:R.cameraBlocked};
 const TAU=Math.PI*2,DRAW_R=62,BUILD_R=68,CAMP=[0,-5],CAMP_GATE=[7,9];
 const norm=v=>{const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l];},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
 function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
-const MATS={gold:[16,[1,.78,.36]],ivory:[16,[1,.9,.7]],win:[12,[1,.66,.22]],stone:[4,[.62,.58,.52]],dark:[0,[.06,.07,.09]],violet:[17,[.62,.28,1]],amber:[17,[1,.62,.2]],vcore:[12,[.78,.46,1]],acore:[12,[1,.72,.28]],path:[12,[.42,.70,1]],vpath:[12,[.70,.40,1]],rock:[4,[.40,.38,.43]],swirl:[12,[.58,.34,1]],swirl2:[12,[.28,.85,1]],fence:[12,[.40,.80,1]],chest:[0,[.34,.21,.11]],gate:[12,[.35,.85,1]]};
-const GLOW={win:.95,vcore:.8,acore:.75,path:.32,vpath:.34,swirl:.9,swirl2:.85,fence:.55,gate:.8,violet:.16,amber:.14,gold:.06};
+const MATS={gold:[16,[1,.74,.30]],ivory:[17,[1,.92,.76]],win:[12,[1,.72,.30]],stone:[4,[.62,.58,.52]],dark:[0,[.06,.07,.09]],violet:[17,[.58,.26,1]],amber:[12,[1,.46,.05]],vcore:[12,[.78,.46,1]],acore:[12,[1,.72,.28]],path:[12,[.42,.70,1]],vpath:[12,[.70,.40,1]],rock:[4,[.40,.38,.43]],swirl:[12,[.58,.34,1]],swirl2:[12,[.28,.85,1]],fence:[12,[.40,.80,1]],chest:[0,[.34,.21,.11]],gate:[12,[1,.74,.34]],imp:[12,[1,.72,.32]],impv:[12,[.62,.32,1]]};
+const GLOW={ivory:.34,win:1.25,imp:.55,impv:.6,vcore:.8,acore:.75,path:.32,vpath:.34,swirl:.9,swirl2:.85,fence:.55,gate:.45,violet:.2,amber:.3,gold:.3};
 // ---------- layout (local: +z faces the camp) ----------
 const D={};for(const d of Core.DISTRICTS){const f=[CAMP[0]-d.x,CAMP[1]-d.z],l=Math.hypot(f[0],f[1]);D[d.id]={...d,yaw:Math.atan2(f[0]/l,f[1]/l),cols:[],chests:[],relics:[]};}
 const W=(d,lx,lz)=>{const c=Math.cos(d.yaw),s=Math.sin(d.yaw);return[d.x+c*lx+s*lz,d.z-s*lx+c*lz];};
@@ -64,7 +64,7 @@ function buildGold(r,ch,d){const main=new Map(),det=new Map();
  for(const[x,z,hr]of d.houses){const b=new B(),hh=hr*1.3;b.shell('ivory',[[1,0],[1,1]],hr,hh);for(let i=0;i<6;i++){const a=i/6*TAU+.4;b.box('win',Math.sin(a)*hr*1.01,hh*.5,Math.cos(a)*hr*1.01,.5,.75,.06,a);}place(main,b,x,z);
   const b2=new B();b2.shell('gold',[[1.04,0],[.9,.45],[.54,.85],[0,1]],hr,hr*1.1);b2.tube('gold',[0,hr*1.05,0],[0,hr*1.05+1.2,0],.09,6,.01);place(main,b2,x,z,0,hh);}
  // avenue of golden arches with lanterns
- for(const z of[8.5,11.5]){const b=new B(),big=z>10,hw=big?3.4:2.7,ph=big?6:4.4;for(const x of[-hw,hw]){b.box('ivory',x,ph/2,0,.8,ph,.8);b.box('gold',x,ph+.1,0,1.05,.3,1.05);if(big){b.tube('gold',[x,ph+.25,0],[x,ph+3.2,0],.4,10,.02);}}const seg=14;for(let i=0;i<seg;i++){const a0=i/seg*Math.PI,a1=(i+1)/seg*Math.PI;b.tube('gold',[Math.cos(a0)*hw,ph+.2+Math.sin(a0)*hw*.8,0],[Math.cos(a1)*hw,ph+.2+Math.sin(a1)*hw*.8,0],big?.32:.24,8);}b.box('win',0,ph+.2+hw*.8,0,.5,.5,.5);place(main,b,0,z);}
+ for(const z of[8.5,11.5]){const b=new B(),big=z>10,hw=big?3.4:2.7,ph=big?6:4.4;for(const x of[-hw,hw]){b.tube('gold',[x,0,0],[x,.35,0],.62,16,.56);b.tube('ivory',[x,.35,0],[x,ph-.2,0],.46,16,.36);for(const y of[ph*.33,ph*.66])b.tube('gold',[x,y-.07,0],[x,y+.07,0],.47,16,.43);b.tube('gold',[x,ph-.2,0],[x,ph+.25,0],.38,16,.6);if(big){b.tube('gold',[x,ph+.25,0],[x,ph+3.2,0],.4,10,.02);}}const seg=14;for(let i=0;i<seg;i++){const a0=i/seg*Math.PI,a1=(i+1)/seg*Math.PI;b.tube('gold',[Math.cos(a0)*hw,ph+.2+Math.sin(a0)*hw*.8,0],[Math.cos(a1)*hw,ph+.2+Math.sin(a1)*hw*.8,0],big?.32:.24,8);}b.box('win',0,ph+.2+hw*.8,0,.5,.5,.5);place(main,b,0,z);}
  {const b=new B();for(const z of[7,10,13])for(const x of[-4.6,4.6])lantern(b,x,0,z);place(main,b,0,0);}
  // golden path from the front gate to the palace + ring around the plaza
  const pts=[];for(let z=14;z>=4.5;z-=1.5)pts.push(W(d,0,z));strip(main,'win',r,ch,pts,1.8);const ring=[];for(let i=0;i<=40;i++){const a=i/40*TAU;ring.push(W(d,Math.cos(a)*7.4,-1.5+Math.sin(a)*7.4));}strip(main,'win',r,ch,ring,.4);
@@ -95,7 +95,7 @@ function unitMeshes(r){if(r.v55u)return r.v55u;const U={};
  {const b=new B();b.box('chest',0,.74,0,1.07,.28,.74);b.box('gold',0,.74,0,1.1,.06,.76);add('lid',b);}
  {const b=new B();b.box('win',0,.62,0,.9,.06,.6);add('loot',b);}
  {const b=new B();b.tube('gold',[0,0,-.05],[0,0,.05],.34,16);b.paw(0,-.02,.06,.5,'win');add('relic',b);}
- {const b=new B();for(const x of[-1.55,1.55])b.box('stone',x,1.3,0,.42,2.6,.42);const seg=14;for(let i=0;i<seg;i++){const a0=i/seg*Math.PI,a1=(i+1)/seg*Math.PI;b.tube('gold',[Math.cos(a0)*1.55,2.6+Math.sin(a0)*1.1,0],[Math.cos(a1)*1.55,2.6+Math.sin(a1)*1.1,0],.14,8);}add('gateFrame',b);
+ {const b=new B();for(const x of[-1.55,1.55]){b.tube('gold',[x,0,0],[x,.3,0],.34,12,.3);b.tube('ivory',[x,.3,0],[x,2.5,0],.22,12,.18);b.tube('gold',[x,2.5,0],[x,2.7,0],.2,12,.3);}const seg=14;for(let i=0;i<seg;i++){const a0=i/seg*Math.PI,a1=(i+1)/seg*Math.PI;b.tube('gold',[Math.cos(a0)*1.55,2.6+Math.sin(a0)*1.1,0],[Math.cos(a1)*1.55,2.6+Math.sin(a1)*1.1,0],.14,8);}add('gateFrame',b);
   const g=new B();const n=28;for(let i=0;i<n;i++){const a0=i/n*TAU,a1=(i+1)/n*TAU;g.tube('gate',[Math.cos(a0)*1.22,2.2+Math.sin(a0)*1.32,0],[Math.cos(a1)*1.22,2.2+Math.sin(a1)*1.32,0],.06,6);}add('gateGlow',g);}
  {const b=new B();b.tube('fence',[0,0,0],[0,2.2,0],.06,6);b.box('fence',0,2.25,0,.16,.16,.16);add('pylon',b);}
  // anomaly swirl: three tilted glowing rings and a core
@@ -103,6 +103,11 @@ function unitMeshes(r){if(r.v55u)return r.v55u;const U={};
   const c=new B();for(let i=0;i<n;i++){const a0=i/n*TAU,a1=(i+1)/n*TAU;c.tube('swirl2',[Math.cos(a0)*1.6,0,Math.sin(a0)*1.6],[Math.cos(a1)*1.6,0,Math.sin(a1)*1.6],.07,6);}add('ringB',c);
   const k=new B(),pts=[[0,1,0],[1,0,0],[0,0,1],[-1,0,0],[0,0,-1],[0,-1,0]],f=[[0,1,2],[0,2,3],[0,3,4],[0,4,1],[5,2,1],[5,3,2],[5,4,3],[5,1,4]];for(const[a,b2,cc]of f)k.tri('swirl',pts[a].map(v=>v*.7),pts[cc].map(v=>v*.7),pts[b2].map(v=>v*.7));add('core',k);}
  return r.v55u=U;}
+function impostor(r,id){r.v55i=r.v55i||{};if(r.v55i[id])return r.v55i[id];const b=new B();
+ if(id==='gold'){b.shell('imp',[[1,0],[1,.4],[.9,.55],[.6,.8],[0,1]],5.5,12);for(const[x,z]of GOLD_SPIRES)b.tube('imp',[x,0,z],[x,15,z],.9,6,.05);b.tube('imp',[0,10,-1.5],[0,18,-1.5],.4,6,.02);}
+ else if(id==='crystal'){const rnd=rng(31);for(let i=0;i<9;i++){const a=i/9*TAU,rr=i?4+rnd()*6:0;b.tube(i%2?'imp':'impv',[Math.cos(a)*rr,0,Math.sin(a)*rr],[Math.cos(a)*rr*1.1,i?5+rnd()*5:16,Math.sin(a)*rr*1.1],i?1.1:2,5,.05);}}
+ else{for(let j=0;j<3;j++){const n=16,rr=5.5-j*1.3,y=6+j*1.2;for(let i=0;i<n;i++){const a0=i/n*TAU,a1=(i+1)/n*TAU;b.tube('impv',[Math.cos(a0)*rr,y,Math.sin(a0)*rr],[Math.cos(a1)*rr,y+.3,Math.sin(a1)*rr],.25,4);}}b.tube('impv',[0,3.5,0],[0,8.5,0],1.6,6,.1);}
+ const L=[];for(const[mat,data]of b.groups){const key='v55i_'+id+'_'+mat;r.addMesh(key,data);L.push([key,mat]);}return r.v55i[id]=L;}
 const BUILDERS={gold:buildGold,crystal:buildCrystal,anomaly:buildAnomaly};
 function build(r,id,ch){r.v55=r.v55||{};const k=id+':'+ch;if(r.v55[k])return r.v55[k];const d=D[id],g=BUILDERS[id](r,ch,d),L={main:[],det:[]};
  for(const part of['main','det'])for(const[mat,data]of g[part]){if(!data.length)continue;const key='v55_'+id+ch+'_'+part+'_'+mat;r.addMesh(key,data);L[part].push([key,mat]);}
@@ -113,7 +118,7 @@ function build(r,id,ch){r.v55=r.v55||{};const k=id+':'+ch;if(r.v55[k])return r.v
 function drawList(r,list,t,mul=1){for(const[key,mat]of list){const[kind,c]=MATS[mat]||[0,[.5,.5,.5]];const g=(GLOW[mat]||0)*(mat==='win'?1+.08*Math.sin(t*1.3):mat==='swirl'||mat==='swirl2'?.8+.25*Math.sin(t*2.1):1)*mul;r.put(key,0,0,0,1,1,1,c,0,kind,g);}}
 const view={opened:[],relics:[]};
 R.scene=function(state,p,t,...args){const out=old.scene.call(this,state,p,t,...args);if(!state)return out;const ch=state.chapter||1,eye=this.eye||[p?p.x:0,0,p?p.z:0],low=this.quality==='low',U=unitMeshes(this);
- for(const id in D){const d=D[id],dist=Math.hypot(eye[0]-d.x,eye[2]-d.z);if(dist>BUILD_R)continue;const L=build(this,id,ch);if(dist>DRAW_R)continue;
+ for(const id in D){const d=D[id],dist=Math.hypot(eye[0]-d.x,eye[2]-d.z);if(dist>DRAW_R-2&&dist<215){const y=this.terrain(d.x,d.z,ch)-.2,f=Math.min(1,(dist-DRAW_R+2)/10);for(const[k,m]of impostor(this,id)){const[kind,cc]=MATS[m];this.put(k,d.x,y,d.z,1,1,1,cc,d.yaw,kind,GLOW[m]*f);}}if(dist>BUILD_R)continue;const L=build(this,id,ch);if(dist>DRAW_R)continue;
   drawList(this,L.main,t);if(!low)drawList(this,L.det,t);
   if(!isOpen(d,state))for(const[x,y,z]of L.pylons)for(const[k,m]of U.pylon){const[kind,cc]=MATS[m];this.put(k,x,y,z,1,1,1,cc,0,kind,.45+.2*Math.sin(t*2+x));}
   for(const c of d.chests){const y=this.terrain(c.x,c.z,ch)-.02,done=view.opened.includes(c.id),s=c.big?1.25:1;for(const[k,m]of U.chest){const[kind,cc]=MATS[m];this.put(k,c.x,y,c.z,s,s,s,cc,d.yaw,kind,m==='gold'?.1:0);}

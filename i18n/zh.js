@@ -1113,7 +1113,7 @@
  "ret.remind_start":"启动机器人即可接收提醒",
  "ret.res_note":"船员的水晶和金属依然进入基地仓库。",
  "dist.gold":"黄金之城",
- "dist.crystal":"水晶山谷",
+ "dist.crystal":"琥珀山谷",
  "dist.anomaly":"异常陨坑",
  "dist.gold_sub":"金色穹顶与发光的窗户",
  "dist.crystal_sub":"紫色与琥珀色的水晶田",

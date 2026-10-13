@@ -1113,7 +1113,7 @@
  "ret.remind_start":"Lance le bot pour recevoir des rappels",
  "ret.res_note":"Les cristaux et le métal de l’Équipage vont toujours au stock de la station.",
  "dist.gold":"Cité d’Or",
- "dist.crystal":"Vallée de Cristal",
+ "dist.crystal":"Vallée d’Ambre",
  "dist.anomaly":"Cratère de l’Anomalie",
  "dist.gold_sub":"dômes d’or et fenêtres lumineuses",
  "dist.crystal_sub":"champs de cristaux violets et ambrés",

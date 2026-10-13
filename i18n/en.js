@@ -1113,7 +1113,7 @@
  "ret.remind_start":"Start the bot to get reminders",
  "ret.res_note":"Crystals and metal from the Crew still go to your station store.",
  "dist.gold":"Golden City",
- "dist.crystal":"Crystal Valley",
+ "dist.crystal":"Amber Valley",
  "dist.anomaly":"Anomaly Crater",
  "dist.gold_sub":"gold domes and glowing windows",
  "dist.crystal_sub":"violet and amber crystal fields",

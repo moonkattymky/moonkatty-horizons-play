@@ -1113,7 +1113,7 @@
  "ret.remind_start":"Starte den Bot, um Erinnerungen zu bekommen",
  "ret.res_note":"Kristalle und Metall der Crew landen weiterhin im Stationslager.",
  "dist.gold":"Goldene Stadt",
- "dist.crystal":"Kristalltal",
+ "dist.crystal":"Bernsteintal",
  "dist.anomaly":"Anomaliekrater",
  "dist.gold_sub":"goldene Kuppeln und leuchtende Fenster",
  "dist.crystal_sub":"violette und bernsteinfarbene Kristallfelder",

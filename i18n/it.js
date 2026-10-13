@@ -1113,7 +1113,7 @@
  "ret.remind_start":"Avvia il bot per ricevere promemoria",
  "ret.res_note":"Cristalli e metallo della Ciurma continuano ad andare nel magazzino della stazione.",
  "dist.gold":"Città d’Oro",
- "dist.crystal":"Valle di Cristallo",
+ "dist.crystal":"Valle d’Ambra",
  "dist.anomaly":"Cratere dell’Anomalia",
  "dist.gold_sub":"cupole d’oro e finestre luminose",
  "dist.crystal_sub":"campi di cristalli viola e ambra",

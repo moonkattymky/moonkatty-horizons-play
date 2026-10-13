@@ -1113,7 +1113,7 @@
  "ret.remind_start":"알림을 받으려면 봇을 시작하세요",
  "ret.res_note":"크루의 크리스털과 금속은 계속 기지 창고로 들어가요.",
  "dist.gold":"황금 도시",
- "dist.crystal":"크리스털 계곡",
+ "dist.crystal":"호박 계곡",
  "dist.anomaly":"이상 현상 분화구",
  "dist.gold_sub":"황금 돔과 빛나는 창문",
  "dist.crystal_sub":"보랏빛과 호박빛 크리스털 들판",

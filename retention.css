@@ -36,3 +36,5 @@
 /* v55: six dock buttons on short screens — two columns below the energy bar, above the bottom controls */
 @media(max-height:760px){#growth-dock#growth-dock{display:grid;grid-template-columns:repeat(2,44px);top:284px;gap:5px}#growth-dock#growth-dock button.gd{width:44px;height:44px;padding:4px 0 3px;border-radius:13px}#growth-dock#growth-dock .gn-icon svg{width:19px;height:19px}#growth-dock#growth-dock .ret-gd .gn-icon{font-size:17px;line-height:19px}#growth-dock#growth-dock .gn-label{font-size:8.5px}}
 @media(max-height:600px){#growth-dock#growth-dock{grid-template-columns:repeat(2,40px);top:280px;gap:4px}#growth-dock#growth-dock button.gd{width:40px;height:40px;padding:3px 0 2px}#growth-dock#growth-dock .gn-label{font-size:7.5px}}
+/* v56: keep the compass chip clear of the two-column dock on short screens */
+@media(max-height:760px){.dm-compass.dm-compass{right:auto;left:12px;top:calc(env(safe-area-inset-top,0px) + 284px)}}

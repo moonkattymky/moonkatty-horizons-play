@@ -1113,7 +1113,7 @@
  "ret.remind_start":"Inicie o bot para receber lembretes",
  "ret.res_note":"Cristais e metal da Tripulação continuam indo para o depósito da estação.",
  "dist.gold":"Cidade Dourada",
- "dist.crystal":"Vale de Cristal",
+ "dist.crystal":"Vale de Âmbar",
  "dist.anomaly":"Cratera da Anomalia",
  "dist.gold_sub":"cúpulas douradas e janelas brilhantes",
  "dist.crystal_sub":"campos de cristais violeta e âmbar",

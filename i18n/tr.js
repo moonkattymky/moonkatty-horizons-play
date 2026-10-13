@@ -1113,7 +1113,7 @@
  "ret.remind_start":"Hatırlatma almak için botu başlat",
  "ret.res_note":"Ekibin kristal ve metali yine istasyon deposuna gider.",
  "dist.gold":"Altın Şehir",
- "dist.crystal":"Kristal Vadisi",
+ "dist.crystal":"Kehribar Vadisi",
  "dist.anomaly":"Anomali Krateri",
  "dist.gold_sub":"altın kubbeler ve parlayan pencereler",
  "dist.crystal_sub":"mor ve kehribar kristal tarlaları",

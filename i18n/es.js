@@ -1113,7 +1113,7 @@
  "ret.remind_start":"Inicia el bot para recibir avisos",
  "ret.res_note":"Los cristales y el metal de la Tripulación siguen yendo al almacén de la estación.",
  "dist.gold":"Ciudad Dorada",
- "dist.crystal":"Valle de Cristal",
+ "dist.crystal":"Valle de Ámbar",
  "dist.anomaly":"Cráter de la Anomalía",
  "dist.gold_sub":"cúpulas doradas y ventanas que brillan",
  "dist.crystal_sub":"campos de cristales violetas y ámbar",
