@@ -1,5 +1,5 @@
 (function(root){'use strict';
-const RIDE={"image":"assets/moonkatty-ride-v63.webp?v=20261013-64b","imageWidth":865,"imageHeight":1099,"directions":{"up":{"x":0,"y":0,"w":385,"h":568,"anchorX":192.3,"anchorY":403.6,"bodyHeight":540.5,"hands":[[-0.791,0.448],[0.799,0.448]]},"left":{"x":391,"y":0,"w":461,"h":519,"anchorX":193.2,"anchorY":355.5,"bodyHeight":540.5,"hands":[[-0.722,0.504]]},"down":{"x":0,"y":574,"w":392,"h":514,"anchorX":196.2,"anchorY":356.1,"bodyHeight":540.5,"hands":[[-0.672,0.494],[0.695,0.494]]},"right":{"x":398,"y":574,"w":461,"h":519,"anchorX":267.8,"anchorY":355.5,"bodyHeight":540.5,"hands":[[0.722,0.504]]}}};
+const RIDE={"image":"assets/moonkatty-ride-v63.webp?v=20261013-65a","imageWidth":865,"imageHeight":1099,"directions":{"up":{"x":0,"y":0,"w":385,"h":568,"anchorX":192.3,"anchorY":403.6,"bodyHeight":540.5,"hands":[[-0.791,0.448],[0.799,0.448]]},"left":{"x":391,"y":0,"w":461,"h":519,"anchorX":193.2,"anchorY":355.5,"bodyHeight":540.5,"hands":[[-0.722,0.504]]},"down":{"x":0,"y":574,"w":392,"h":514,"anchorX":196.2,"anchorY":356.1,"bodyHeight":540.5,"hands":[[-0.672,0.494],[0.695,0.494]]},"right":{"x":398,"y":574,"w":461,"h":519,"anchorX":267.8,"anchorY":355.5,"bodyHeight":540.5,"hands":[[0.722,0.504]]}}};
 const atlas=root.MoonCharacterAtlas,R=root.MoonRenderer.prototype,originalCat=R.cat,originalScene=R.scene;
 R.scene=function(...args){this.crewSprites=[];return originalScene.apply(this,args);};
 const VERT=`attribute vec3 position;attribute vec2 texcoord;uniform mat4 vp;varying vec2 uv;varying vec3 W;void main(){uv=texcoord;W=position;gl_Position=vp*vec4(position,1.);}`;
@@ -55,6 +55,7 @@ R.drawCrewSprites=function(vp,state){
  gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.enableVertexAttribArray(s.position);gl.vertexAttribPointer(s.position,3,gl.FLOAT,false,20,0);gl.enableVertexAttribArray(s.uv);gl.vertexAttribPointer(s.uv,2,gl.FLOAT,false,20,12);gl.drawArrays(gl.TRIANGLES,0,6);gl.disableVertexAttribArray(s.position);gl.disableVertexAttribArray(s.uv);gl.disable(gl.BLEND);
  }
 };
+const TILT_K=1;
 R.drawCharacterSprites=function(vp,p,state,t,dt){
  const rideB=root.MoonBike&&root.MoonBike.on&&root.MoonBike.on(p)&&root.MoonBike.seat?root.MoonBike.seat:null;/* v61: seated on the hover-bike: no walk cycle, legs cut away inside the seat */
  const s=this.characterSprite;if(!s||!s.ready)return;this.drawCrewSprites(vp,state);
@@ -66,7 +67,8 @@ R.drawCharacterSprites=function(vp,p,state,t,dt){
    const left=-f.anchorX*scale,bottom=(f.anchorY-f.h)*scale,top=f.anchorY*scale,width=f.w*scale,ln=0,bob=Math.sin((t||0)*3.1)*.004;
    const fx=p.x+Math.sin(camera)*.45,fz=p.z+Math.cos(camera)*.45;/* drawn on the camera side of the bike so the near leg and the paws sit over the hull and grips */
    const point=(x,y,u,v)=>[fx+right[0]*x,base+y+bob,fz+right[1]*x,u,v],u0=f.x/IW,u1=(f.x+f.w)/IW,v0=f.y/IH,v1=(f.y+f.h)/IH;
-   const a=point(left+ln,top,u0,v0),b=point(left,bottom,u0,v1),c=point(left+width,bottom,u1,v1),d=point(left+width+ln,top,u1,v0);this.spriteLight={frameUV:[u0,v0,u1-u0,v1-v0],spriteRight:[right[0],0,right[1]]};s.mode='ride';
+   const tl=root.MoonBike&&root.MoonBike.tilt||0,tc=Math.cos(tl*TILT_K),ts=Math.sin(tl*TILT_K),PY=-.29,rot=(x,y,u,v)=>tl?point(x*tc-(y-PY)*ts,PY+x*ts+(y-PY)*tc,u,v):point(x,y,u,v);/* v65: in the sky the rider banks and barrel-rolls with the bike (rotation in the sprite plane around the hull centre) */
+   const a=rot(left+ln,top,u0,v0),b=rot(left,bottom,u0,v1),c=rot(left+width,bottom,u1,v1),d=rot(left+width+ln,top,u1,v0);this.spriteLight={frameUV:[u0,v0,u1-u0,v1-v0],spriteRight:[right[0],0,right[1]]};s.mode='ride';
    this.drawCharacterShadow(vp,p,state,camera);const gl=this.gl;gl.useProgram(s.program);gl.uniformMatrix4fv(s.vp,false,vp);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,s.ride.texture);gl.uniform1i(s.map,0);gl.uniform4f(s.frameUV,u0,v0,u1-u0,v1-v0);gl.uniform3fv(s.right,[right[0],0,right[1]]);gl.uniform3fv(s.eye,this.eye);gl.bindBuffer(gl.ARRAY_BUFFER,s.buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([...a,...b,...c,...a,...c,...d]),gl.DYNAMIC_DRAW);
    gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.enableVertexAttribArray(s.position);gl.vertexAttribPointer(s.position,3,gl.FLOAT,false,20,0);gl.enableVertexAttribArray(s.uv);gl.vertexAttribPointer(s.uv,2,gl.FLOAT,false,20,12);gl.drawArrays(gl.TRIANGLES,0,6);gl.disableVertexAttribArray(s.position);gl.disableVertexAttribArray(s.uv);gl.disable(gl.BLEND);return;}}
  const walking=!rideB&&p.speed>.08&&p.alt<.15;

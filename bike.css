@@ -34,3 +34,13 @@
 .bike-comet>button{grid-column:1/-1}
 .bike-comet .bc-buy{background:linear-gradient(180deg,#ffd36a,#e39a2a);color:#3a2408;font-weight:800;border:0}
 .bike-comet.cur{box-shadow:0 0 16px #ff9a3a44}
+/* v65 bike flight: hold-to-rise button (right side, above the controls) with an altitude gauge */
+.bike-fly{position:absolute;right:6px;bottom:calc(100% + 14px);pointer-events:auto;width:78px;height:78px;border-radius:50%;border:2px solid #ffe2a0;background:radial-gradient(circle at 50% 35%,#ffcf6e 0,#e8862a 46%,#7a3610 100%);color:#fff8e6;display:grid;place-items:center;align-content:center;gap:0;font-weight:800;font-size:12px;box-shadow:0 0 18px #ff9a3a66,0 5px 16px #06172a66,inset 0 2px 0 #ffffff55;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overflow:hidden;z-index:3}
+.bike-fly[hidden]{display:none}
+.bike-fly .bf-ico{font-size:26px;line-height:1;text-shadow:0 1px 3px #0008;position:relative;z-index:1}
+.bike-fly .bf-lbl{position:relative;z-index:1;line-height:1.05;text-shadow:0 1px 2px #0009}
+.bike-fly .bf-m{position:relative;z-index:1;font-size:10px;opacity:.9;min-height:11px}
+.bike-fly .bf-alt{position:absolute;left:0;right:0;bottom:0;height:calc(var(--k,0)*100%);background:linear-gradient(0deg,#fff3c455,#ffffff10);transition:height .18s}
+.bike-fly.hold{transform:scale(.94);box-shadow:0 0 28px #ffb24dcc,0 3px 10px #06172a66,inset 0 2px 0 #ffffff55}
+html.bike-sky #fly{visibility:hidden}
+.bike-flyrow{display:flex;flex-direction:column;gap:3px}.bike-flyrow small{opacity:.85}
