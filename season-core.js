@@ -8,7 +8,7 @@ const DAY_MS=86400000;
 const seasonLength=v=>v==='month'?'month':'week';
 const SEASON_TIERS=[{need:30,reward:{crystals:20,metal:10}},{need:100,reward:{points:15}},{need:200,reward:{item:'frame_aurora'}},{need:350,reward:{points:25}},
  {need:550,reward:{crystals:40,metal:30}},{need:800,reward:{points:40}},{need:1100,reward:{badge:'season'}},{need:1500,reward:{points:60,item:'frame_gold'}}];
-const WEEK_DIVISOR=4,WEEK_NEEDS=[10,25,50,90,140,200,275,375],SEASON_SCORE_SKIP=['story','season','goal','vest_story'];
+const WEEK_DIVISOR=4,WEEK_NEEDS=[10,25,50,90,140,200,275,375],SEASON_SCORE_SKIP=['story','season','goal','vest_story','botbuy'];
 const GOAL_BEACONS={streak:1,story:3,ref_invitee:5},GOAL_REWARD={points:50,badge:'beacon'},GOAL_CLAIM_DAYS=7;
 // v41: the goal target follows the last season (~110% of its beacons) between a minimum and a maximum; GOAL_TARGET = the maximum.
 // A share of the reward needs at least GOAL_MIN_BEACONS own beacons; the bar shows milestones at 25/50/75/100%.
@@ -17,7 +17,7 @@ function goalTargetFrom(prevProgress,length='week'){const k=seasonLength(length)
  if(!Number.isFinite(prevProgress)||prevProgress<=0)return lo;return Math.max(lo,Math.min(hi,Math.round(prevProgress*GOAL_GROWTH)));}
 // v41: pass rewards stay claimable SEASON_GRACE_DAYS after the season; a pass frame you already own gives these supplies instead.
 const SEASON_GRACE_DAYS=3,FRAME_SUBSTITUTE={frame_aurora:{crystals:25,metal:25},frame_gold:{crystals:60,metal:60}};
-const COSMETICS={frame_aurora:{kind:'frame',source:'season'},frame_gold:{kind:'frame',source:'season'},frame_nebula:{kind:'frame',stars:30},frame_comet:{kind:'frame',stars:30},badge_patron:{kind:'badge',stars:60},cargo_bay:{kind:'boost',stars:40},energy_refill:{kind:'energy',stars:25,consumable:true}};  // v46: energy_refill is a consumable (daily map energy), never in the cosmetics shop
+const COSMETICS={frame_aurora:{kind:'frame',source:'season'},frame_gold:{kind:'frame',source:'season'},frame_nebula:{kind:'frame',stars:30},frame_comet:{kind:'frame',stars:30},badge_patron:{kind:'badge',stars:60},cargo_bay:{kind:'boost',stars:40},energy_refill:{kind:'energy',stars:25,consumable:true},bot_boost_miner:{kind:'botboost',prof:'miner',stars:25,consumable:true},bot_boost_mechanic:{kind:'botboost',prof:'mechanic',stars:25,consumable:true},bot_boost_builder:{kind:'botboost',prof:'builder',stars:25,consumable:true}};  // v46: energy_refill is a consumable (daily map energy), never in the cosmetics shop
 const CARGO_HOURS=3,FRAMES=Object.keys(COSMETICS).filter(id=>COSMETICS[id].kind==='frame');
 function seasonOf(now,length='week'){
  if(seasonLength(length)==='week'){const day=Math.floor(now/DAY_MS),dow=(new Date(day*DAY_MS).getUTCDay()+6)%7,startDay=day-dow,thu=new Date((startDay+3)*DAY_MS),y=thu.getUTCFullYear();

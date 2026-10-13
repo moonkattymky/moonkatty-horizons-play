@@ -30,7 +30,7 @@ R.initCharacterSprites=function(){
 };
 R.cat=function(x,z,yaw,t,moving,alt,ch,accent,hero,equipment){
  const sprite=this.initCharacterSprites();if(!sprite.ready||(!hero&&!sprite.idleReady))return originalCat.call(this,x,z,yaw,t,moving,alt,ch,accent,hero,equipment);
- if(!hero){(this.crewSprites||(this.crewSprites=[])).push({x,z,yaw,alt:alt||0,speed:0});return;}
+ if(!hero){const q=this._npcActor;(this.crewSprites||(this.crewSprites=[])).push({x,z,yaw,alt:(alt||0)+(q?q.hop:0),speed:q&&q.moving?1:0,lean:q?q.lean:0,t});return;}
  const ground=this.terrain(x,z,ch);
  if(alt>.15){const camera=Math.atan2(this.eye[0]-x,this.eye[2]-z);for(const side of[-1,1])this.put('cone',x+Math.cos(camera)*side*.20,ground+alt+.10,z-Math.sin(camera)*side*.20,.055,.38+Math.sin(t*35)*.04,.055,[.04,.7,1],0,0,1,Math.PI);}
 };
@@ -45,12 +45,12 @@ R.drawCharacterShadow=function(vp,p,state,camera){
 R.drawCrewSprites=function(vp,state){
  const s=this.characterSprite,gl=this.gl;if(!s||!s.idleReady)return;
  if(root.MoonExportCapture)this.crewSpriteFrames=[];
- for(const actor of this.crewSprites||[]){const camera=Math.atan2(this.eye[0]-actor.x,this.eye[2]-actor.z),direction=directionFor(actor.yaw,camera),f=atlas.idle.directions[direction],scale=2.35/f.bodyHeight,right=[Math.cos(camera),-Math.sin(camera)],base=this.terrain(actor.x,actor.z,state.chapter)+actor.alt+.025,left=-f.anchorX*scale,bottom=(f.anchorY-f.h)*scale,top=f.anchorY*scale,width=f.w*scale;
- const point=(x,y,u,v)=>[actor.x+right[0]*x,base+y,actor.z+right[1]*x,u,v],u0=f.x/atlas.idle.imageWidth,u1=(f.x+f.w)/atlas.idle.imageWidth,v0=f.y/atlas.idle.imageHeight,v1=(f.y+f.h)/atlas.idle.imageHeight;
- const a=point(left,top,u0,v0),b=point(left,bottom,u0,v1),c=point(left+width,bottom,u1,v1),d=point(left+width,top,u1,v0),vertices=[...a,...b,...c,...a,...c,...d];
+ for(const actor of this.crewSprites||[]){const camera=Math.atan2(this.eye[0]-actor.x,this.eye[2]-actor.z),direction=directionFor(actor.yaw,camera),walkF=actor.speed>0&&s.ready,row=atlas.directions[direction],f=walkF?row.frames[CYCLES[direction][Math.floor((actor.t||0)*8)%CYCLES[direction].length]]:atlas.idle.directions[direction],scale=2.35/(walkF?row.referenceHeight:f.bodyHeight),right=[Math.cos(camera),-Math.sin(camera)],base=this.terrain(actor.x,actor.z,state.chapter)+actor.alt+.025,left=-f.anchorX*scale,bottom=(f.anchorY-f.h)*scale,top=f.anchorY*scale,width=f.w*scale;
+ const point=(x,y,u,v)=>[actor.x+right[0]*x,base+y,actor.z+right[1]*x,u,v],IW=walkF?atlas.imageWidth:atlas.idle.imageWidth,IH=walkF?atlas.imageHeight:atlas.idle.imageHeight,u0=f.x/IW,u1=(f.x+f.w)/IW,v0=f.y/IH,v1=(f.y+f.h)/IH,ln=(actor.lean||0)*top;
+ const a=point(left+ln,top,u0,v0),b=point(left,bottom,u0,v1),c=point(left+width,bottom,u1,v1),d=point(left+width+ln,top,u1,v0),vertices=[...a,...b,...c,...a,...c,...d];
  this.drawCharacterShadow(vp,actor,state,camera);
  if(root.MoonExportCapture)this.crewSpriteFrames.push({vertices,shadowVertices:this.lastShadowVertices,opacity:.35,frameUV:[u0,v0,u1-u0,v1-v0],spriteRight:[right[0],0,right[1]],shaders:root.MoonCharacterSpriteMath,image:atlas.idle.image});
- gl.useProgram(s.program);gl.uniformMatrix4fv(s.vp,false,vp);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,s.idleTexture);gl.uniform1i(s.map,0);gl.uniform4f(s.frameUV,u0,v0,u1-u0,v1-v0);gl.uniform3fv(s.right,[right[0],0,right[1]]);gl.uniform3fv(s.eye,this.eye);gl.bindBuffer(gl.ARRAY_BUFFER,s.buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(vertices),gl.DYNAMIC_DRAW);
+ gl.useProgram(s.program);gl.uniformMatrix4fv(s.vp,false,vp);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,walkF?s.texture:s.idleTexture);gl.uniform1i(s.map,0);gl.uniform4f(s.frameUV,u0,v0,u1-u0,v1-v0);gl.uniform3fv(s.right,[right[0],0,right[1]]);gl.uniform3fv(s.eye,this.eye);gl.bindBuffer(gl.ARRAY_BUFFER,s.buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(vertices),gl.DYNAMIC_DRAW);
  gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.enableVertexAttribArray(s.position);gl.vertexAttribPointer(s.position,3,gl.FLOAT,false,20,0);gl.enableVertexAttribArray(s.uv);gl.vertexAttribPointer(s.uv,2,gl.FLOAT,false,20,12);gl.drawArrays(gl.TRIANGLES,0,6);gl.disableVertexAttribArray(s.position);gl.disableVertexAttribArray(s.uv);gl.disable(gl.BLEND);
  }
 };

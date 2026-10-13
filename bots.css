@@ -1,0 +1,38 @@
+/* v59 worker cat-bots panel */
+.bots-dialog{max-width:440px}
+.bots-plot{background:linear-gradient(160deg,#0f3550cc,#0a2338cc);border:1px solid #2e6a86;border-radius:14px;padding:10px 12px;margin:4px 0 8px}
+.bots-plot-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;color:#e4f1f8;font-size:14px}
+.bots-plot-row b{color:#ffd98c}.bots-lvl{font-size:11.5px;color:#9fe8f0;text-align:right}
+.bots-steps{display:flex;justify-content:space-between;gap:3px;margin:8px 0 6px}
+.bots-step{flex:1;height:32px;border-radius:9px;display:grid;place-items:center;font-size:17px;background:#071c2c;border:1px dashed #3c6a84;filter:grayscale(1);opacity:.55}
+.bots-step.on{filter:none;opacity:1;border:1px solid #7ef0d8;background:#0f4150;box-shadow:0 0 8px #48e0d044}
+.bots-step.next{filter:none;opacity:.9;border:1px dashed #ffd98c;animation:botsPulse 1.6s ease-in-out infinite}
+@keyframes botsPulse{50%{box-shadow:0 0 12px #ffd98c66}}
+.bots-fill,.bot-fill{height:8px;border-radius:6px;background:#071c2c;overflow:hidden;margin:4px 0}
+.bots-fill i,.bot-fill i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#48e0d0,#ffd98c);transition:width .6s}
+.bots-actions{margin:4px 0 2px}
+.bots-h{margin:12px 2px 6px;font-size:14px;color:#ffd98c;letter-spacing:.02em}
+.bot-list{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.bot-card{display:flex;gap:10px;align-items:flex-start;background:#0b2a40cc;border:1px solid #2e5d7a;border-radius:14px;padding:9px 10px}
+.bot-card.ready{border-color:#ffd98c;box-shadow:0 0 14px #ffc96a33}.bot-card.boost{background:linear-gradient(160deg,#3a2c0acc,#0b2a40cc)}
+.bot-card.locked{opacity:.6;border-style:dashed;align-items:center}.bot-card.locked b{font-size:12.5px;color:#cfe3ee}
+.bot-ava{position:relative;flex:0 0 46px;height:46px;border-radius:14px;display:grid;place-items:center;background:radial-gradient(circle at 50% 35%,#ffffff22,#0000);border:1px solid #ffffff22}
+.bot-ava i{font-style:normal;font-size:28px}.bot-ava em{position:absolute;right:-5px;bottom:-5px;font-style:normal;font-size:16px;background:#0a2338;border-radius:9px;padding:1px 2px}
+.bot-ava.a-miner{background:#5a3a12}.bot-ava.a-mechanic{background:#0f4a55}.bot-ava.a-builder{background:#5a4a10}.bot-ava.a-courier{background:#5a1f3c}
+.bot-main{flex:1;min-width:0}
+.bot-top{display:flex;flex-wrap:wrap;gap:6px;align-items:center;color:#e4f1f8;font-size:14px}
+.bot-lv{font-size:11px;color:#2a1a05;background:#ffd98c;border-radius:7px;padding:1px 6px;font-weight:700}
+.bot-tag{font-size:10.5px;color:#9fe8f0;border:1px solid #2e6a86;border-radius:7px;padding:0 5px}.bot-tag.gold{color:#ffd98c;border-color:#e9c67a99}
+.bot-sub{display:flex;justify-content:space-between;gap:6px;font-size:12px;color:#cfe3ee}.bot-sub small{color:#9fe8f0;text-align:right}
+.bot-card.ready .bot-sub span{color:#ffd98c;font-weight:700}
+.bot-profs{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:6px 0}
+.bot-profs button{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;padding:6px 8px;border-radius:10px;background:#0a2338;border:1px solid #2e5d7a;color:#e4f1f8;font-size:12.5px;font-weight:700}
+.bot-profs button small{font-weight:400;font-size:10.5px;color:#a9c6d6}.bot-profs button.on{border-color:#ffd98c}
+.bots-hire{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.bots-hire button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 3px;border-radius:12px;background:linear-gradient(160deg,#173d58,#0a2338);border:1px solid #e9c67a77;color:#e4f1f8}
+.bots-hire button span{font-size:22px}.bots-hire button b{font-size:11.5px}.bots-hire button small{font-size:9.5px;color:#a9c6d6;line-height:1.15;text-align:center}
+.bots-hire button:disabled,.bots-boost button:disabled{opacity:.45}
+.bots-price{color:#ffd98c;font-weight:700}
+.bots-boost{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.bots-boost button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 3px;border-radius:12px;background:linear-gradient(160deg,#4a3a10,#1d1a10);border:1px solid #ffd98c88;color:#ffe9b8;font-size:12px}
+.bots-boost button b{color:#ffd98c}
