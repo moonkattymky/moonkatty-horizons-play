@@ -1,5 +1,5 @@
 (function(root){'use strict';
-const RIDE={"image":"assets/moonkatty-ride-v63.webp?v=20261013-65a","imageWidth":865,"imageHeight":1099,"directions":{"up":{"x":0,"y":0,"w":385,"h":568,"anchorX":192.3,"anchorY":403.6,"bodyHeight":540.5,"hands":[[-0.791,0.448],[0.799,0.448]]},"left":{"x":391,"y":0,"w":461,"h":519,"anchorX":193.2,"anchorY":355.5,"bodyHeight":540.5,"hands":[[-0.722,0.504]]},"down":{"x":0,"y":574,"w":392,"h":514,"anchorX":196.2,"anchorY":356.1,"bodyHeight":540.5,"hands":[[-0.672,0.494],[0.695,0.494]]},"right":{"x":398,"y":574,"w":461,"h":519,"anchorX":267.8,"anchorY":355.5,"bodyHeight":540.5,"hands":[[0.722,0.504]]}}};
+const RIDE={"image":"assets/moonkatty-ride-v63.webp?v=20261014-66a","imageWidth":865,"imageHeight":1099,"directions":{"up":{"x":0,"y":0,"w":385,"h":568,"anchorX":192.3,"anchorY":403.6,"bodyHeight":540.5,"hands":[[-0.791,0.448],[0.799,0.448]]},"left":{"x":391,"y":0,"w":461,"h":519,"anchorX":193.2,"anchorY":355.5,"bodyHeight":540.5,"hands":[[-0.722,0.504]]},"down":{"x":0,"y":574,"w":392,"h":514,"anchorX":196.2,"anchorY":356.1,"bodyHeight":540.5,"hands":[[-0.672,0.494],[0.695,0.494]]},"right":{"x":398,"y":574,"w":461,"h":519,"anchorX":267.8,"anchorY":355.5,"bodyHeight":540.5,"hands":[[0.722,0.504]]}}};
 const atlas=root.MoonCharacterAtlas,R=root.MoonRenderer.prototype,originalCat=R.cat,originalScene=R.scene;
 R.scene=function(...args){this.crewSprites=[];return originalScene.apply(this,args);};
 const VERT=`attribute vec3 position;attribute vec2 texcoord;uniform mat4 vp;varying vec2 uv;varying vec3 W;void main(){uv=texcoord;W=position;gl_Position=vp*vec4(position,1.);}`;
@@ -55,10 +55,34 @@ R.drawCrewSprites=function(vp,state){
  gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.enableVertexAttribArray(s.position);gl.vertexAttribPointer(s.position,3,gl.FLOAT,false,20,0);gl.enableVertexAttribArray(s.uv);gl.vertexAttribPointer(s.uv,2,gl.FLOAT,false,20,12);gl.drawArrays(gl.TRIANGLES,0,6);gl.disableVertexAttribArray(s.position);gl.disableVertexAttribArray(s.uv);gl.disable(gl.BLEND);
  }
 };
+
+// v66 worker cat-astronauts: one 4-view turnaround per bot (assets/bot-cats-v66.webp: columns miner/mechanic/builder/courier, rows front/back/left/right),
+// animated like a toy: step bob, waddle roll, squash on each footfall, a stride shear on side views; working = rhythmic lean with the tool.
+const BOT_ATLAS={image:'assets/bot-cats-v66.webp?v=66',cols:{miner:0,mechanic:1,builder:2,courier:3},rows:{down:0,up:1,left:2,right:3},meta:{"miner":[[0.0166015625,0.002840909090909091,0.2158203125,0.24431818181818182,0.6424418604651163],[0.0283203125,0.2528409090909091,0.1923828125,0.24431818181818182,0.5726744186046512],[0.0263671875,0.5028409090909091,0.197265625,0.24431818181818182,0.5872093023255814],[0.0166015625,0.7528409090909091,0.2158203125,0.24431818181818182,0.6424418604651163]],"mechanic":[[0.296875,0.002840909090909091,0.1552734375,0.24431818181818182,0.4622093023255814],[0.2919921875,0.2528409090909091,0.166015625,0.24431818181818182,0.4941860465116279],[0.2763671875,0.5028409090909091,0.197265625,0.24431818181818182,0.5872093023255814],[0.2822265625,0.7528409090909091,0.1845703125,0.24431818181818182,0.5494186046511628]],"builder":[[0.5380859375,0.002840909090909091,0.173828125,0.24431818181818182,0.5174418604651163],[0.5419921875,0.2528409090909091,0.1650390625,0.24431818181818182,0.49127906976744184],[0.5234375,0.5028409090909091,0.2021484375,0.24431818181818182,0.6017441860465116],[0.5302734375,0.7528409090909091,0.189453125,0.24431818181818182,0.563953488372093]],"courier":[[0.7978515625,0.002840909090909091,0.1533203125,0.24431818181818182,0.4563953488372093],[0.79296875,0.2528409090909091,0.1640625,0.24431818181818182,0.4883720930232558],[0.771484375,0.5028409090909091,0.2060546875,0.24431818181818182,0.6133720930232558],[0.7724609375,0.7528409090909091,0.205078125,0.24431818181818182,0.6104651162790697]]}};
+const BOT_H=1.92;
+R.drawBotSprites=function(vp,state,t){const s=this.characterSprite,gl=this.gl,HP=root.MoonHomePlot;if(!s||!HP||!HP.H||!this.v59Poses)return;
+ if(!s.bots){s.bots={texture:gl.createTexture(),ready:false};if(typeof Image==='undefined')return;const im=new Image();im.onload=()=>{try{s.upload(s.bots.texture,im);s.bots.ready=true;}catch(e){s.bots.failed=true;}};im.src=BOT_ATLAS.image;}
+ if(!s.bots.ready)return;const H=HP.H,ch=state.chapter||1;let poses;try{poses=this.v59Poses(t);}catch(e){return;}
+ const eye=this.eye;if(Math.hypot(eye[0]-H.x,eye[2]-H.z)>95)return;
+ for(let i=0;i<poses.length;i++){const q=poses[i],b=q.b,col=BOT_ATLAS.cols[b.prof];if(col==null)continue;const x=H.x+q.x,z=H.z+q.z;
+  const camera=Math.atan2(eye[0]-x,eye[2]-z),dir=directionFor(q.yaw,camera),m=BOT_ATLAS.meta[b.prof][BOT_ATLAS.rows[dir]],side=dir==='left'||dir==='right';
+  const ph=i*1.37,mv=!!q.moving,step=t*(mv?7.5:0)+ph,fall=Math.abs(Math.sin(step));
+  let bob=mv?fall*.07:0,roll=mv?Math.sin(step)*.07:0,squash=mv?1-(1-fall)*.05:1,lean=0,shear=side&&mv?Math.sin(step*2)*.05:0;
+  if(q.work){const w=q.swing||0;lean=w*.10;bob+=Math.max(0,-w)*.03;squash*=1-Math.max(0,-w)*.04;roll=Math.sin(t*2+ph)*.03;}
+  if(q.hop)bob+=q.hop;if(q.sit){squash*=.9;}
+  if(!mv&&!q.work){bob+=Math.sin(t*2.2+ph)*.012;roll=Math.sin(t*1.3+ph)*.025;}
+  const sc=b.source==='stars'?1.06:1,hgt=BOT_H*sc*squash,wid=BOT_H*sc*m[4]*(2-squash),right=[Math.cos(camera),-Math.sin(camera)],base=this.terrain(x,z,ch)+.02+bob;
+  const u0=m[0],v0=m[1],u1=m[0]+m[2],v1=m[1]+m[3],cr=Math.cos(roll),sr=Math.sin(roll),fw=side?(dir==='left'?-1:1):0;
+  const pt=(px,py,u,v)=>{const sx=px+py*(lean*fw+shear),rx=sx*cr-py*sr,ry=sx*sr+py*cr;return[x+right[0]*rx,base+ry,z+right[1]*rx,u,v];};
+  const A=pt(-wid/2,hgt,u0,v0),Bq=pt(-wid/2,0,u0,v1),C=pt(wid/2,0,u1,v1),D=pt(wid/2,hgt,u1,v0),V=[...A,...Bq,...C,...A,...C,...D];
+  try{this.drawCharacterShadow(vp,{x,z,alt:bob,yaw:q.yaw},state,camera);}catch(e){}
+  gl.useProgram(s.program);gl.uniformMatrix4fv(s.vp,false,vp);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,s.bots.texture);gl.uniform1i(s.map,0);gl.uniform4f(s.frameUV,u0,v0,u1-u0,v1-v0);gl.uniform3fv(s.right,[right[0],0,right[1]]);gl.uniform3fv(s.eye,eye);gl.bindBuffer(gl.ARRAY_BUFFER,s.buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(V),gl.DYNAMIC_DRAW);
+  gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.enableVertexAttribArray(s.position);gl.vertexAttribPointer(s.position,3,gl.FLOAT,false,20,0);gl.enableVertexAttribArray(s.uv);gl.vertexAttribPointer(s.uv,2,gl.FLOAT,false,20,12);gl.drawArrays(gl.TRIANGLES,0,6);gl.disableVertexAttribArray(s.position);gl.disableVertexAttribArray(s.uv);gl.disable(gl.BLEND);}
+ this.v66Bots=poses.length;};
 const TILT_K=1;
 R.drawCharacterSprites=function(vp,p,state,t,dt){
  const rideB=root.MoonBike&&root.MoonBike.on&&root.MoonBike.on(p)&&root.MoonBike.seat?root.MoonBike.seat:null;/* v61: seated on the hover-bike: no walk cycle, legs cut away inside the seat */
- const s=this.characterSprite;if(!s||!s.ready)return;this.drawCrewSprites(vp,state);
+ const s=this.characterSprite;if(!s||!s.ready)return;this.drawCrewSprites(vp,state);try{this.drawBotSprites(vp,state,t||0);}catch(e){}
  const camera=Math.atan2(this.eye[0]-p.x,this.eye[2]-p.z),direction=directionFor(p.yaw,camera,s.direction);
  s.direction=direction;
  // v63: newly drawn seated riding frames (assets/moonkatty-ride-v63.webp): legs tucked, paws forward on the grips, hip on the seat

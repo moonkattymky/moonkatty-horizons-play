@@ -108,8 +108,12 @@ function botPose(b,i,n,st,t){const ph=i*1.7,ready=b.state==='ready',idle=b.state
   return{x:tx,z:tz,yaw:Math.atan2(c[0]-tx,c[1]-tz),work:1,swing:Math.sin(t*7+ph),hop:0,spark:k};}
  if(b.prof==='courier'){const w=walk([[.4+i*.3,-1.2],[PARCEL[0]-1,PARCEL[1]+.8],[2.2,-8.2],[1.2,-15],[-3,-22]],t*.9+ph*4,1.1);return{...w,work:0,hop:0,parcel:true};}
  return{x:0,z:0,yaw:0,work:0,hop:0};}
+// v66: workers visibly walk from the plot centre to their work spot, work, then stroll back for a break (a 26 s shift loop per bot)
+function commute(b,i,n,q,t){if(b.state!=='working'||!q.work||b.prof==='courier')return q;const ph=i*1.7,f=(t+ph*5)%26,a=i/Math.max(1,n)*TAU+.4,hx=Math.cos(a)*1.2,hz=Math.sin(a)*1.2;
+ const go=(sx,sz,ex,ez,k)=>{const x=sx+(ex-sx)*k,z=sz+(ez-sz)*k;return{...q,x,z,yaw:Math.atan2(ex-sx,ez-sz),moving:true,work:0,swing:0,hop:0,spark:null};};
+ if(f<5)return go(hx,hz,q.x,q.z,f/5);if(f>22){return go(q.x,q.z,hx,hz,(f-22)/4);}return q;}
 R.v59Poses=function(t){const M=view();if(!M)return[];const bots=(M.view.bots||[]).slice(0,12),st=Math.min(STEPS.length,(M.view.plot&&M.view.plot.stage)|0),now=serverNow(M);
- return bots.map((b0,i)=>{const b={...b0};if(b.state==='working'&&b.endsAt&&now>=b.endsAt)b.state='ready';return{b,...botPose(b,i,bots.length,st,t)};});};
+ return bots.map((b0,i)=>{const b={...b0};if(b.state==='working'&&b.endsAt&&now>=b.endsAt)b.state='ready';return{b,...commute(b,i,bots.length,botPose(b,i,bots.length,st,t),t)};});};
 const on=s=>!!s;
 R.scene=function(state,p,t,...args){const out=old.scene.call(this,state,p,t,...args);if(!on(state))return out;const eye=this.eye||[0,0,0];if(Math.hypot(eye[0]-H.x,eye[2]-H.z)>DRAW_R)return out;
  const v=this.v59Build(),ch=state.chapter||1,low=this.quality==='low',st=stageOf(state),pl=plotOf(state),lvl=pl?pl.level|0:1,G=(lx,lz)=>this.terrain(H.x+lx,H.z+lz,ch);
@@ -118,7 +122,7 @@ R.scene=function(state,p,t,...args){const out=old.scene.call(this,state,p,t,...a
  for(const k of['house','workshop','garden','house2','solar','tower']){const idx=STEPS.indexOf(k);if(st>idx)draw(k,POS[k][0],POS[k][1],k==='solar'?0:0,-.05);else if(st===idx)draw('scaffold',POS[k][0],POS[k][1],0,-.05);}
  for(let l=2;l<=Math.min(4,lvl);l++)draw('lvl'+l,0,0,0,-.04);
  // robo-cats
- for(const q of this.v59Poses(t)){const{b}=q,yb=(q.hop||0)+(q.moving?Math.abs(Math.sin(t*9+q.x))*.06:0)-(q.sit?.1:0),sc=b.source==='stars'?1.42:1.36;
+ if(!(this.characterSprite&&this.characterSprite.bots&&this.characterSprite.bots.ready))for(const q of this.v59Poses(t)){const{b}=q,yb=(q.hop||0)+(q.moving?Math.abs(Math.sin(t*9+q.x))*.06:0)-(q.sit?.1:0),sc=b.source==='stars'?1.42:1.36;
   draw('bot_'+b.prof,q.x,q.z,q.yaw,yb,sc);
   if(b.prof!=='courier'&&v.L['tool_'+b.prof]){const c=Math.cos(q.yaw),s=Math.sin(q.yaw),hx=q.x+(c*.36+s*.18)*sc,hz=q.z+(-s*.36+c*.18)*sc;const sw=q.work?q.swing:0;draw('tool_'+b.prof,hx,hz,q.yaw,(.62+(q.work?.08:0))*sc+yb,sc,q.work?-.6+sw*.75:-1.3,0);}}
  return out;};
@@ -146,15 +150,15 @@ R.render=function(state,p,t,dt,yaw,pitch,scan){old.render.call(this,state,p,t,dt
   if(st<STEPS.length){const k=STEPS[st],c=POS[k]&&RAD[k]?POS[k]:null;if(c){const y=T(c[0],c[1]),f=(t*.5)%1;bill(c[0],y+1.4,c[1],RAD[k]*1.05,1.6,0,TEAL,.16*pul);if(!low)bill(c[0],y+.2+f*2.6,c[1],RAD[k]*.9,.08,0,TEAL,(1-f)*.5);}}
   // bots: soft halo, ready "!" marker, work sparks, boost ring
   for(const q of this.v59Poses(t)){const y=T(q.x,q.z),b=q.b;bill(q.x,y+.6,q.z,.75,.6,0,b.source==='stars'?GOLD:TEAL,.16);
-   if(b.state==='ready'){bill(q.x,y+1.75+.08*Math.sin(t*4),q.z,.32,.32,0,GOLD,.95);bill(q.x,y+1.75,q.z,.75,.75,0,GOLD,.35*pul);}
+   if(b.state==='ready'){bill(q.x,y+2.3+.08*Math.sin(t*4),q.z,.32,.32,0,GOLD,.95);bill(q.x,y+2.3,q.z,.75,.75,0,GOLD,.35*pul);}
    if(b.source==='stars')flat(q.x,q.z,.7,[.35,.26,.05],.8);
    if(!low&&q.work){const c=Math.cos(q.yaw),s=Math.sin(q.yaw),fx=q.x+s*.7,fz=q.z+c*.7,hit=Math.max(0,-q.swing);for(let j=0;j<3;j++){const a=t*3+j*2.1;bill(fx+Math.cos(a)*.25*hit,y+.5+hit*.4+j*.1,fz+Math.sin(a)*.25*hit,.09,.09,2,b.prof==='miner'?[1,.75,.35]:b.prof==='mechanic'?[.6,1,1]:[1,.95,.6],hit*.9);}}
-   if(q.parcel&&!low)bill(q.x,y+1.25,q.z,.3,.3,2,PINK,.4);}
+   if(q.parcel&&!low)bill(q.x,y+1.1,q.z,.3,.3,2,PINK,.4);}
   if(!Q.length)return;const data=new Float32Array(Q);
   gl.useProgram(P5.p);gl.uniformMatrix4fv(P5.vp,false,this.vp);gl.uniform1f(P5.time,t);gl.bindBuffer(gl.ARRAY_BUFFER,P5.buf);gl.bufferData(gl.ARRAY_BUFFER,data,gl.DYNAMIC_DRAW);
   gl.enable(gl.DEPTH_TEST);gl.depthMask(false);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFunc(gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
   gl.enableVertexAttribArray(P5.pos);gl.vertexAttribPointer(P5.pos,3,gl.FLOAT,false,44,0);gl.enableVertexAttribArray(P5.info);gl.vertexAttribPointer(P5.info,4,gl.FLOAT,false,44,12);gl.enableVertexAttribArray(P5.tone);gl.vertexAttribPointer(P5.tone,4,gl.FLOAT,false,44,28);
   gl.drawArrays(gl.TRIANGLES,0,data.length/11);gl.disableVertexAttribArray(P5.pos);gl.disableVertexAttribArray(P5.info);gl.disableVertexAttribArray(P5.tone);
   gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(true);gl.disable(gl.BLEND);this.v59Stats={fxQuads:data.length/66|0};}catch(e){this._v59Off=true;if(typeof console!=='undefined')console.warn('v59 fx off',e);}};
-root.MoonHomePlot={POS,RAD,VEIN,PARCEL,GATE,LAMPS,FENCE_R,inside:insideHome,walk,botPose};
+root.MoonHomePlot={H,POS,RAD,VEIN,PARCEL,GATE,LAMPS,FENCE_R,inside:insideHome,walk,botPose,commute};
 })(typeof window!=='undefined'?window:globalThis);
