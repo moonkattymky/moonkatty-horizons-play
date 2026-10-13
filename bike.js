@@ -43,10 +43,10 @@ if(R&&B){
   lathe(b,'seat',[[.001,0],[.7,.08],[.95,.3],[1,.6],[.85,.88],[.001,1]],.19,.78,.74,CY+.25,1.05,.42);
   lathe(b,'paint',[[.001,0],[.5,.1],[.9,.4],[1,.75],[.001,1]],.16,.4,1.02,CY+.22,1.1,.6);
   // canopy: chrome rim + clear bubble screen
-  b.tube('chrome',[0,CY+.2,-.66],[0,CY+.225,-.66],.15,24,.15);
-  {const k=new B();ball(k,'glass',0,0,0,.16,1);for(const[m,d]of k.groups){const g=b.groups.get(m)||[];for(let i=0;i<d.length;i+=6){if(d[i+1]<-.02)continue;g.push(d[i]*.95,CY+.21+d[i+1]*.9,-.68+d[i+2]*1.2-d[i+1]*.6,d[i+3],d[i+4],d[i+5]);}b.groups.set(m,g);}}
+  b.tube('chrome',[0,CY+.17,-.84],[0,CY+.195,-.84],.14,24,.14);
+  {const k=new B();ball(k,'glass',0,0,0,.16,1);for(const[m,d]of k.groups){const g=b.groups.get(m)||[];for(let i=0;i<d.length;i+=6){if(d[i+1]<-.02)continue;g.push(d[i]*.9,CY+.18+d[i+1]*.85,-.86+d[i+2]*1.15-d[i+1]*.6,d[i+3],d[i+4],d[i+5]);}b.groups.set(m,g);}}
   // chrome handlebar with grips
-  /* v62: grips where the riding sprite's paws are (x ±.36, seat +.19, forward .2) */b.tube('chrome',[0,CY+.2,-.4],[0,CY+.39,-.26],.03,10);b.tube('chrome',[0,CY+.39,-.26],[0,CY+.39,-.2],.03,10);b.tube('chrome',[-.3,CY+.39,-.2],[.3,CY+.39,-.2],.026,10);for(const sx of[-1,1])b.tube('seat',[sx*.28,CY+.39,-.2],[sx*.4,CY+.39,-.2],.042,10,.044);
+  /* v63: wide grips where the drawn paws are (x ±.52, seat +.32, forward .5) */b.tube('chrome',[0,CY+.18,-.62],[0,CY+.52,-.52],.032,10);b.tube('chrome',[-.44,CY+.52,-.5],[.44,CY+.52,-.5],.028,10);for(const sx of[-1,1]){b.tube('chrome',[sx*.08,CY+.52,-.52],[sx*.44,CY+.52,-.5],.028,10);b.tube('seat',[sx*.42,CY+.52,-.5],[sx*.58,CY+.52,-.5],.045,10,.047);}
   // headlight + nose cap
   ball(b,'lamp',0,CY+.02,-1.08,.075,.8);b.tube('chrome',[0,CY+.02,-1.05],[0,CY+.02,-1.0],.1,16,.1);
   // swept side fins
@@ -76,7 +76,7 @@ if(R&&B){
   for(const[key,mat,part]of m){const kind=MATS[mat],c=mat==='paint'?pc:mat==='neon'||mat==='ring'||mat==='flame'?nc:COL[mat],g=part==='glow'?thr:part==='rings'?pulse:mat==='neon'?.85:mat==='lamp'?.9:mat==='gold'?.2:mat==='glass'?.0:0;this.put(key,x,y,z,SC,SC,SC,c,yaw,kind,g,S.pitch,S.roll);}
   S.pose={x,y,z,yaw,t,speed:p.speed};Bike.seat={y:y+(CY+.2)*SC,cut:.30};
   if(p.speed>.25){const last=S.trail[S.trail.length-1];if(!last||Math.hypot(last.x-x,last.z-z)>.35)S.trail.push({x:x+Math.sin(yaw)*1.15,z:z+Math.cos(yaw)*1.15,y:y-.1,t});}
-  return oldCat.call(this,x,z,yaw,t,false,alt+hov+.62,ch,col,isPlayer,...rest);};
+  const sp=this.characterSprite;if(sp&&sp.ride&&sp.ride.ready)return;return oldCat.call(this,x,z,yaw,t,false,alt+hov+.62,ch,col,isPlayer,...rest);};
  R.render=function(state,p,t,dt,yaw,pitch,scan){const ride=Bike.on(p);S.camK=(S.camK||0)+((ride?1:0)-(S.camK||0))*Math.min(1,(dt||0)*3);
   if(S.camK>.001&&!root.__mkNoBikeCam){yaw+=.55*S.camK;pitch+=.5*S.camK;}
   oldRender.call(this,state,p,t,dt,yaw,pitch,scan);
