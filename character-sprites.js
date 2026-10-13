@@ -58,7 +58,8 @@ R.drawCharacterSprites=function(vp,p,state,t,dt){
  const s=this.characterSprite;if(!s||!s.ready)return;this.drawCrewSprites(vp,state);
  const camera=Math.atan2(this.eye[0]-p.x,this.eye[2]-p.z),direction=directionFor(p.yaw,camera,s.direction);
  s.direction=direction;
- const walking=p.speed>.08&&p.alt<.15;
+ const rideB=root.MoonBike&&root.MoonBike.on&&root.MoonBike.on(p)&&root.MoonBike.seat?root.MoonBike.seat:null;/* v61: seated on the hover-bike: no walk cycle, legs cut away inside the seat */
+ const walking=!rideB&&p.speed>.08&&p.alt<.15;
  s.time=walking?s.time+Math.min(dt,.2)*Math.min(p.speed,1):0;
  const detailed=s.directionTextures[direction]?.ready,row=detailed?root.MoonCharacterWalkAtlas[direction]:atlas.directions[direction],cycle=detailed?[0,1,2,3,4,5]:CYCLES[direction],useIdle=!walking&&s.idleReady;
  s.frame=walking?cycle[Math.floor(s.time*cycle.length)%cycle.length]:0;s.mode=useIdle?'idle':'walk';
@@ -66,7 +67,8 @@ R.drawCharacterSprites=function(vp,p,state,t,dt){
  const left=-f.anchorX*scale,bottom=(f.anchorY-f.h)*scale,top=f.anchorY*scale,width=f.w*scale;
  const point=(x,y,u,v)=>[p.x+right[0]*x,base+y,p.z+right[1]*x,u,v];
  const source=useIdle?atlas.idle:detailed?row:atlas; s.currentImage=source.image; const u0=f.x/source.imageWidth,u1=(f.x+f.w)/source.imageWidth,v0=f.y/source.imageHeight,v1=(f.y+f.h)/source.imageHeight;
- const a=point(left,top,u0,v0),b=point(left,bottom,u0,v1),c=point(left+width,bottom,u1,v1),d=point(left+width,top,u1,v0);this.spriteLight={frameUV:[u0,v0,u1-u0,v1-v0],spriteRight:[right[0],0,right[1]]};
+ let bot=bottom,vb=v1,dy=0;if(rideB){const cut=rideB.cut;bot=bottom+(top-bottom)*cut;vb=v1-(v1-v0)*cut;dy=rideB.y-(base+bot);}
+ const P2=(x,y,u,v)=>{const q=point(x,y,u,v);q[1]+=dy;return q;};const a=P2(left,top,u0,v0),b=P2(left,bot,u0,vb),c=P2(left+width,bot,u1,vb),d=P2(left+width,top,u1,v0);this.spriteLight={frameUV:[u0,v0,u1-u0,v1-v0],spriteRight:[right[0],0,right[1]]};
  this.drawCharacterShadow(vp,p,state,camera);
  const gl=this.gl;gl.useProgram(s.program);gl.uniformMatrix4fv(s.vp,false,vp);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,useIdle?s.idleTexture:detailed?s.directionTextures[direction].texture:s.texture);gl.uniform1i(s.map,0);gl.uniform4f(s.frameUV,u0,v0,u1-u0,v1-v0);gl.uniform3fv(s.right,[right[0],0,right[1]]);gl.uniform3fv(s.eye,this.eye);gl.bindBuffer(gl.ARRAY_BUFFER,s.buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([...a,...b,...c,...a,...c,...d]),gl.DYNAMIC_DRAW);
  gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
