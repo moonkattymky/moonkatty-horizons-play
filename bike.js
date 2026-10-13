@@ -8,7 +8,7 @@
 (function(root){'use strict';
 const R=root.MoonRenderer&&root.MoonRenderer.prototype,B=root.MoonOutpostBuilder;
 const KEY='moonkatty-bike-v60';
-const PAINT={gold:[1,.74,.28],mint:[.45,.92,.74],berry:[.96,.40,.64],sky:[.44,.72,1],cocoa:[.66,.45,.32],galaxy:[.50,.36,.92]};
+const PAINT={gold:[1,.74,.28],mint:[.45,.92,.74],berry:[.96,.40,.64],sky:[.44,.72,1],cocoa:[.66,.45,.32],galaxy:[.50,.36,.92],comet:[.07,.07,.09]};   // v64 'comet' = the Stars skin: black body, gold trim, fiery trail (looks only)
 const ORDER=['gold','mint','berry','sky','cocoa','galaxy'];
 const Bike=root.MoonBike={view:null,at:0,riding:false,PAINT,ORDER,
  get unlocked(){if(this.view)return!!this.view.unlocked;const s=root.MoonGame&&root.MoonGame.state;return!!(s&&(s.chapter>1||s.complete));},
@@ -60,7 +60,8 @@ if(R&&B){
  function bRings(b){for(const z of[.5,-.5]){b.tube('ring',[0,CY-.335,z],[0,CY-.315,z],.27,28,.27);b.tube('ring',[0,CY-.34,z],[0,CY-.33,z],.15,24,.15);}}
  let mesh=null;
  R.v60Build=function(){if(mesh)return mesh;mesh=[];for(const[part,fn]of[['body',bBike],['glow',bGlow],['rings',bRings]]){const b=new B();fn(b);for(const[m,d]of b.groups){if(!d.length)continue;const key='v61_bike_'+part+'_'+m;this.addMesh(key,d);mesh.push([key,m,part]);}}return mesh;};
- const NEON={gold:[.35,1,.9],mint:[.45,1,.78],berry:[1,.42,.74],sky:[.38,.9,.96],cocoa:[1,.66,.3],galaxy:[.76,.5,1]},neonOf=k=>NEON[k]||NEON.gold;
+ const NEON={gold:[.35,1,.9],mint:[.45,1,.78],berry:[1,.42,.74],sky:[.38,.9,.96],cocoa:[1,.66,.3],galaxy:[.76,.5,1],comet:[1,.55,.15]},neonOf=k=>NEON[k]||NEON.gold;
+ const CGOLD=[1,.76,.30];
  const SC=1.45,S={yaw:null,roll:0,pitch:0,trail:[],lastX:null,lastZ:null};
  Bike.on=function(p){return Bike.riding&&Bike.unlocked&&p&&p.alt<.15;};
  const oldScene=R.scene,oldRender=R.render,oldCat=R.cat;
@@ -72,8 +73,8 @@ if(R&&B){
   if(S.yaw==null)S.yaw=yaw;let dy=Math.atan2(Math.sin(yaw-S.yaw),Math.cos(yaw-S.yaw));const turn=dt>0?dy/dt:0;S.yaw=yaw;
   S.roll+=(Math.max(-.32,Math.min(.32,-turn*.09*(.3+p.speed)))-S.roll)*Math.min(1,dt*6);S.pitch+=((p.speed>.2?.07:0)-S.pitch)*Math.min(1,dt*4);
   const hov=.32+Math.sin(t*3.1)*.05+(p.speed>.2?Math.sin(t*11)*.012:0),y=this.terrain(x,z,ch)+alt+hov,m=this.v60Build(),pc=PAINT[Bike.color];
-  const nc=neonOf(Bike.color),thr=.75+.25*Math.sin(t*23)*Math.sin(t*7.3)+(p.speed>.2?.25:0),pulse=.6+.4*Math.sin(t*4.2);
-  for(const[key,mat,part]of m){const kind=MATS[mat],c=mat==='paint'?pc:mat==='neon'||mat==='ring'||mat==='flame'?nc:COL[mat],g=part==='glow'?thr:part==='rings'?pulse:mat==='neon'?.85:mat==='lamp'?.9:mat==='gold'?.2:mat==='glass'?.0:0;this.put(key,x,y,z,SC,SC,SC,c,yaw,kind,g,S.pitch,S.roll);}
+  const comet=Bike.color==='comet',nc=neonOf(Bike.color),thr=.75+.25*Math.sin(t*23)*Math.sin(t*7.3)+(p.speed>.2?.25:0),pulse=.6+.4*Math.sin(t*4.2);
+  for(const[key,mat,part]of m){const kind=MATS[mat],c=mat==='paint'?pc:comet&&(mat==='cream'||mat==='chrome')?CGOLD:mat==='neon'||mat==='ring'||mat==='flame'?nc:COL[mat],g=part==='glow'?thr:part==='rings'?pulse:mat==='neon'?.85:mat==='lamp'?.9:mat==='gold'?.2:mat==='glass'?.0:0;this.put(key,x,y,z,SC,SC,SC,c,yaw,kind,g,S.pitch,S.roll);}
   S.pose={x,y,z,yaw,t,speed:p.speed};Bike.seat={y:y+(CY+.2)*SC,cut:.30};
   if(p.speed>.25){const last=S.trail[S.trail.length-1];if(!last||Math.hypot(last.x-x,last.z-z)>.35)S.trail.push({x:x+Math.sin(yaw)*1.15,z:z+Math.cos(yaw)*1.15,y:y-.1,t});}
   const sp=this.characterSprite;if(sp&&sp.ride&&sp.ride.ready)return;return oldCat.call(this,x,z,yaw,t,false,alt+hov+.62,ch,col,isPlayer,...rest);};
@@ -86,6 +87,8 @@ if(R&&B){
    const pc=PAINT[Bike.color];
    for(const q of S.trail){const f=(t-q.t)/life,g=this.terrain(q.x,q.z,(state&&state.chapter)||1);
     bill(q.x,g+.25+f*.5,q.z,.35+f*.7,.3+f*.5,0,[.86,.80,.92],.30*(1-f));
+    if(Bike.color==='comet'){const e=1-f;bill(q.x,q.y+.05,q.z,.42*e+.1,.2*e+.06,0,[1,.42,.08],.75*e);   // v64 comet: a glowing fiery tail (one quad per point on low)
+     if(this.quality!=='low'){bill(q.x,q.y+.05,q.z,.2*e+.04,.1*e+.03,0,[1,.86,.4],.8*e);const j=Math.sin(q.t*97)*.25;bill(q.x+rx*j,q.y+.15+f*.4,q.z+rz*j,.09,.09,2,[1,.7,.25],.7*e);}continue;}
     if(glow){bill(q.x,q.y,q.z,.32*(1-f)+.08,.12,0,[.3,.95,1],.55*(1-f));bill(q.x,q.y+.1,q.z,.2,.2,2,[pc[0]*.6+.4,pc[1]*.6+.4,pc[2]*.6+.4],.35*(1-f));}}
    if(P0){const low=this.quality==='low',nc=neonOf(Bike.color),sy=Math.sin(P0.yaw),cy=Math.cos(P0.yaw),L=(lx,ly,lz)=>[P0.x+(lx*cy+lz*sy)*SC,P0.y+ly*SC,P0.z+(-lx*sy+lz*cy)*SC],gy=this.terrain(P0.x,P0.z,(state&&state.chapter)||1),fl=.8+.2*Math.sin(t*31)+.15*Math.sin(t*13),run=P0.speed>.2?1:.45;
     // underglow on the ground (paint-matched), pulsing
@@ -119,7 +122,7 @@ function show(d){d.querySelectorAll('[data-gclose]').forEach(b=>b.onclick=()=>d.
 const hex=c=>'#'+c.map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join('');
 function render(){const d=dlg(),v=Bike.view,un=Bike.unlocked,pts=(Game.state&&Game.state.growth&&Game.state.growth.moon&&Game.state.growth.moon.points)|0;
  let h=`<div class="g-head"><div><span class="eyebrow">${esc(T('bike.eyebrow'))}</span><h2>${esc(T('bike.title'))}</h2></div><button class="close-icon" data-gclose aria-label="×">×</button></div>`;
- h+=`<div class="bike-hero" style="--paint:${hex(PAINT[Bike.color])}"><div class="bike-art"><i class="b-body"></i><i class="b-seat"></i><i class="b-paw">🐾</i><i class="b-pad a"></i><i class="b-pad b"></i></div><p>${esc(T('bike.sub'))}</p></div>`;
+ h+=`<div class="bike-hero${Bike.color==='comet'?' comet':''}" style="--paint:${hex(PAINT[Bike.color])}"><div class="bike-art"><i class="b-body"></i><i class="b-seat"></i><i class="b-paw">🐾</i><i class="b-pad a"></i><i class="b-pad b"></i></div><p>${esc(T('bike.sub'))}</p></div>`;
  if(!un){h+=`<p class="bike-lock">🔒 ${esc(T('bike.locked'))}</p>`;d.innerHTML=h;show(d);return;}
  h+=`<button class="primary bike-toggle" data-ride>${esc(T(Bike.riding?'bike.dismount':'bike.mount'))}</button>`;
  if(!v){h+=`<p class="bike-note">${esc(T('bike.offline'))}</p>`;d.innerHTML=h;show(d);d.querySelector('[data-ride]').onclick=()=>{setRide(!Bike.riding);render();};return;}
@@ -128,10 +131,16 @@ function render(){const d=dlg(),v=Bike.view,un=Bike.unlocked,pts=(Game.state&&Ga
  h+=`<section class="bike-sec"><b>🎨 ${esc(T('bike.paints'))}</b><div class="bike-paints">`;
  for(const k of ORDER){const own=(v.colors||[]).includes(k),cur=v.color===k,pr=(v.prices||{})[k]|0;
   h+=`<button class="bike-paint${cur?' cur':''}" data-paint="${k}" data-own="${own?1:0}"><i style="background:${hex(PAINT[k])}"></i><span>${esc(T('bike.c_'+k))}</span><small>${cur?'✓ '+esc(T('bike.on')):own?esc(T('bike.use')):esc(T('bike.buy',{p:pr}))}</small></button>`;}
- h+=`</div></section><p class="bike-note">${esc(T('bike.points',{n:pts}))}</p>`;
+ h+=`</div></section>`;
+ // v64: the Stars skin — black + gold, fiery trail, same speed; bought through the Stars shop (server-validated)
+ {const own=(v.colors||[]).includes('comet'),cur=v.color==='comet',cm=v.comet||{stars:150},sui=root.MoonSeasonUI,pay=!!(UI.online&&cm.enabled!==false&&root.Telegram?.WebApp?.openInvoice&&sui&&sui.confirmBuy);
+  h+=`<section class="bike-sec bike-comet${cur?' cur':''}"><div class="bc-art" aria-hidden="true"><i class="bc-trail"></i><i class="bc-body"></i><i class="bc-paw">🐾</i></div><div class="bc-txt"><b>☄️ ${esc(T('bike.comet'))}</b><small>${esc(T('bike.comet_d'))}</small></div>`+
+   (own?`<button data-paint="comet" data-own="1" class="${cur?'cur':''}">${cur?'✓ '+esc(T('bike.on')):esc(T('bike.use'))}</button>`:`<button class="bc-buy" data-comet ${pay?'':'disabled'}>⭐ ${esc(T('bike.stars',{n:cm.stars||150}))}</button>`)+`</section>`;}
+ h+=`<p class="bike-note">${esc(T('bike.points',{n:pts}))}</p>`;
  d.innerHTML=h;show(d);
  d.querySelector('[data-ride]').onclick=()=>{setRide(!Bike.riding);render();if(Bike.riding)d.close();};
  d.querySelector('[data-buy]')?.addEventListener('click',()=>act('/api/bike/buy',{item:'speed'}));
+ d.querySelector('[data-comet]')?.addEventListener('click',()=>{root.MoonSeasonUI?.confirmBuy?.('bike_comet');});
  d.querySelectorAll('[data-paint]').forEach(b=>b.onclick=()=>{const k=b.dataset.paint;if(v.color===k)return;act(b.dataset.own==='1'?'/api/bike/paint':'/api/bike/buy',b.dataset.own==='1'?{color:k}:{item:'color:'+k});});}
 async function act(path,body){if(busy)return;busy=true;try{const r=await UI.api(path,body);setView(r.bike);apply(r);if(r.bought)toast(T('bike.bought'));}catch(e){const c=e&&(e.code||e.message);toast(T(c==='not_enough_points'?'bike.need_points':'bike.error'));}finally{busy=false;}render();}
 function mount(){const dock=$('#growth-dock');if(!dock)return false;if(dock.querySelector('[data-bike]'))return true;const b=document.createElement('button');b.type='button';b.className='gd ret-gd bike-gd';b.dataset.bike='1';

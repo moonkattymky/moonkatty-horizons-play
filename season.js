@@ -73,16 +73,31 @@ function goal(st){const g=st.goal,pct=Math.min(100,Math.round(g.progress/Math.ma
 function canPay(st){return st.online&&st.shop.enabled&&!!tg()?.openInvoice;}
 function shop(st){const sh=st.shop,pay=canPay(st),owned=new Set(sh.owned||[]);
  const note=!st.online?_t('shop.offline'):!sh.enabled||!tg()?.openInvoice?_t('shop.soon'):'';
- const items=sh.items.map(i=>{const has=owned.has(i.id),art=SC.COSMETICS[i.id].kind==='frame'?framePreview(i.id,myName()):i.id==='badge_patron'?`<span class="cos-name"><bdi>${esc(myName())}</bdi><i class="patron-star" aria-hidden="true">✦</i></span>`:`<span class="sh-cargo">${IC.cargo}<b>${iso('+'+SC.CARGO_HOURS)}</b></span>`;
+ const items=sh.items.filter(i=>i.kind!=='pack').sort((a,b)=>(b.id==='bike_comet')-(a.id==='bike_comet')).map(i=>{const has=i.owned!=null?!!i.owned:owned.has(i.id),art=itemArt(i.id),via=i.viaPack?`<p class="pk-via">🧭 ${_t('pack.via')}</p>`:'';
   const btn=has?`<span class="sh-owned">${ICON.check}${_t('shop.owned')}</span>`:`<button class="sh-buy" data-confirm="${i.id}" ${pay&&!busy?'':'disabled'} aria-label="${esc(itemName(i.id)+' · '+_t('shop.price',{n:i.stars}))}">${IC.star}<span>${busy==='buy:'+i.id?'…':_t('shop.price',{n:i.stars})}</span></button>`;
-  return`<article class="sh-item ${has?'owned':''}"><div class="sh-art">${art}</div><b>${esc(itemName(i.id))}</b><small>${_t('shop.'+i.id+'_d',{n:SC.CARGO_HOURS})}</small>${btn}</article>`;}).join('');
+  return`<article class="sh-item ${has?'owned':''} ${i.id==='bike_comet'?'sh-hero':''}"><div class="sh-art">${art}</div><b>${esc(itemName(i.id))}</b><small>${_t('shop.'+i.id+'_d',{n:SC.CARGO_HOURS})}</small>${via}${btn}</article>`;}).join('');
  const frames=SC.FRAMES.filter(f=>owned.has(f));
  const wear=frames.length?`<div class="sh-wear"><small>${_t('shop.my_frames')}</small><div class="sh-frames">${['',...frames].map(f=>`<button class="${sh.frame===f?'on':''}" data-frame="${f}" ${st.online&&!busy?'':'disabled'} aria-pressed="${sh.frame===f}">${f?framePreview(f,itemName(f)):_t('shop.unequip')}</button>`).join('')}</div></div>`:'';
- return`<h3 class="g-sub">${_t('shop.title')}</h3><p class="sh-note">${_t('shop.note')}</p>${note?`<p class="sn-off">${note}</p>`:''}<div class="sh-grid">${items}</div>${wear}`+
+ return`<h3 class="g-sub" id="sh-anchor">${_t('shop.title')}</h3><p class="sh-note">${_t('shop.note')}</p>${note?`<p class="sn-off">${note}</p>`:''}${packCard(st)}<div class="sh-grid">${items}</div>${wear}`+
   (msg.shop?`<p class="g-feedback" role="status">${esc(msg.shop)}</p>`:'')+`<p class="sh-terms">${agreeText()}</p><p class="g-note sh-support">${_t('shop.support')}</p><p class="g-note pts-disclaimer">${_t('points.disclaimer')}</p>`;}
 // v41 purchase terms: a link everywhere in the shop and a confirm sheet («by buying you agree…») before Telegram's payment sheet.
 const agreeText=()=>_t('shop.agree',{terms:`<button type="button" class="link-btn" data-terms>${_t('shop.terms_link')}</button>`});
-function itemArt(id){return SC.COSMETICS[id].kind==='frame'?framePreview(id,myName()):id==='badge_patron'?`<span class="cos-name"><bdi>${esc(myName())}</bdi><i class="patron-star" aria-hidden="true">✦</i></span>`:`<span class="sh-cargo">${IC.cargo}<b>${iso('+'+SC.CARGO_HOURS)}</b></span>`;}
+// v64 Stars items: the Lunar Comet bike skin and the weekly Expedition pack (one at a time, daily claims, never Moon Points)
+const COMET_ART=`<span class="sh-comet" aria-hidden="true"><i class="cm-trail"></i><i class="cm-body"><i class="cm-paw">🐾</i></i></span>`;
+function packCard(st){const sh=st.shop,p=sh.pack,pay=canPay(st),it=sh.items.find(i=>i.id==='pack_expedition');if(!it)return'';
+ const perks=`<ul class="pk-perks"><li>🤖 ${_t('pack.perk_bot')}</li><li>⚡ ${_t('pack.perk_energy')}</li><li>🏷️ ${_t('pack.perk_frame')}</li><li>📦 ${_t('pack.perk_cargo',{n:SC.CARGO_HOURS})}</li></ul>`;
+ if(!p||!p.active)return`<article class="pk-card"><div class="pk-head"><span class="pk-ico" aria-hidden="true">🧭</span><span><b>${esc(itemName('pack_expedition'))}</b><small>${_t('pack.days',{n:it.days||7})}</small></span></div>${perks}<p class="pk-note">${_t('pack.no_mp')}</p>`+
+  `<button class="sh-buy pk-buy" data-confirm="pack_expedition" ${pay&&!busy?'':'disabled'}>${IC.star}<span>${busy==='buy:pack_expedition'?'…':_t('shop.price',{n:it.stars})}</span></button></article>`;
+ const t=p.today||{},on=st.online&&!busy;
+ const bot=t.bot?`<span class="pk-done">${ICON.check}${_t('pack.bot_done')}</span>`:`<div class="pk-profs">${(p.profs||['miner','mechanic','builder']).map(pr=>`<button class="pk-claim" data-pack="bot" data-prof="${pr}" ${on?'':'disabled'}>${_t('pack.bot_'+pr)}</button>`).join('')}</div>`;
+ const en=t.energy?`<span class="pk-done">${ICON.check}${_t('pack.energy_done')}</span>`:`<button class="pk-claim" data-pack="energy" ${on?'':'disabled'}>⚡ ${_t('pack.claim_energy')}</button>`;
+ return`<article class="pk-card on"><div class="pk-head"><span class="pk-ico" aria-hidden="true">🧭</span><span><b>${esc(itemName('pack_expedition'))}</b><small>${_t('pack.active')}</small></span><span class="pk-left">${_t('pack.days_left',{n:p.daysLeft})}</span></div>`+
+  `<div class="pk-days" aria-hidden="true">${Array.from({length:p.days||7},(_,k)=>`<i class="${k<(p.days||7)-p.daysLeft?'gone':k===(p.days||7)-p.daysLeft?'now':''}"></i>`).join('')}</div>`+
+  `<div class="pk-row"><small>${_t('pack.today_bot')}</small>${bot}</div><div class="pk-row"><small>${_t('pack.today_energy')}</small>${en}</div><p class="pk-note">${_t('pack.reset',{h:Math.max(1,Math.ceil((p.resetInSec||0)/3600))})} · ${_t('pack.no_mp')}</p></article>`;}
+async function packClaim(what,prof){if(busy||!UI.online)return;busy='pack';msg.shop='';render();
+ try{const r=await UI.api('/api/pack/claim',what==='bot'?{what,prof}:{what});UI.setStage3({shop:r.shop});if(what==='energy')window.MoonDailyMap?.refresh?.();if(r.bots)window.MoonBots?.setView?.(r.bots);haptic('success');toast(_t(what==='bot'?'pack.bot_got':'pack.energy_got'));}
+ catch(e){msg.shop=e&&e.code==='boost_limit'?_t('pack.boost_limit'):errText(e);haptic('warning');refresh();}busy='';render();}
+function itemArt(id){if(id==='bike_comet')return COMET_ART;if(id==='pack_expedition')return`<span class="pk-ico big" aria-hidden="true">🧭</span>`;return SC.COSMETICS[id].kind==='frame'?framePreview(id,myName()):id==='badge_patron'?`<span class="cos-name"><bdi>${esc(myName())}</bdi><i class="patron-star" aria-hidden="true">✦</i></span>`:`<span class="sh-cargo">${IC.cargo}<b>${iso('+'+SC.CARGO_HOURS)}</b></span>`;}
 function confirmBuy(id){const st=state(),item=st.shop.items.find(i=>i.id===id);if(!item||busy||!canPay(st))return;
  sheet.innerHTML=head(_t('shop.title'),esc(itemName(id)),'shop-confirm')+`<div class="ss-item"><div class="sh-art">${itemArt(id)}</div><p>${_t('shop.'+id+'_d',{n:SC.CARGO_HOURS})}</p></div>`+
   `<p class="ss-agree">${agreeText()}</p><button class="primary g-cta ss-pay" data-pay="${id}">${IC.star}<span>${_t('shop.pay',{price:_t('shop.price',{n:item.stars})})}</span></button>`+
@@ -96,7 +111,7 @@ function render(){const st=state(),y=d.scrollTop;
  d.innerHTML=head(_t(st.season.length==='week'?'season.eyebrow_week':'season.eyebrow'),esc(seasonTitle(st.season)),'season')+hero(st)+pass(st)+goal(st)+shop(st);d.scrollTop=y;
  wireClose(d);d.querySelectorAll('[data-tier]').forEach(b=>b.onclick=()=>claimTier(Number(b.dataset.tier),b.dataset.season||''));d.querySelectorAll('[data-goal]').forEach(b=>b.onclick=()=>claimGoal(b.dataset.goal));
  d.querySelectorAll('[data-confirm]').forEach(b=>b.onclick=()=>confirmBuy(b.dataset.confirm));d.querySelectorAll('[data-terms]').forEach(b=>b.onclick=openTerms);
- d.querySelectorAll('[data-all]').forEach(b=>b.onclick=()=>claimAll(b.dataset.all));d.querySelectorAll('[data-invite]').forEach(b=>b.onclick=()=>{d.close();UI.openCrew();});d.querySelectorAll('[data-frame]').forEach(b=>b.onclick=()=>wear(b.dataset.frame));
+ d.querySelectorAll('[data-all]').forEach(b=>b.onclick=()=>claimAll(b.dataset.all));d.querySelectorAll('[data-invite]').forEach(b=>b.onclick=()=>{d.close();UI.openCrew();});d.querySelectorAll('[data-frame]').forEach(b=>b.onclick=()=>wear(b.dataset.frame));d.querySelectorAll('[data-pack]').forEach(b=>b.onclick=()=>packClaim(b.dataset.pack,b.dataset.prof));
  const lb=$('#sn-board');if(lb)lb.onclick=()=>{d.close();window.MoonTeamUI?.openLeaders?.('season');};}
 // ---------- actions (online only; every reward comes from the server) ----------
 function errText(e){const c=e&&e.code;return c==='few_beacons'||c==='no_beacons'?_t('goal.need_min',{n:SC.GOAL_MIN_BEACONS}):c==='expired'?_t('season.not_yet'):c==='not_yet'?_t('season.not_yet'):c==='already'?_t('season.claimed'):c==='owned'?_t('shop.owned'):c==='stars_not_configured'?_t('shop.soon'):_t('growth.net_svyazi');}
@@ -118,9 +133,10 @@ async function buy(id){const st=state();if(busy||!canPay(st))return;busy='buy:'+
  try{const r=await UI.api('/api/stars/invoice',{item:id});   // v41: the invoice text comes from the server catalog only
   tg().openInvoice(r.link,status=>{if(status==='paid'){msg.shop=_t('shop.paid');haptic();waitOwned(id,0);}else if(status==='failed'){msg.shop=_t('shop.failed');haptic('warning');}else msg.shop='';busy='';render();});}
  catch(e){msg.shop=errText(e);haptic('warning');busy='';render();if(e.code==='owned')refresh();}}
-function waitOwned(id,n){clearTimeout(pollTimer);pollTimer=setTimeout(async()=>{try{const r=await UI.api('/api/stars/status',{});UI.setStage3(r);if(r.shop.owned.includes(id)){msg.shop=_t('shop.ready',{item:itemName(id)});toast(msg.shop);Game.refresh?.();if(d.open)render();return;}}catch{}if(n<8)waitOwned(id,n+1);},n?2000:1200);}
+function waitOwned(id,n){clearTimeout(pollTimer);pollTimer=setTimeout(async()=>{try{const r=await UI.api('/api/stars/status',{});UI.setStage3(r);if(r.shop.owned.includes(id)){msg.shop=_t('shop.ready',{item:itemName(id)});toast(msg.shop);Game.refresh?.();if(id==='bike_comet')window.MoonBike?.load?.();if(d.open)render();return;}}catch{}if(n<8)waitOwned(id,n+1);},n?2000:1200);}
 async function refresh(){if(!UI.online)return;try{const r=await UI.api('/api/season',{});UI.setStage3(r);}catch{}}
-function openSeason(){msg={};render();openDialog('season');d.scrollTop=0;refresh();}
+function openSeason(o){msg={};render();openDialog('season');d.scrollTop=0;const toShop=()=>{const a=d.querySelector('#sh-anchor');if(a)d.scrollTop=Math.max(0,a.offsetTop-12);};if(o&&o.shop){toShop();requestAnimationFrame(toShop);}refresh().then(()=>{if(o&&o.shop)toShop();});}
+function openShop(){openSeason({shop:true});}
 // ---------- entry points: cover pill, main menu row, a row in «Связь с Землёй», season tab in the leaderboard ----------
 function taskRow(){const st=state(),s=st.season,ready=st.online&&(s.tiers.some(t=>t.ready&&!t.claimed)||!!(s.prev&&s.prev.unclaimed))||st.online&&st.goal.claimable;
  return`<div class="task-row season-row ${ready?'ready':''}"><span class="tr-icon">${IC.trophy}</span><span class="tr-text"><b>${esc(seasonName(s))}</b><small>${leftText(s)} · ${_t(s.length==='week'?'season.task_sub_week':'season.task_sub')}</small></span><span class="tr-side"><button class="tr-btn ${ready?'gold':''}" data-go="season">${ready?_t('season.claim'):_t('growth.otkryt')}</button></span></div>`;}
@@ -133,5 +149,5 @@ function updateEntry(){const st=state(),ready=st.online&&(st.season.tiers.some(t
  const m=$('#menu-season');if(m)m.innerHTML=`<span>🏆 ${esc(_t('season.menu'))} <small>${esc(leftText(st.season))}</small></span><b aria-hidden="true">›</b>`;}
 function onState(){updateEntry();if(d.open&&!busy)render();}
 mount();setInterval(updateEntry,60000);
-window.MoonSeasonUI={open:openSeason,render,taskRow,onState,seasonName,leftText,framePreview,openTerms,confirmBuy};
+window.MoonSeasonUI={open:openSeason,openShop,render,taskRow,onState,seasonName,leftText,framePreview,openTerms,confirmBuy};
 })();

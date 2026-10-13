@@ -17,7 +17,7 @@ function goalTargetFrom(prevProgress,length='week'){const k=seasonLength(length)
  if(!Number.isFinite(prevProgress)||prevProgress<=0)return lo;return Math.max(lo,Math.min(hi,Math.round(prevProgress*GOAL_GROWTH)));}
 // v41: pass rewards stay claimable SEASON_GRACE_DAYS after the season; a pass frame you already own gives these supplies instead.
 const SEASON_GRACE_DAYS=3,FRAME_SUBSTITUTE={frame_aurora:{crystals:25,metal:25},frame_gold:{crystals:60,metal:60}};
-const COSMETICS={frame_aurora:{kind:'frame',source:'season'},frame_gold:{kind:'frame',source:'season'},frame_nebula:{kind:'frame',stars:30},frame_comet:{kind:'frame',stars:30},badge_patron:{kind:'badge',stars:60},cargo_bay:{kind:'boost',stars:40},energy_refill:{kind:'energy',stars:25,consumable:true},bot_boost_miner:{kind:'botboost',prof:'miner',stars:25,consumable:true},bot_boost_mechanic:{kind:'botboost',prof:'mechanic',stars:25,consumable:true},bot_boost_builder:{kind:'botboost',prof:'builder',stars:25,consumable:true}};  // v46: energy_refill is a consumable (daily map energy), never in the cosmetics shop
+const COSMETICS={frame_aurora:{kind:'frame',source:'season'},frame_gold:{kind:'frame',source:'season'},frame_nebula:{kind:'frame',stars:30},frame_comet:{kind:'frame',stars:30},badge_patron:{kind:'badge',stars:60},cargo_bay:{kind:'boost',stars:40},energy_refill:{kind:'energy',stars:25,consumable:true},bot_boost_miner:{kind:'botboost',prof:'miner',stars:25,consumable:true},bot_boost_mechanic:{kind:'botboost',prof:'mechanic',stars:25,consumable:true},bot_boost_builder:{kind:'botboost',prof:'builder',stars:25,consumable:true},bike_comet:{kind:'bikeskin',stars:150,bundle:['frame_racer']},frame_racer:{kind:'frame',source:'bike_comet'},pack_expedition:{kind:'pack',stars:200,days:7,timed:true},frame_expedition:{kind:'frame',source:'pack'}};  // v46: energy_refill is a consumable (daily map energy), never in the cosmetics shop
 const CARGO_HOURS=3,FRAMES=Object.keys(COSMETICS).filter(id=>COSMETICS[id].kind==='frame');
 function seasonOf(now,length='week'){
  if(seasonLength(length)==='week'){const day=Math.floor(now/DAY_MS),dow=(new Date(day*DAY_MS).getUTCDay()+6)%7,startDay=day-dow,thu=new Date((startDay+3)*DAY_MS),y=thu.getUTCFullYear();
@@ -26,7 +26,7 @@ function seasonOf(now,length='week'){
 function seasonTiers(length='week'){const wk=seasonLength(length)==='week',k=wk?WEEK_DIVISOR:1;
  return SEASON_TIERS.map((t,i)=>({tier:i+1,need:wk?WEEK_NEEDS[i]:t.need,reward:t.reward.points?{...t.reward,points:Math.ceil(t.reward.points/k)}:{...t.reward}}));}
 const goalReward=length=>seasonLength(length)==='week'?{...GOAL_REWARD,points:Math.ceil(GOAL_REWARD.points/WEEK_DIVISOR)}:{...GOAL_REWARD};
-const shopItems=()=>Object.entries(COSMETICS).filter(([,v])=>v.stars&&!v.consumable).map(([id,v])=>({id,kind:v.kind,stars:v.stars}));
+const shopItems=()=>Object.entries(COSMETICS).filter(([,v])=>v.stars&&!v.consumable).map(([id,v])=>({id,kind:v.kind,stars:v.stars,...(v.days?{days:v.days}:{})}));
 // Time left until the season ends (UTC): whole days, or hours on the last day.
 function timeLeft(end,now=Date.now()){const ms=Math.max(0,end-now);return ms>=DAY_MS?{days:Math.ceil(ms/DAY_MS),hours:0}:{days:0,hours:Math.max(1,Math.ceil(ms/3600000))};}
 // Progress of the pass track as 0..1 between tiers, for the bar.

@@ -27,3 +27,10 @@
 .bike-paint span{font-size:12px;font-weight:650}.bike-paint small{font-size:10.5px;color:#9fe8f0}
 .bike-paint.cur{border:2px solid #ffd98c;box-shadow:0 0 10px #ffd98c55}.bike-paint.cur small{color:#ffd98c}
 .bike-note,.bike-lock{font-size:12px!important;margin:8px 2px!important;color:#b8d1e1}
+/* v64 Lunar Comet (Stars skin) */
+.bike-hero.comet .b-body{background:linear-gradient(180deg,#2a2930,#08080b);border:2px solid #e3b04a;box-shadow:inset 0 3px 0 #ffffff30,0 0 12px #ff9a3a77}
+.bike-comet{display:grid;grid-template-columns:auto 1fr;gap:8px 10px;align-items:center;border-color:#ffd98c88!important;background:linear-gradient(150deg,#1c1710e8,#0b1220e8)!important}
+.bike-comet .bc-txt{display:flex;flex-direction:column;gap:2px}.bike-comet .bc-txt b{color:#ffe7a3}.bike-comet .bc-txt small{font-size:11.5px;color:#cbbfa6;line-height:1.35}
+.bike-comet>button{grid-column:1/-1}
+.bike-comet .bc-buy{background:linear-gradient(180deg,#ffd36a,#e39a2a);color:#3a2408;font-weight:800;border:0}
+.bike-comet.cur{box-shadow:0 0 16px #ff9a3a44}
