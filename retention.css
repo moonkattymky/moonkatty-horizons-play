@@ -1,0 +1,35 @@
+/* v54 retention dialogs */
+.ret-dialog{max-width:420px}
+#growth-dock .ret-gd .gn-icon{font-size:20px;line-height:22px}
+.ret-sub{margin:4px 0 10px;color:#cfe3ee;font-size:13px;line-height:1.4}
+.ret-note{color:#cfe3ee;font-size:13px}.ret-note.small{font-size:11.5px;opacity:.8}
+.ret-hints{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:6px}
+.ret-hints li{display:flex;gap:8px;align-items:baseline;background:#0b2a40cc;border:1px solid #2e5d7a;border-radius:10px;padding:7px 10px;font-size:13px;color:#e4f1f8}
+.ret-hints b{color:#ffd98c;white-space:nowrap;font-size:11.5px}
+.ret-slots{display:flex;justify-content:center;gap:8px;margin:8px 0}
+.ret-slot{width:52px;height:52px;border-radius:14px;border:2px dashed #e9c67a88;display:grid;place-items:center;font-size:28px;background:#071c2c}
+.ret-slot.on{border-style:solid;border-color:#ffd98c}.ret-slot.win{border-color:#7ef0a8;box-shadow:0 0 14px #7ef0a866}
+.ret-keys{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0}
+.ret-keys button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0;border-radius:12px;background:linear-gradient(160deg,#173d58,#0a2338);border:1px solid #e9c67a77;color:#e4f1f8}
+.ret-keys button i{font-style:normal;font-size:24px}.ret-keys button small{font-size:10.5px}
+.ret-keys button:disabled{opacity:.45}
+.ret-row{display:flex;gap:8px;margin:6px 0}.ret-row>*{flex:1}
+.ret-main,.ret-ghost{min-height:44px;border-radius:12px;font-weight:700;font-size:14px}
+.ret-main{background:linear-gradient(160deg,#ffd98c,#e9a94a);color:#2a1a05;border:0}
+.ret-ghost{background:transparent;color:#ffd98c;border:1px solid #e9c67a99}
+.ret-main:disabled,.ret-ghost:disabled{opacity:.45}
+.ret-wide{width:100%;margin:8px 0}
+.ret-meta{text-align:center;font-size:12px;color:#a9c6d6;margin:4px 0}
+.ret-result{text-align:center;font-weight:700;margin:6px 0}.ret-result.ok{color:#7ef0a8}.ret-result.fail{color:#ffb38a}
+.ret-attempts{list-style:none;padding:0;margin:8px 0;display:grid;gap:4px}
+.ret-attempts li{display:flex;justify-content:space-between;background:#0b2a40aa;border-radius:8px;padding:5px 10px;font-size:13px;color:#e4f1f8}
+.ret-attempts em{font-style:normal;color:#ffd98c}
+.ret-pig{display:flex;align-items:center;gap:10px;background:#0b2a40cc;border:1px solid #2e5d7a;border-radius:14px;padding:10px 12px;margin:6px 0}
+.ret-pig.full{border-color:#ffd98c;box-shadow:0 0 18px #ffc96a44}
+.ret-pig-ico{font-size:34px}.ret-pig b{color:#ffd98c;font-size:14px;white-space:nowrap}
+.ret-fill{flex:1;height:12px;border-radius:6px;background:#04121d;overflow:hidden}
+.ret-fill i{display:block;height:100%;background:linear-gradient(90deg,#e9a94a,#ffd98c);transition:width .4s}
+.ret-remind{margin-top:10px;padding-top:10px;border-top:1px solid #2e5d7a}
+.ret-remind label{display:flex;gap:8px;align-items:center;color:#e4f1f8;font-weight:700;font-size:14px}
+.ret-remind input{width:20px;height:20px;accent-color:#ffd98c}
+.ret-remind p{margin:4px 0 0;font-size:11.5px;color:#a9c6d6}
