@@ -1,0 +1,8 @@
+/* v49 LIFE #1 look: warm gold + violet UI accents (body.mk-v49 only while chapter 1 is on screen) */
+body.mk-v49 .mission{background:linear-gradient(135deg,#1d1146e6,#0c2140e0 60%,#2a1a08d9);border-color:#e9b75a88;box-shadow:0 6px 22px #4b1fa055,inset 0 1px 0 #ffe0a033}
+body.mk-v49 #chapter-title{color:#ffd27a;text-shadow:0 0 10px #ffb84d66}
+body.mk-v49 .progress i{background:linear-gradient(90deg,#ffcf5a,#c77dff);box-shadow:0 0 10px #c77dff88}
+body.mk-v49 .inventory>span,body.mk-v49 #menu,body.mk-v49 .quick-tools button,body.mk-v49 #collection,body.mk-v49 #destination{border-color:#e9b75a77!important;box-shadow:0 0 12px #8a4dff33,inset 0 1px 0 #ffe7b333}
+body.mk-v49 .actions button{border-color:#ffd27a99!important;box-shadow:0 0 18px #b26bff55,inset 0 0 12px #ffcf5a22}
+body.mk-v49 #thumb{background:radial-gradient(circle at 35% 30%,#fff6dc,#ffd27a 55%,#c98a2b)!important;box-shadow:0 0 16px #ffcf5a88}
+body.mk-v49 .brand{text-shadow:0 0 12px #c77dff66}
