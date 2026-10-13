@@ -30,6 +30,6 @@ function mount(){dock=$('#growth-dock');if(!dock)return false;if(btn)return true
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&isOpen())setOpen(false);});
  document.addEventListener('moonkatty:lang',()=>{btn.querySelector('.hm-lbl').textContent=T('menu.open');head.querySelector('b').textContent=T('menu.title');for(const[id,,key]of PROXY){const l=dock.querySelector(`[data-menu="${id}"] .gn-label`);if(l)l.textContent=T(key);}sync();});
  sync();return true;}
-let n=0;const iv=setInterval(()=>{if(mount()){addTiles();sync();}if(++n>80)clearInterval(iv);},250);setInterval(()=>{if(btn)sync();},1500);
+let n=0;const iv=setInterval(()=>{if(mount()){addTiles();sync();}if(++n>80)clearInterval(iv);},250);setInterval(()=>{if(btn)sync();else if(mount()){addTiles();sync();}},1500);   // the dock may appear later (after Life #1 / session)
 root.MoonHudMenu={open:()=>setOpen(true),close:()=>setOpen(false),toggle:()=>setOpen(!isOpen()),get isOpen(){return isOpen();},sync};
 })(typeof window!=='undefined'?window:globalThis);
