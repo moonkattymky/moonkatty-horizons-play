@@ -19,8 +19,8 @@ const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify({view:Bike.view,r
 // ---------- 3D ----------
 if(R&&B){
  // v61: glossy sculpted body (kind 21 clear-coat), chrome (16), clear canopy (13), neon lines + rings (12, paint-matched)
- const MATS={paint:21,cream:21,seat:21,dark:21,chrome:16,gold:16,glass:13,neon:12,lamp:12,flame:12,ring:12};
- const COL={cream:[1,.95,.88],seat:[.30,.20,.26],dark:[.10,.11,.16],chrome:[.80,.84,.90],gold:[1,.80,.36],glass:[.62,.88,1],lamp:[1,.94,.70],flame:[.45,.95,1]};
+ const MATS={paint:21,cream:21,seat:21,dark:21,chrome:16,gold:16,glass:21,neon:12,lamp:12,flame:12,ring:12};
+ const COL={cream:[1,.95,.88],seat:[.30,.20,.26],dark:[.10,.11,.16],chrome:[.80,.84,.90],gold:[1,.80,.36],glass:[.16,.22,.32],lamp:[1,.94,.70],flame:[.45,.95,1]};
  function ball(b,mat,x,y,z,r,sy=1){const prof=[];for(let i=0;i<=10;i++){const a=-Math.PI/2+i/10*Math.PI;prof.push([Math.max(.001,Math.cos(a)),(Math.sin(a)+1)/2]);}const k=new B();k.shell(mat,prof,r,r*2*sy);for(const[m,d]of k.groups){const g=b.groups.get(m)||[];for(let i=0;i<d.length;i+=6)g.push(d[i]+x,d[i+1]-.15+y-r*sy,d[i+2]+z,d[i+3],d[i+4],d[i+5]);b.groups.set(m,g);}}
  // a lathe laid along -z: profile [radius fraction, 0 at the tail .. 1 at the nose], squashed to an oval cross-section
  function lathe(b,mat,prof,r,len,zb,cy,wx=1,hy=1,cx=0){const k=new B();k.shell(mat,prof,r,len);for(const[m,d]of k.groups){const g=b.groups.get(m)||[];for(let i=0;i<d.length;i+=6){const x=d[i],u=d[i+1]-.15,z=d[i+2];let nx=d[i+3]/wx,ny=d[i+5]/hy,nz=-d[i+4];const l=Math.hypot(nx,ny,nz)||1;g.push(cx+x*wx,cy+z*hy,zb-u,nx/l,ny/l,nz/l);}b.groups.set(m,g);}}
@@ -43,10 +43,10 @@ if(R&&B){
   lathe(b,'seat',[[.001,0],[.7,.08],[.95,.3],[1,.6],[.85,.88],[.001,1]],.19,.78,.74,CY+.25,1.05,.42);
   lathe(b,'paint',[[.001,0],[.5,.1],[.9,.4],[1,.75],[.001,1]],.16,.4,1.02,CY+.22,1.1,.6);
   // canopy: chrome rim + clear bubble screen
-  b.tube('chrome',[0,CY+.2,-.42],[0,CY+.235,-.42],.2,24,.2);
-  {const k=new B();ball(k,'glass',0,0,0,.21,1);for(const[m,d]of k.groups){const g=b.groups.get(m)||[];for(let i=0;i<d.length;i+=6){if(d[i+1]<-.02)continue;g.push(d[i]*.95,CY+.22+d[i+1]*1.15,-.46+d[i+2]*1.25-d[i+1]*.55,d[i+3],d[i+4],d[i+5]);}b.groups.set(m,g);}}
+  b.tube('chrome',[0,CY+.2,-.66],[0,CY+.225,-.66],.15,24,.15);
+  {const k=new B();ball(k,'glass',0,0,0,.16,1);for(const[m,d]of k.groups){const g=b.groups.get(m)||[];for(let i=0;i<d.length;i+=6){if(d[i+1]<-.02)continue;g.push(d[i]*.95,CY+.21+d[i+1]*.9,-.68+d[i+2]*1.2-d[i+1]*.6,d[i+3],d[i+4],d[i+5]);}b.groups.set(m,g);}}
   // chrome handlebar with grips
-  b.tube('chrome',[0,CY+.2,-.3],[0,CY+.42,-.36],.03,10);b.tube('chrome',[-.34,CY+.44,-.34],[.34,CY+.44,-.34],.026,10);for(const sx of[-1,1])b.tube('seat',[sx*.26,CY+.44,-.34],[sx*.38,CY+.44,-.34],.04,10,.042);
+  /* v62: grips where the riding sprite's paws are (x ±.36, seat +.19, forward .2) */b.tube('chrome',[0,CY+.2,-.4],[0,CY+.39,-.26],.03,10);b.tube('chrome',[0,CY+.39,-.26],[0,CY+.39,-.2],.03,10);b.tube('chrome',[-.3,CY+.39,-.2],[.3,CY+.39,-.2],.026,10);for(const sx of[-1,1])b.tube('seat',[sx*.28,CY+.39,-.2],[sx*.4,CY+.39,-.2],.042,10,.044);
   // headlight + nose cap
   ball(b,'lamp',0,CY+.02,-1.08,.075,.8);b.tube('chrome',[0,CY+.02,-1.05],[0,CY+.02,-1.0],.1,16,.1);
   // swept side fins

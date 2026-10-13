@@ -1,4 +1,5 @@
 (function(root){'use strict';
+const RIDE={"image":"assets/moonkatty-ride-v62.webp?v=20261013-62a","imageWidth":1151,"imageHeight":412,"directions":{"down":{"x":0,"y":0,"w":308,"h":412,"anchorX":152.8,"anchorY":412,"bodyHeight":568.6,"hands":[[-0.503,0.306],[0.509,0.306]]},"up":{"x":316,"y":0,"w":303,"h":377,"anchorX":151.9,"anchorY":377,"bodyHeight":566.7,"hands":[[-0.489,0.22],[0.598,0.22]]},"left":{"x":627,"y":0,"w":254,"h":342,"anchorX":114.4,"anchorY":342,"bodyHeight":574.2,"hands":[[-0.291,0.317]]},"right":{"x":889,"y":0,"w":254,"h":342,"anchorX":139.6,"anchorY":342,"bodyHeight":574.2,"hands":[[0.291,0.317]]}}};
 const atlas=root.MoonCharacterAtlas,R=root.MoonRenderer.prototype,originalCat=R.cat,originalScene=R.scene;
 R.scene=function(...args){this.crewSprites=[];return originalScene.apply(this,args);};
 const VERT=`attribute vec3 position;attribute vec2 texcoord;uniform mat4 vp;varying vec2 uv;varying vec3 W;void main(){uv=texcoord;W=position;gl_Position=vp*vec4(position,1.);}`;
@@ -22,7 +23,7 @@ R.initCharacterSprites=function(){
    for(const key of[gl.TEXTURE_MIN_FILTER,gl.TEXTURE_MAG_FILTER])gl.texParameteri(gl.TEXTURE_2D,key,gl.LINEAR);
    for(const key of[gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T])gl.texParameteri(gl.TEXTURE_2D,key,gl.CLAMP_TO_EDGE);
   };
-  const image=new Image();image.onload=()=>{try{upload(s.texture,image);s.ready=true;}catch(e){s.failed=true;}};image.onerror=()=>{s.failed=true;};image.src=atlas.image;s.image=image;
+  s.upload=upload;const image=new Image();image.onload=()=>{try{upload(s.texture,image);s.ready=true;}catch(e){s.failed=true;}};image.onerror=()=>{s.failed=true;};image.src=atlas.image;s.image=image;
   const idle=new Image();idle.onload=()=>{try{upload(s.idleTexture,idle);s.idleReady=true;}catch(e){s.idleReady=false;}};idle.onerror=()=>{s.idleReady=false;};idle.src=atlas.idle.image;s.idleImage=idle;
   for(const [direction,row]of Object.entries(root.MoonCharacterWalkAtlas||{})){const item={texture:gl.createTexture(),ready:false};s.directionTextures[direction]=item;const frameImage=new Image();frameImage.onload=()=>{try{upload(item.texture,frameImage);item.ready=true;}catch(e){item.ready=false;}};frameImage.onerror=()=>{item.ready=false;};frameImage.src=row.image;item.image=frameImage;}
  }catch(e){s.failed=true;console.warn('MOONKATTY character sprite fallback:',e.message);}
@@ -55,10 +56,18 @@ R.drawCrewSprites=function(vp,state){
  }
 };
 R.drawCharacterSprites=function(vp,p,state,t,dt){
+ const rideB=root.MoonBike&&root.MoonBike.on&&root.MoonBike.on(p)&&root.MoonBike.seat?root.MoonBike.seat:null;/* v61: seated on the hover-bike: no walk cycle, legs cut away inside the seat */
  const s=this.characterSprite;if(!s||!s.ready)return;this.drawCrewSprites(vp,state);
  const camera=Math.atan2(this.eye[0]-p.x,this.eye[2]-p.z),direction=directionFor(p.yaw,camera,s.direction);
  s.direction=direction;
- const rideB=root.MoonBike&&root.MoonBike.on&&root.MoonBike.on(p)&&root.MoonBike.seat?root.MoonBike.seat:null;/* v61: seated on the hover-bike: no walk cycle, legs cut away inside the seat */
+ // v62: dedicated seated riding frames (assets/moonkatty-ride-v62.webp): legs tucked, paws forward on the grips, hip on the seat
+ if(rideB&&RIDE){if(!s.ride){s.ride={texture:this.gl.createTexture(),ready:false};const im=new Image();im.onload=()=>{try{s.upload(s.ride.texture,im);s.ride.ready=true;}catch(e){s.ride.failed=true;}};im.src=RIDE.image;s.ride.image=im;}
+  if(s.ride.ready){const f=RIDE.directions[direction],scale=2.35/f.bodyHeight,right=[Math.cos(camera),-Math.sin(camera)],base=rideB.y,IW=RIDE.imageWidth,IH=RIDE.imageHeight;
+   const left=-f.anchorX*scale,bottom=(f.anchorY-f.h)*scale,top=f.anchorY*scale,width=f.w*scale,ln=(direction==='left'?-1:direction==='right'?1:0)*.07*top,bob=Math.sin((t||0)*3.1)*.004;
+   const point=(x,y,u,v)=>[p.x+right[0]*x,base+y+bob,p.z+right[1]*x,u,v],u0=f.x/IW,u1=(f.x+f.w)/IW,v0=f.y/IH,v1=(f.y+f.h)/IH;
+   const a=point(left+ln,top,u0,v0),b=point(left,bottom,u0,v1),c=point(left+width,bottom,u1,v1),d=point(left+width+ln,top,u1,v0);this.spriteLight={frameUV:[u0,v0,u1-u0,v1-v0],spriteRight:[right[0],0,right[1]]};s.mode='ride';
+   this.drawCharacterShadow(vp,p,state,camera);const gl=this.gl;gl.useProgram(s.program);gl.uniformMatrix4fv(s.vp,false,vp);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,s.ride.texture);gl.uniform1i(s.map,0);gl.uniform4f(s.frameUV,u0,v0,u1-u0,v1-v0);gl.uniform3fv(s.right,[right[0],0,right[1]]);gl.uniform3fv(s.eye,this.eye);gl.bindBuffer(gl.ARRAY_BUFFER,s.buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([...a,...b,...c,...a,...c,...d]),gl.DYNAMIC_DRAW);
+   gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.enableVertexAttribArray(s.position);gl.vertexAttribPointer(s.position,3,gl.FLOAT,false,20,0);gl.enableVertexAttribArray(s.uv);gl.vertexAttribPointer(s.uv,2,gl.FLOAT,false,20,12);gl.drawArrays(gl.TRIANGLES,0,6);gl.disableVertexAttribArray(s.position);gl.disableVertexAttribArray(s.uv);gl.disable(gl.BLEND);return;}}
  const walking=!rideB&&p.speed>.08&&p.alt<.15;
  s.time=walking?s.time+Math.min(dt,.2)*Math.min(p.speed,1):0;
  const detailed=s.directionTextures[direction]?.ready,row=detailed?root.MoonCharacterWalkAtlas[direction]:atlas.directions[direction],cycle=detailed?[0,1,2,3,4,5]:CYCLES[direction],useIdle=!walking&&s.idleReady;
