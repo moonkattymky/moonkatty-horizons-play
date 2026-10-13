@@ -80,3 +80,11 @@ body.mk-first-steps #growth-dock,body.mk-first-steps #collection{visibility:hidd
 /* v44 touch: small HUD buttons keep their look but get a ≥44 px hit area */
 #mission-toggle,.quick-tools button{position:relative}
 #mission-toggle::after,.quick-tools button::after{content:"";position:absolute;inset:-6px -4px}
+/* v52 Telegram fullscreen: keep the HUD below the notch and Telegram's Close/menu buttons */
+html[data-tg-fullscreen=true] header{top:calc(var(--tg-safe-top,0px) + 6px)!important}
+html[data-tg-fullscreen=true] #expedition-hud{top:calc(var(--tg-safe-top,0px) + 62px)!important}
+html[data-tg-fullscreen=true] .dm-compass{top:calc(var(--tg-safe-top,0px) + 198px)!important}
+html[data-tg-fullscreen=true] .dm-energy{top:calc(var(--tg-safe-top,0px) + 240px)!important}
+html[data-tg-fullscreen=true] .cin-top{padding-top:calc(var(--tg-safe-top,0px) + 10px)!important}
+html[data-tg-fullscreen=true] .cover .cover-lang,html[data-tg-fullscreen=true] .cover .cover-menu,html[data-tg-fullscreen=true] .cover .cover-tools{top:calc(var(--tg-safe-top,0px) + 8px)!important}
+html[data-tg-fullscreen=true] .controls{bottom:max(64px,calc(var(--tg-safe-bottom,0px) + 43px))!important}
