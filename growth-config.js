@@ -8,6 +8,7 @@ window.MoonGrowthConfig=Object.assign({
  CHANNEL_USERNAME:'moonkattymkty',             // channel username without @, e.g. 'moonkattymkty'. Empty = channel task hidden
  CHAT_USERNAME:'moonkattymkty_chat',  // community chat username without @. Empty = chat task hidden
  SOCIAL:{youtube:'https://www.youtube.com/@moonkattymky',tiktok:'https://www.tiktok.com/@moonkattymky',instagram:'https://www.instagram.com/moonkattymky/',x:'https://x.com/moonkattymky'},  // full https:// links; empty = task hidden. v45: instagram is a plain link only — it has NO reward task
+ ADS_ENABLED:false,               // v46: rewarded-ad button on the «out of energy» screen (AdsGram is wired in the next stage). false = hidden
  SHARE_STORY_IMAGE:'assets/share/story-{lang}.jpg',
  SHARE_CARD_IMAGE:'assets/share/card-{lang}.jpg'
 },window.MoonGrowthConfig||{});
