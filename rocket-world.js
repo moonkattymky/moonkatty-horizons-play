@@ -202,7 +202,7 @@ R.v43Build=function(){if(this.v43)return this.v43;this.ensureWorldModels();const
 function stageOf(state){return Core.rocketStage?Core.rocketStage(state):0;}
 const SITE_R={pad:[PAD,22],wreck:[[-25,56],20],cave:[CAVE,18],hangar:[[-58,26],16]};
 R.ensureWorldModels=function(){old.ensure.call(this);};
-R.scene=function(state,p,t,...args){const out=old.scene.call(this,state,p,t,...args);if(!state||state.chapter!==4)return out;const v=this.v43Build(),low=this.quality==='low',L=v.L,eye=this.eye||[0,0,0];
+R.scene=function(state,p,t,...args){const out=old.scene.call(this,state,p,t,...args);if(!state||state.chapter<4)return out;const v=this.v43Build(),low=this.quality==='low',L=v.L,eye=this.eye||[0,0,0];
  const far=(k)=>{const[c,rad]=SITE_R[k];return Math.hypot(eye[0]-c[0],eye[2]-c[1])>150+rad;};
  const draw=(name,glowMul=1)=>{for(const[key,mat]of L[name]||[]){const[kind,col]=MATS[mat]||[0,[.5,.5,.5]];const g=mat==='fpaint'?.42:mat==='rgold'?.12:mat==='port'?.7+.1*Math.sin(t*1.9):mat==='amber'?.5:mat==='blue'?.75+.2*Math.sin(t*2.2):mat==='holo'?(.35+.25*Math.max(0,Math.sin(t*3.1)))*glowMul:mat==='core'?.85+.15*Math.sin(t*1.7):mat==='crystal'?.24+.06*Math.sin(t*1.7):0;this.put(key,0,0,0,1,1,1,col,0,kind,g);}};
  const st=stageOf(state);
@@ -231,7 +231,7 @@ function inside4(x,z,state){
  if(!parts.includes('nose')&&Math.hypot(x-n[0],z-n[1])<1.05)return true;
  if(!parts.includes('fins')&&Math.abs(x-f[0])<1.45&&Math.abs(z-f[1])<.75)return true;
  return false;}
-R.blocked=function(x,z,state,alt=0){if(state&&state.chapter===4&&alt<2.2){if(!this.v43&&this.gl)this.v43Build();if(inside4(x,z,state))return true;}return old.blocked.call(this,x,z,state,alt);};
+R.blocked=function(x,z,state,alt=0){if(state&&state.chapter>=4&&alt<2.2){if(!this.v43&&this.gl)this.v43Build();if(inside4(x,z,state))return true;}return old.blocked.call(this,x,z,state,alt);};
 // the hangar is a closed arched shell: keep the follow camera on the cat's side of its walls (inside stays inside, outside stays outside)
 let hangarBase=null;function hangarCam(r,x,z,y){const{x0,x1,z:hz,r:hr,door,doorH}=HANGAR;if(x<x0-.6||x>x1+.6||Math.abs(z-hz)>hr+.6)return false;
  if(hangarBase===null){let lo=1e9;for(let xx=x0;xx<=x1;xx+=1)for(const dz of[-hr,-hr/2,0,hr/2,hr])lo=Math.min(lo,r.terrain(xx,hz+dz,4));hangarBase=lo-.25;}
@@ -240,7 +240,7 @@ let hangarBase=null;function hangarCam(r,x,z,y){const{x0,x1,z:hz,r:hr,door,doorH
  if(Math.abs(x-x0)<.45)return true;
  if(Math.abs(x-x1)<.45&&!(Math.abs(dz)<door-.25&&dy<doorH-.3))return true;
  return false;}
-if(old.camera)R.cameraBlocked=function(x,z,state,alt=0){if(state&&state.chapter===4){if(alt<1.6&&inside4(x,z,state))return true;if(hangarCam(this,x,z,this.terrain(x,z,4)+alt))return true;}return old.camera.call(this,x,z,state,alt);};
+if(old.camera)R.cameraBlocked=function(x,z,state,alt=0){if(state&&state.chapter>=4){if(alt<1.6&&inside4(x,z,state))return true;if(hangarCam(this,x,z,this.terrain(x,z,4)+alt))return true;}return old.camera.call(this,x,z,state,alt);};
 // ---------- light pools and halos ----------
 function poolData(r,state,v){const out=[],ch=4,disc=(x,z,rad,col,k,ph)=>{const N=4,y0=(a,b)=>r.terrain(a,b,ch)+.035;for(let j=0;j<N;j++)for(let i=0;i<N;i++){const q=[[i,j],[i+1,j],[i+1,j+1],[i,j+1]].map(([a,b])=>{const u=a/N*2-1,w=b/N*2-1,px=x+u*rad,pz=z+w*rad;return[px,y0(px,pz),pz,u,w,ph,k];});for(const t of[0,1,2,0,2,3])out.push(...q[t],...col);}};
  const W=v.w,amber=[1.0,.58,.22],blue=[.16,.42,1.0],st=stageOf(state);
@@ -253,7 +253,7 @@ function poolData(r,state,v){const out=[],ch=4,disc=(x,z,rad,col,k,ph)=>{const N
  disc(HEART[0]-.6,HEART[1],3.6,blue,.6,3);for(const l of W.cave.lamps||[])disc(l[0],l[2],1.6,amber,.45,l[0]);
  for(const l of W.hangar.lamps)disc(l[0],l[2],1.5,amber,.32,l[0]);
  return new Float32Array(out);}
-R.render=function(state,p,t,dt,yaw,pitch,scan){old.render.call(this,state,p,t,dt,yaw,pitch,scan);if(!state||state.chapter!==4||!this.v43||!this.vp||!this.initHorizons)return;
+R.render=function(state,p,t,dt,yaw,pitch,scan){old.render.call(this,state,p,t,dt,yaw,pitch,scan);if(!state||state.chapter<4||!this.v43||!this.vp||!this.initHorizons)return;
  const hv=this.initHorizons();if(!hv||!hv.ok)return;const gl=this.gl,v=this.v43,low=this.quality==='low',W=v.w,st=stageOf(state),eye=this.eye||[0,0,0];
  const key=st+':'+(state.coreShards||[]).length+':'+(state.engineFound?1:0)+':'+this.quality;if(!v.pools.buf)v.pools.buf=gl.createBuffer();if(key!==v.pools.key){v.pools.key=key;v.pools.data=poolData(this,state,v);gl.bindBuffer(gl.ARRAY_BUFFER,v.pools.buf);gl.bufferData(gl.ARRAY_BUFFER,v.pools.data,gl.STATIC_DRAW);}
  gl.useProgram(hv.p);gl.uniformMatrix4fv(hv.vp,false,this.vp);gl.uniform1f(hv.time,t);gl.bindBuffer(gl.ARRAY_BUFFER,v.pools.buf);gl.enable(gl.DEPTH_TEST);gl.depthMask(false);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFunc(gl.ONE,gl.ONE);gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(-2,-8);

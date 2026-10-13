@@ -8,7 +8,7 @@ const A='assets/cinema/';
 // Glow spots [x, y, radius (fraction of image width), colour] pulse softly over windows, crystals, beacons and Earth.
 // v38 chapter covers are 16:9 (1280×720). On a portrait phone only ~26% of the width is visible, so each title card pans
 // from the cat to the story object. V busts GitHub Pages / Telegram caches of the old portrait files that kept the same names.
-const V='?v=38',V4='?v=43';
+const V='?v=38',V4='?v=43',V5='?v=57';
 // Optional titleY (fraction of the screen height) moves the title card off the key object; default 66%.
 const CH1={img:A+'ch1-awakening.jpg'+V,from:[.355,.42,1.08],to:[.60,.62,1.1],sky:.3,fx:['stars','dust'],glows:[[.415,.51,.05,'blue'],[.60,.54,.05,'amber'],[.083,.68,.03,'blue'],[.168,.835,.035,'blue'],[.79,.85,.035,'blue'],[.915,.75,.03,'blue'],[.78,.23,.14,'earth']],
  title:[_t('life.n',{n:1}),_t('chapter.1')],kicker:_t('cine.zadanie'),text:_t('cine.naydi_bortovoy'),mood:'title',mark:'ch1'};
@@ -44,6 +44,16 @@ const SCENES={
  ch4end:{name:_t('ch4.end_title'),frames:()=>[
   {img:A+'ch4-rocket.jpg'+V4,from:[.607,.40,1.55],to:[.62,.48,1.04],sky:.32,titleY:.24,fx:['stars','dust'],glows:[[.607,.37,.035,'blue'],[.865,.20,.10,'earth'],[.70,.30,.02,'amber']],
    title:[_t('ch4.end_title'),_t('ch4.end_silent')],kicker:_t('ch4.end_kicker'),text:_t('ch4.end_card'),mood:'mystery'}],marks:()=>['ch4end']},
+ // v57 LIFE #5 · IGNITION (1280×720 in-engine renders, graded). Opener: the silent rocket on the pad at dusk → the Sun Forge
+ // gate far in the south (title card). Ending: liftoff over the pad with the whole sky lit gold.
+ ch5:{name:_t('life.title',{n:5,name:_t('chapter.5')}),frames:()=>[
+  {img:A+'ch5-ignition.jpg'+V5,from:[.49,.62,1.2],to:[.41,.40,1.04],sky:.3,fx:['stars','dust'],glows:[[.41,.36,.035,'blue'],[.41,.58,.05,'amber'],[.73,.42,.04,'violet']],
+   kicker:_t('ch5.cine_kicker'),text:_t('ch5.cine_text'),mood:'mystery'},
+  {img:A+'ch5-forge.jpg'+V5,from:[.46,.64,1.18],to:[.53,.40,1.02],sky:.3,titleY:.74,fx:['stars','dust'],glows:[[.53,.31,.09,'violet'],[.53,.43,.04,'amber'],[.33,.49,.03,'amber'],[.84,.49,.03,'amber']],
+   title:[_t('life.n',{n:5}),_t('chapter.5')],kicker:_t('cine.zadanie'),text:_t('ch5.cine_mission'),mood:'title',mark:'ch5'}],marks:()=>['ch5']},
+ ch5end:{name:_t('ch5.end_title'),frames:()=>[
+  {img:A+'ch5-liftoff.jpg'+V5,from:[.56,.66,1.35],to:[.55,.36,1.02],sky:.32,titleY:.24,fx:['stars','dust'],glows:[[.56,.47,.07,'amber'],[.56,.6,.10,'amber']],
+   title:[_t('ch5.end_title'),_t('ch5.end_sub')],kicker:_t('ch5.end_kicker'),text:_t('ch5.end_card'),mood:'hope'}],marks:()=>['ch5end']},
  crystal:{name:_t('cine.pervyy_kristall'),flash:true,frames:()=>[
   {kind:'flash',img:A+'crystal.webp',dur:5600,kicker:_t('cine.nahodka'),title:[_t('cine.kristall_nayden'),''],text:_t('cine.golubye_kristally'),mood:'chime'}],marks:()=>['crystal']}
 };

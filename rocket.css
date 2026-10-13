@@ -28,3 +28,11 @@
 /* cinema titles: keep long subtitles (e.g. the cliffhanger line) off the screen edges, keep the brand kicker readable over bright art */
 .cin-title{padding:0 18px;box-sizing:border-box}
 .cin-title small{text-shadow:0 1px 8px #000,0 0 3px #000}
+/* v57 LIFE #5 · Sun Forge lenses: a little sun per lens, four rays light up with the lens level */
+.forge-lenses .align-row{background:linear-gradient(135deg,#2a1c3c,#1a2440);border-color:#8a6a3c}
+.forge-lenses .align-row[data-aligned=true]{background:linear-gradient(135deg,#4a3110,#3a2350);border-color:#ffd27a;box-shadow:0 0 14px #ffb84a55}
+.forge-lenses .align-row[data-aligned=true] small{color:#ffd27a}
+.forge-sun{border-radius:50%;background:radial-gradient(circle,#ffe7a8 0 22%,#c98a2e 24% 34%,transparent 36%)}
+.forge-row[data-aligned=true] .forge-sun{background:radial-gradient(circle,#fff6d6 0 24%,#ffc24a 26% 38%,#ffb84a33 40%,transparent 62%)}
+.forge-pip{position:absolute;left:50%;top:50%;width:6px;height:13px;margin:-21px 0 0 -3px;border-radius:3px;background:#5a4a62;transform-origin:3px 21px;transform:rotate(calc(var(--k) * 90deg + 45deg));transition:background .25s ease,box-shadow .25s ease}
+.forge-pip[data-on=true]{background:#ffd27a;box-shadow:0 0 8px #ffb84aaa}
