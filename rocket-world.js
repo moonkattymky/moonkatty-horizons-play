@@ -13,7 +13,7 @@ if(!R||!Core||!B)return;
 const old={ensure:R.ensureWorldModels,scene:R.scene,render:R.render,blocked:R.blocked,camera:R.cameraBlocked};
 const TAU=Math.PI*2,norm=v=>{const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l];},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
 function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
-const MATS={ivory:[17,[.88,.89,.87]],hull:[17,[.64,.62,.58]],pad:[17,[.52,.52,.50]],gold:[16,[.92,.63,.25]],steel:[0,[.23,.28,.31]],dark:[0,[.045,.065,.085]],rust:[0,[.30,.21,.15]],amber:[12,[1,.57,.14]],blue:[12,[.10,.62,1.0]],holo:[12,[.18,.66,1.0]],crystal:[13,[.06,.34,1.0]],core:[12,[.35,.80,1.0]],stone:[4,[.56,.56,.575]]};
+const MATS={ivory:[17,[.97,.96,.93]],rgold:[16,[1.0,.76,.32]],fpaint:[12,[.95,.60,.22]],port:[12,[1.0,.62,.20]],hull:[17,[.64,.62,.58]],pad:[17,[.52,.52,.50]],gold:[16,[.92,.63,.25]],steel:[0,[.23,.28,.31]],dark:[0,[.045,.065,.085]],rust:[0,[.30,.21,.15]],amber:[12,[1,.57,.14]],blue:[12,[.10,.62,1.0]],holo:[12,[.18,.66,1.0]],crystal:[13,[.06,.34,1.0]],core:[12,[.35,.80,1.0]],stone:[4,[.56,.56,.575]]};
 const SITES=Core.ROCKET_SITES||{pad:[28,4],wreck:[-25,55],cave:[69,4],hangar:[-58,26]};
 const PAD=SITES.pad,WRECK={c:[-25,57],a:[-31.6,57.9],b:[-18.6,56.2],r:2.25},ENGINE=[-28.6,52.4],CAVE=SITES.cave,HANGAR={x0:-66,x1:-51,z:26,r:6,door:2.8,doorH:3.9};
 const HEART=[75.3,6.9],CAVE_ROCKS=[],PLINTH=4.4;
@@ -49,26 +49,27 @@ const RB=1.15;
 function rocketStage(n){const b=new B();
  if(n===1){
   b.tube('dark',[0,.36,0],[0,1.38,0],.98,28,.5);b.tube('gold',[0,.30,0],[0,.42,0],1.02,28);b.tube('steel',[0,1.30,0],[0,1.46,0],.62,20);
-  lathe(b,'ivory',[[.58,0],[.92,.1],[1,.2],[1,1]],RB,1.3,2.3);b.tube('gold',[0,1.95,0],[0,2.06,0],RB+.025,48);b.tube('gold',[0,2.36,0],[0,2.42,0],RB+.02,48);
+  lathe(b,'ivory',[[.58,0],[.92,.1],[1,.2],[1,1]],RB,1.3,2.3);b.tube('gold',[0,1.95,0],[0,2.06,0],RB+.025,48);b.tube('gold',[0,2.36,0],[0,2.42,0],RB+.02,48);b.tube('rgold',[0,1.3,0],[0,1.42,0],RB*.94,48);b.tube('port',[0,.30,0],[0,.36,0],.9,28,.88);
   for(let i=0;i<4;i++){const a=i/4*TAU+TAU/8,c=Math.cos(a),s=Math.sin(a);b.box('steel',c*(RB+.02),2.9,s*(RB+.02),.34,.42,.34,-a);b.box('amber',c*(RB+.18),2.98,s*(RB+.18),.1,.06,.1,-a);}
  }
  if(n===2){
   lathe(b,'ivory',[[1,0],[1,1]],RB,3.6,4.8);b.tube('gold',[0,3.58,0],[0,3.76,0],RB+.03,48);b.tube('gold',[0,8.24,0],[0,8.4,0],RB+.03,48);
   // vertical seam strips and small hatches
   for(let i=0;i<6;i++){const a=i/6*TAU+.2,c=Math.cos(a),s=Math.sin(a);if(c<-.6)continue;b.box('steel',s*(RB+.012),6.0,c*(RB+.012),.05,3.6,.05,a);}
-  b.box('steel',RB*.72,4.4,RB*.72,.32,.5,.06,TAU/8);
+  b.box('steel',RB*.72,4.4,RB*.72,.32,.5,.06,TAU/8);b.tube('rgold',[0,4.9,0],[0,4.98,0],RB+.02,48);b.tube('rgold',[0,7.2,0],[0,7.28,0],RB+.02,48);
+  b.ring('rgold',0,7.75,RB-.02,.62,.62,.09,.24,28);b.ring('port',0,7.75,RB+.03,.53,.53,.03,.07,28);b.paw(0,7.66,RB+.16,.95,'rgold');
  }
  if(n===3){
   lathe(b,'ivory',[[1,0],[1,.16],[.97,.3],[.89,.46],[.75,.62],[.55,.76],[.32,.88],[.12,.96],[0,1]],RB,8.4,5.4);
-  b.tube('gold',[0,8.42,0],[0,8.58,0],RB+.03,48);b.tube('gold',[0,9.25,0],[0,9.33,0],RB*.99+.02,48);b.tube('gold',[0,13.12,0],[0,14.2,0],.24,16,.015);
+  b.tube('gold',[0,8.42,0],[0,8.58,0],RB+.03,48);b.tube('gold',[0,9.25,0],[0,9.33,0],RB*.99+.02,48);b.tube('gold',[0,13.12,0],[0,14.2,0],.24,16,.015);lathe(b,'rgold',[[.34,0],[.22,.35],[.1,.7],[0,1]],RB*1.012,8.4+5.4*.86,5.4*.142);b.tube('rgold',[0,8.4+5.4*.6,0],[0,8.4+5.4*.6+.07,0],RB*.83,40);
   // four swept fins with gold leading edges
   for(let i=0;i<4;i++){const a=i/4*TAU+TAU/8,c=Math.cos(a),s=Math.sin(a),P=(r,y,o)=>[c*r-s*o,y,s*r+c*o],th=.07;
    const pts=[[RB*.97,3.2],[RB*.97,.9],[2.35,.12],[2.45,.75]];
-   b.quad('ivory',...pts.map(([r,y])=>P(r,y,th)).reverse());b.quad('ivory',...pts.map(([r,y])=>P(r,y,-th)));
-   for(let k=0;k<4;k++){const[p,q]=[pts[k],pts[(k+1)%4]];b.quad('ivory',P(p[0],p[1],-th),P(q[0],q[1],-th),P(q[0],q[1],th),P(p[0],p[1],th));}
+   b.quad('fpaint',...pts.map(([r,y])=>P(r,y,th)).reverse());b.quad('fpaint',...pts.map(([r,y])=>P(r,y,-th)));
+   for(let k=0;k<4;k++){const[p,q]=[pts[k],pts[(k+1)%4]];b.quad('fpaint',P(p[0],p[1],-th),P(q[0],q[1],-th),P(q[0],q[1],th),P(p[0],p[1],th));}
    b.tube('gold',P(RB*.97,3.25,0),P(2.47,.72,0),.07,6);b.tube('gold',P(2.36,.08,0),P(2.47,.76,0),.06,6);}
   // portholes facing the camp side (-x after yaw)
-  for(const[yy,rr]of[[10.1,.26],[11.0,.2]]){b.ring('gold',0,yy,RB*.96+.03,rr,rr,.32,.12,14);}
+  for(const[yy,rr,zz]of[[10.1,.26,RB*.96],[11.0,.2,RB*.86]]){b.ring('rgold',0,yy,zz+.03,rr,rr,.32,.12,14);for(let i=0;i<14;i++){const a=i/14*TAU,c=(i+1)/14*TAU;b.tri('port',[0,yy,zz+.05],[Math.sin(c)*rr*.82,yy+Math.cos(c)*rr*.82,zz+.04],[Math.sin(a)*rr*.82,yy+Math.cos(a)*rr*.82,zz+.04],[0,0,1]);}}
  }
  return b;}
 // window with the blue crystal fuel core (stage 2), built facing +z and baked with yaw -PI/2 so it faces the camp (-x)
@@ -203,7 +204,7 @@ const SITE_R={pad:[PAD,22],wreck:[[-25,56],20],cave:[CAVE,18],hangar:[[-58,26],1
 R.ensureWorldModels=function(){old.ensure.call(this);};
 R.scene=function(state,p,t,...args){const out=old.scene.call(this,state,p,t,...args);if(!state||state.chapter!==4)return out;const v=this.v43Build(),low=this.quality==='low',L=v.L,eye=this.eye||[0,0,0];
  const far=(k)=>{const[c,rad]=SITE_R[k];return Math.hypot(eye[0]-c[0],eye[2]-c[1])>150+rad;};
- const draw=(name,glowMul=1)=>{for(const[key,mat]of L[name]||[]){const[kind,col]=MATS[mat]||[0,[.5,.5,.5]];const g=mat==='amber'?.5:mat==='blue'?.75+.2*Math.sin(t*2.2):mat==='holo'?(.35+.25*Math.max(0,Math.sin(t*3.1)))*glowMul:mat==='core'?.85+.15*Math.sin(t*1.7):mat==='crystal'?.24+.06*Math.sin(t*1.7):0;this.put(key,0,0,0,1,1,1,col,0,kind,g);}};
+ const draw=(name,glowMul=1)=>{for(const[key,mat]of L[name]||[]){const[kind,col]=MATS[mat]||[0,[.5,.5,.5]];const g=mat==='fpaint'?.42:mat==='rgold'?.12:mat==='port'?.7+.1*Math.sin(t*1.9):mat==='amber'?.5:mat==='blue'?.75+.2*Math.sin(t*2.2):mat==='holo'?(.35+.25*Math.max(0,Math.sin(t*3.1)))*glowMul:mat==='core'?.85+.15*Math.sin(t*1.7):mat==='crystal'?.24+.06*Math.sin(t*1.7):0;this.put(key,0,0,0,1,1,1,col,0,kind,g);}};
  const st=stageOf(state);
  if(!far('pad')){draw('pad');if(!low)draw('padDetail');for(let i=1;i<=3;i++){if(st>=i)draw('stage'+i);else draw('holo'+i,i===st+1?1.4:.7);}if(st===1)draw('padCap');}
  if(!far('wreck')){draw('wreck');if(!low)draw('wreckDetail');if(!state.engineFound)draw('engine');}
