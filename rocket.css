@@ -77,3 +77,18 @@
 .rings-buttons{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 .ring-turn{min-width:88px;padding:10px 12px;border-radius:12px;background:#12324c;color:#e9f5ff;border:1px solid #3c6b8f;font-weight:700}
 .rings-count{margin:0;opacity:.85;font-size:13px}
+/* v68 star chart (finale) */
+.stars-puzzle{display:flex;flex-direction:column;align-items:center;gap:10px;padding:4px 0}
+.stars-wrap{position:relative;width:min(70vw,260px);aspect-ratio:1;border-radius:18px;background:radial-gradient(circle at 50% 40%,#13284a,#060f1c 70%);box-shadow:0 0 0 1px #2b4a66,inset 0 0 30px #000a}
+.stars-puzzle.solved .stars-wrap{box-shadow:0 0 0 2px #ffd27a,0 0 30px #ffbe5a66}
+.stars-chart{position:absolute;inset:0;width:100%;height:100%}
+.star-line{stroke:#5f86b4;stroke-width:.7;stroke-dasharray:2 2;opacity:.55}
+.star-line.drawn{stroke:#ffd27a;stroke-width:1.6;stroke-dasharray:none;opacity:1;filter:drop-shadow(0 0 1.5px #ffbe5a)}
+.star-dot{position:absolute;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:0;background:transparent;padding:0;display:grid;place-items:center;color:#cfe6ff;font-size:20px;text-shadow:0 0 8px #8fc6ff}
+.star-dot.on{color:#ffd27a;text-shadow:0 0 10px #ffbe5a}.star-dot.head span{transform:scale(1.35);display:inline-block}
+.star-dot.nope{animation:star-nope .35s}@keyframes star-nope{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.stars-count{margin:0;opacity:.85;font-size:13px}
+/* v68 finale end card */
+.finale-links{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 12px}
+.finale-thanks{grid-column:1/-1;margin:0 0 4px;color:#ffd27a;font-size:14px;line-height:1.35}
+.finale-link{padding:10px 8px;border-radius:12px;background:#12324c;color:#e9f5ff;border:1px solid #3c6b8f;font-weight:700;font-size:13px}

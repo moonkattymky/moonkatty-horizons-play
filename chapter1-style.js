@@ -61,7 +61,7 @@ R.v49Build=function(){if(this.v49)return this.v49;this.ensureWorldModels&&this.e
  cluster(small,CRYSTALS[0][0]+.6,this.terrain(CRYSTALS[0][0],CRYSTALS[0][1],1)-.05,CRYSTALS[0][1]-.4,.5,493,true);cluster(small,CRYSTALS[1][0]+.7,this.terrain(CRYSTALS[1][0],CRYSTALS[1][1],1)-.05,CRYSTALS[1][1]+.5,.6,498,true,true);const sky=new Map();skyline(sky,this);
  tower(north,this,TOWERS[2][0],TOWERS[2][1],TOWERS[2][2]);for(const[i,c]of[[2,CRYSTALS[2]],[3,CRYSTALS[3]]])cluster(north,c[0],this.terrain(c[0],c[1],1)-.05,c[1],c[2],494+i,true);
  add('west',west);add('north',north);add('small',small);add('sky',sky);return this.v49={L};};
-const on=s=>!!(s&&Number(s.chapter)===1),onAll=s=>!!(s&&[1,2,3,4,5,6,7,8].includes(Number(s.chapter)));
+const on=s=>!!(s&&Number(s.chapter)===1),onAll=s=>!!(s&&[1,2,3,4,5,6,7,8,9].includes(Number(s.chapter)));
 // violet re-tint of blue crystal glass / glow while in chapter 1
 const violet=c=>{const b=Math.max(c[2],.001);return[b*.66,Math.min(c[1],b)*.36+.03,b];};
 R.put=function(shape,x,y,z,sx,sy,sz,color,yaw,kind,glow,...rest){if(this.v49On&&kind===13&&typeof shape==='string'&&(shape==='crystal'||shape==='crystal2'||shape.startsWith('v40_frag_')||shape.startsWith('v40_cluster_')||shape.startsWith('v43_')&&shape.endsWith('_crystal'))){const h=Math.abs(Math.sin(x*12.9898+z*78.233)*43758.5453)%1,amb=h<.3;kind=12;color=amb?[1.,.56,.16]:[.58,.24,1.];glow=.42;if(this._v52cr&&this._v52cr.length<40&&(x||z))this._v52cr.push([x,y,z,Math.min(1.4,Math.max(sy||1,.4)),amb]);}else if(this.v49On&&color&&(kind===13||kind===12)&&color[2]>.45&&color[2]>color[0]*1.7&&color[2]>=color[1]*1.05)color=violet(color);return old.put.call(this,shape,x,y,z,sx,sy,sz,color,yaw,kind,glow,...rest);};

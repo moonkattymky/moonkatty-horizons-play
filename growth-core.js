@@ -16,7 +16,7 @@ const SHARE_REWARD={crystals:2};
 // Moon Points rules (server side; shown in «Rules & Rewards»). Daily things use the UTC day.
 // v41: story and referral points vest (pending → available 1/7 per active day); the inviter is paid after the friend's
 // LIFE #1 + 3 active days, at most 3 inviter payouts per UTC day.
-const MOON={story:{life1:500,life2:500,life3:750,life4:750,life5:1000,life6:1000,life7:1000,life8:1000},streak:[3,5,7,10,12,15,25],channel:5,social:{follow:5,daily:5},referral:200,referralCap:3,referralDays:3,vestDays:7,
+const MOON={story:{life1:500,life2:500,life3:750,life4:750,life5:1000,life6:1000,life7:1000,life8:1000,life9:1500},streak:[3,5,7,10,12,15,25],channel:5,social:{follow:5,daily:5},referral:200,referralCap:3,referralDays:3,vestDays:7,
  code:{default:10,min:1,max:50},codeFails:10,socialPending:3};
 // v41 story checkpoint journal (mirror of server/src/logic.js): the game posts these in order, the server stamps the time.
 const STORY_CHECKPOINTS=['c1_recorder','c1_cells','c1_antenna','c1_signal','life1',
@@ -26,7 +26,8 @@ const STORY_CHECKPOINTS=['c1_recorder','c1_cells','c1_antenna','c1_signal','life
  'c5_brief','c5_sparks','c5_forge','c5_igniter','life5',
  'c6_brief','c6_echoes','c6_song','c6_heart','life6',
  'c7_brief','c7_logs','c7_aurora','c7_drive','life7',
- 'c8_brief','c8_glyphs','c8_rings','c8_key','life8'];
+ 'c8_brief','c8_glyphs','c8_rings','c8_key','life8',
+ 'c9_brief','c9_lenses','c9_course','life9'];
 function storyCheckpoints(s){if(!s||typeof s!=='object')return[];const ch=Number(s.chapter)||1,len=k=>Array.isArray(s[k])?s[k].length:0,t=k=>s[k]===true;
  const ok={c1_recorder:ch>=2||t('recorder'),c1_cells:ch>=2||len('cells')>=3,c1_antenna:ch>=2||t('antenna'),c1_signal:ch>=2||t('signal'),life1:ch>=2,
   c2_engineer:ch>=3||t('engineerMet'),c2_tools:ch>=3||len('tools')>=2,c2_repair:ch>=3||t('engineerFixed'),c2_navigator:ch>=3||t('navigatorMet'),c2_route:ch>=3||t('navigatorSolved'),
@@ -36,7 +37,8 @@ function storyCheckpoints(s){if(!s||typeof s!=='object')return[];const ch=Number
   c5_brief:ch>=5&&t('ignBriefed'),c5_sparks:ch>=5&&len('sunSparks')>=3,c5_forge:ch>=5&&t('forgeLit'),c5_igniter:ch>=5&&t('igniterIn'),life5:ch>=5&&t('chapter5Complete'),
   c6_brief:ch>=6&&t('deepBriefed'),c6_echoes:ch>=6&&len('deepEchoes')>=3,c6_song:ch>=6&&t('songPlayed'),c6_heart:ch>=6&&t('heartTaken'),life6:ch>=6&&t('chapter6Complete'),
   c7_brief:ch>=7&&t('lostBriefed'),c7_logs:ch>=7&&len('lostLogs')>=3,c7_aurora:ch>=7&&t('auroraLit'),c7_drive:ch>=7&&t('driveTaken'),life7:ch>=7&&t('chapter7Complete'),
-  c8_brief:ch>=8&&t('gateBriefed'),c8_glyphs:ch>=8&&len('gateGlyphs')>=3,c8_rings:ch>=8&&t('ringsAligned'),c8_key:ch>=8&&t('keyTaken'),life8:ch>=8&&t('chapter8Complete')};
+  c8_brief:ch>=8&&t('gateBriefed'),c8_glyphs:ch>=8&&len('gateGlyphs')>=3,c8_rings:ch>=8&&t('ringsAligned'),c8_key:ch>=8&&t('keyTaken'),life8:ch>=8&&t('chapter8Complete'),
+  c9_brief:ch>=9&&t('finalBriefed'),c9_lenses:ch>=9&&len('obsLenses')>=3,c9_course:ch>=9&&t('courseSet'),life9:ch>=9&&t('chapter9Complete')};
  const out=[];for(const k of STORY_CHECKPOINTS){if(!ok[k])break;out.push(k);}return out;}
 // Next checkpoints to post: what the save reached minus what the server journal already has.
 function checkpointsToSend(s,done){const have=new Set(Array.isArray(done)?done:[]);return storyCheckpoints(s).filter(k=>!have.has(k));}
@@ -127,9 +129,9 @@ function moonView(s,online){ensure(s);const m=s.growth.moon,pend=m.pending||0,ne
 function formatPoints(n){const v=Math.max(0,Math.floor(Number(n)||0));try{return new Intl.NumberFormat((typeof MoonI18n!=='undefined'&&MoonI18n.lang)||'en').format(v);}catch{return String(v);}}
 
 // Progress score for cloud-save conflicts. Story beats dominate; resources only break near-ties.
-const FLAGS=['recorder','antenna','signal','supply','engineerMet','engineerFixed','navigatorMet','navigatorSolved','scoutMet','artifact','complete','signalBriefed','vaultOpen','blueprint','chapter3Complete','rocketBriefed','engineInstalled','coreInstalled','topInstalled','chapter4Complete','ignBriefed','groveFound','forgeLit','igniterIn','chapter5Complete','deepBriefed','scoutDeep','songPlayed','heartTaken','chapter6Complete','lostBriefed','navLost','auroraLit','driveTaken','chapter7Complete','gateBriefed','scoutGate','ringsAligned','keyTaken','chapter8Complete'];
+const FLAGS=['recorder','antenna','signal','supply','engineerMet','engineerFixed','navigatorMet','navigatorSolved','scoutMet','artifact','complete','signalBriefed','vaultOpen','blueprint','chapter3Complete','rocketBriefed','engineInstalled','coreInstalled','topInstalled','chapter4Complete','ignBriefed','groveFound','forgeLit','igniterIn','chapter5Complete','deepBriefed','scoutDeep','songPlayed','heartTaken','chapter6Complete','lostBriefed','navLost','auroraLit','driveTaken','chapter7Complete','gateBriefed','scoutGate','ringsAligned','keyTaken','chapter8Complete','finalBriefed','navObs','courseSet','chapter9Complete'];
 function progressScore(s){if(!s||typeof s!=='object')return 0;let p=(Number(s.chapter)||1)*10000;for(const f of FLAGS)if(s[f]===true)p+=400;
- const arr=k=>Array.isArray(s[k])?s[k].length:0;p+=arr('cells')*150+arr('tools')*150+arr('beacons')*150+arr('buildings')*200+arr('signalClues')*150+arr('coreShards')*150+arr('rocketParts')*150+arr('sunSparks')*150+arr('deepEchoes')*150+arr('lostLogs')*150+arr('gateGlyphs')*150;
+ const arr=k=>Array.isArray(s[k])?s[k].length:0;p+=arr('cells')*150+arr('tools')*150+arr('beacons')*150+arr('buildings')*200+arr('signalClues')*150+arr('coreShards')*150+arr('rocketParts')*150+arr('sunSparks')*150+arr('deepEchoes')*150+arr('lostLogs')*150+arr('gateGlyphs')*150+arr('obsLenses')*150;
  for(const v of Object.values(s.cards||{}))p+=Number.isFinite(v)?v*120:0;
  const ex=s.expeditions;if(ex&&ex.done&&typeof ex.done==='object')p+=Object.keys(ex.done).length*300;
  p+=Math.min(400,(Number(s.crystals)||0)+(Number(s.metal)||0));return Math.max(0,Math.floor(p));}

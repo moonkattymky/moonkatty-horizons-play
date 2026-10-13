@@ -8,7 +8,7 @@ const A='assets/cinema/';
 // Glow spots [x, y, radius (fraction of image width), colour] pulse softly over windows, crystals, beacons and Earth.
 // v38 chapter covers are 16:9 (1280×720). On a portrait phone only ~26% of the width is visible, so each title card pans
 // from the cat to the story object. V busts GitHub Pages / Telegram caches of the old portrait files that kept the same names.
-const V='?v=38',V4='?v=43',V5='?v=57',V6='?v=58',V7='?v=65',V8='?v=67';
+const V='?v=38',V4='?v=43',V5='?v=57',V6='?v=58',V7='?v=65',V8='?v=67',V9='?v=68';
 // Optional titleY (fraction of the screen height) moves the title card off the key object; default 66%.
 const CH1={img:A+'ch1-awakening.jpg'+V,from:[.355,.42,1.08],to:[.60,.62,1.1],sky:.3,fx:['stars','dust'],glows:[[.415,.51,.05,'blue'],[.60,.54,.05,'amber'],[.083,.68,.03,'blue'],[.168,.835,.035,'blue'],[.79,.85,.035,'blue'],[.915,.75,.03,'blue'],[.78,.23,.14,'earth']],
  title:[_t('life.n',{n:1}),_t('chapter.1')],kicker:_t('cine.zadanie'),text:_t('cine.naydi_bortovoy'),mood:'title',mark:'ch1'};
@@ -84,6 +84,19 @@ const SCENES={
  ch8end:{name:_t('ch8.end_title'),frames:()=>[
   {img:A+'ch8-open.jpg'+V8,from:[.5,.6,1.3],to:[.5,.42,1.02],sky:.32,titleY:.24,fx:['stars','dust'],glows:[[.5,.5,.08,'blue'],[.5,.7,.04,'amber']],
    title:[_t('ch8.end_title'),_t('ch8.end_sub')],kicker:_t('ch8.end_kicker'),text:_t('ch8.end_card'),mood:'hope'}],marks:()=>['ch8end']},
+ // v68 LIFE #9 · A NEW HORIZON (the finale). Opener: the Observatory hill under the stars → the dome with its telescope (title).
+ // Ending, four cards: the course is set → lift-off from the pad → through the Gate → the whole crew, thank you (+ what comes next).
+ ch9:{name:_t('life.title',{n:9,name:_t('chapter.9')}),frames:()=>[
+  {img:A+'ch9-hill.jpg'+V9,from:[.5,.62,1.2],to:[.5,.42,1.04],sky:.3,fx:['stars','dust'],glows:[[.5,.3,.06,'blue'],[.6,.2,.04,'amber']],
+   kicker:_t('ch9.cine_kicker'),text:_t('ch9.cine_text'),mood:'mystery'},
+  {img:A+'ch9-dome.jpg'+V9,from:[.5,.6,1.18],to:[.5,.45,1.02],sky:.3,titleY:.74,fx:['stars','dust'],glows:[[.5,.35,.07,'amber'],[.4,.3,.05,'blue']],
+   title:[_t('life.n',{n:9}),_t('chapter.9')],kicker:_t('cine.zadanie'),text:_t('ch9.cine_mission'),mood:'title',mark:'ch9'}],marks:()=>['ch9']},
+ ch9end:{name:_t('ch9.end_title'),frames:()=>[
+  {img:A+'ch9-course.jpg'+V9,from:[.5,.6,1.2],to:[.5,.44,1.04],sky:.3,fx:['stars','dust'],glows:[[.5,.3,.07,'amber']],kicker:_t('ch9.fin1_kicker'),text:_t('ch9.fin1'),mood:'hope'},
+  {img:A+'ch9-liftoff.jpg'+V9,from:[.5,.66,1.25],to:[.5,.4,1.02],sky:.32,fx:['stars','dust'],glows:[[.55,.7,.09,'amber'],[.5,.2,.05,'blue']],kicker:_t('ch9.fin2_kicker'),text:_t('ch9.fin2'),mood:'hope'},
+  {img:A+'ch9-through.jpg'+V9,from:[.5,.5,1.3],to:[.5,.45,1.0],sky:.3,fx:['stars'],glows:[[.5,.45,.12,'blue'],[.5,.45,.05,'amber']],kicker:_t('ch9.fin3_kicker'),text:_t('ch9.fin3'),mood:'hope'},
+  {img:A+'ch9-crew.jpg'+V9,from:[.5,.6,1.2],to:[.5,.45,1.02],sky:.32,titleY:.24,fx:['stars','dust'],glows:[[.5,.4,.08,'amber'],[.3,.2,.04,'blue']],
+   title:[_t('ch9.end_title'),_t('ch9.end_sub')],kicker:_t('ch9.end_kicker'),text:_t('ch9.end_card'),mood:'hope'}],marks:()=>['ch9end']},
  crystal:{name:_t('cine.pervyy_kristall'),flash:true,frames:()=>[
   {kind:'flash',img:A+'crystal.webp',dur:5600,kicker:_t('cine.nahodka'),title:[_t('cine.kristall_nayden'),''],text:_t('cine.golubye_kristally'),mood:'chime'}],marks:()=>['crystal']}
 };
