@@ -13,7 +13,7 @@ const R=root.MoonRenderer&&root.MoonRenderer.prototype,Core=root.MoonCore,B=root
 const old={scene:R.scene,render:R.render,blocked:R.blocked,put:R.put};
 const TAU=Math.PI*2,norm=v=>{const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l];},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
 function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
-const MATS={ivory:[17,[.93,.91,.86]],gold:[16,[.98,.70,.28]],pgold:[16,[1.0,.78,.34]],amber:[12,[1,.66,.22]],violet:[12,[.78,.36,1.0]],membrane:[12,[.30,.10,.62]],crystal:[30,[.36,.16,.78]],crystalHi:[12,[.66,.40,1.0]],core:[12,[1.0,.80,1.0]],aCrystal:[30,[.98,.54,.16]],aCrystalHi:[12,[1.0,.80,.42]],aCore:[12,[1.0,.95,.70]],stone:[4,[.62,.60,.64]]};
+const MATS={ivory:[17,[.93,.91,.86]],gold:[16,[.98,.70,.28]],pgold:[16,[1.0,.78,.34]],amber:[12,[1,.66,.22]],violet:[12,[.78,.36,1.0]],membrane:[12,[.30,.10,.62]],crystal:[30,[.24,.62,1.0]],crystalHi:[12,[.62,.88,1.0]],core:[12,[.80,.95,1.0]],aCrystal:[30,[.24,.62,1.0]],aCrystalHi:[12,[.62,.88,1.0]],aCore:[12,[.80,.95,1.0]],stone:[4,[.62,.60,.64]]};
 // sites (checked clear of story points, resources and daily beacons; see tests/chapter1-style.cjs)
 const PORTAL={x:-24,z:12,yaw:Math.PI/2,r:3.2},TOWERS=[[-27.5,17.5,1.25],[-27.5,6.5,1.25],[-13,39,1.1]],CRYSTALS=[[-20.5,7.5,1.0],[-20.5,16.8,.85],[-16.5,37.5,1.1],[-9.5,38.5,.8]];
 const PEDESTALS=[-1,1].map(s=>[PORTAL.x,PORTAL.z+s*(PORTAL.r+.35)]);
@@ -64,7 +64,7 @@ R.v49Build=function(){if(this.v49)return this.v49;this.ensureWorldModels&&this.e
 const on=s=>!!(s&&Number(s.chapter)===1),onAll=s=>!!(s&&[1,2,3,4,5,6,7,8,9].includes(Number(s.chapter)));
 // violet re-tint of blue crystal glass / glow while in chapter 1
 const violet=c=>{const b=Math.max(c[2],.001);return[b*.66,Math.min(c[1],b)*.36+.03,b];};
-R.put=function(shape,x,y,z,sx,sy,sz,color,yaw,kind,glow,...rest){if(this.v49On&&kind===13&&typeof shape==='string'&&(shape==='crystal'||shape==='crystal2'||shape.startsWith('v40_frag_')||shape.startsWith('v40_cluster_')||shape.startsWith('v43_')&&shape.endsWith('_crystal'))){const h=Math.abs(Math.sin(x*12.9898+z*78.233)*43758.5453)%1,amb=h<.3;kind=12;color=amb?[1.,.56,.16]:[.58,.24,1.];glow=.42;if(this._v52cr&&this._v52cr.length<40&&(x||z))this._v52cr.push([x,y,z,Math.min(1.4,Math.max(sy||1,.4)),amb]);}else if(this.v49On&&color&&(kind===13||kind===12)&&color[2]>.45&&color[2]>color[0]*1.7&&color[2]>=color[1]*1.05)color=violet(color);return old.put.call(this,shape,x,y,z,sx,sy,sz,color,yaw,kind,glow,...rest);};
+R.put=function(shape,x,y,z,sx,sy,sz,color,yaw,kind,glow,...rest){if(this.v49On&&kind===13&&typeof shape==='string'&&(shape==='crystal'||shape==='crystal2'||shape.startsWith('v40_frag_')||shape.startsWith('v40_cluster_')||shape.startsWith('v43_')&&shape.endsWith('_crystal'))){const h=Math.abs(Math.sin(x*12.9898+z*78.233)*43758.5453)%1,amb=h<.3;kind=30;color=[.24,.62,1.];glow=.5;if(this._v52cr&&this._v52cr.length<40&&(x||z))this._v52cr.push([x,y,z,Math.min(1.4,Math.max(sy||1,.4)),amb]);}else if(this.v49On&&color&&(kind===13||kind===12)&&color[2]>.45&&color[2]>color[0]*1.7&&color[2]>=color[1]*1.05)color=violet(color);return old.put.call(this,shape,x,y,z,sx,sy,sz,color,yaw,kind,glow,...rest);};
 R.scene=function(state,p,t,...args){const out=old.scene.call(this,state,p,t,...args);if(!onAll(state))return out;const ch=Number(state.chapter);if(ch!==1){if(this.quality!=='low'){const k='v52sky'+ch;if(!this[k]){const m=new Map();skyline(m,this,ch);const L=[];addGroups(this,'v52_sky'+ch,m,L);this[k]=L;}for(const[key,mat]of this[k]){const[kind,col]=MATS[mat];old.put.call(this,key,0,0,0,1,1,1,col,0,kind,mat==='amber'?.55:mat==='gold'?.08:0);}}return out;}const v=this.v49Build(),low=this.quality==='low',eye=this.eye||[0,0,0];
  const draw=(name,dx=0,dy=0,dz=0,yaw=0)=>{for(const[key,mat]of v.L[name]||[]){const[kind,col]=MATS[mat];const g=mat==="pgold"?.17+.04*Math.sin(t*1.5):mat==='gold'?.08:mat==='amber'?.55:mat==='violet'?.8+.2*Math.sin(t*2.1):mat==='core'?.85+.15*Math.sin(t*1.6):mat==='membrane'?.22+.08*Math.sin(t*1.3):mat==='crystal'||mat==='aCrystal'?.32+.08*Math.sin(t*1.7):mat==='crystalHi'||mat==='aCrystalHi'?.5+.15*Math.sin(t*2.3):mat==='aCore'?.9:0;old.put.call(this,key,dx,dy,dz,1,1,1,col,yaw,kind,g);}};
  const dW=Math.hypot(eye[0]-PORTAL.x,eye[2]-PORTAL.z),dN=Math.hypot(eye[0]-TOWERS[2][0],eye[2]-TOWERS[2][1]);
@@ -118,25 +118,26 @@ const COINS=[[-6,12.4],[-8.5,11.6],[-11,12.6],[-13.5,11.6],[-16,12.4],[-18.5,11.
 R.v50Fx=function(state,p,t,yaw){if(this._v50Off)return;const P=this.v50Prog();if(!P)return;const gl=this.gl,low=this.quality==='low',eye=this.eye||[0,0,0],Q=[];
  const V=this.vp,rl=Math.hypot(V[0],V[8])||1,rx=V[0]/rl,rz=V[8]/rl;
  const bill=(x,y,z,sx,sy,k,c,w)=>{if(Math.hypot(x-eye[0],z-eye[2])>140)return;for(const[u,q]of[[-1,-1],[1,-1],[1,1],[-1,-1],[1,1],[-1,1]])Q.push(x+rx*u*sx,y+q*sy,z+rz*u*sx,u,q,k,0,c[0],c[1],c[2],w);};
- const flat=(x,z,rad,c,w)=>{const N=3;for(let j=0;j<N;j++)for(let i=0;i<N;i++){const q=[[i,j],[i+1,j],[i+1,j+1],[i,j+1]].map(([a,b])=>{const u=a/N*2-1,v=b/N*2-1,px=x+u*rad,pz=z+v*rad;return[px,this.terrain(px,pz,1)+.04,pz,u,v];});for(const n of[0,1,2,0,2,3])Q.push(...q[n],4,0,c[0],c[1],c[2],w);}};
+ const flat=(x,z,rad,c,w,fch=1)=>{const N=3;for(let j=0;j<N;j++)for(let i=0;i<N;i++){const q=[[i,j],[i+1,j],[i+1,j+1],[i,j+1]].map(([a,b])=>{const u=a/N*2-1,v=b/N*2-1,px=x+u*rad,pz=z+v*rad;return[px,this.terrain(px,pz,fch)+.04,pz,u,v];});for(const n of[0,1,2,0,2,3])Q.push(...q[n],4,0,c[0],c[1],c[2],w);}};
  const ch=this._v52ch||1;const ty=this.terrain(PORTAL.x,PORTAL.z,1)-.08,cy=ty+PORTAL.r+.95,pr=PORTAL.r*.87,pul=.85+.15*Math.sin(t*2.);
  if(ch===1){
  // ground tint pools: warm gold plaza + violet near crystals (static-looking, cheap)
- flat(PORTAL.x+2.5,PORTAL.z,6.5,[.30,.19,.07],.9);if(!low){flat(-18,12,5,[.22,.14,.05],.7);for(const[x,z,sc]of CRYSTALS)flat(x,z,2.6*sc+.8,[.22,.07,.34],.9);flat(TOWERS[0][0]+1,TOWERS[0][1],3,[.25,.15,.05],.7);flat(TOWERS[1][0]+1,TOWERS[1][1],3,[.25,.15,.05],.7);}
+ flat(PORTAL.x+2.5,PORTAL.z,6.5,[.30,.19,.07],.9);if(!low){flat(-18,12,5,[.22,.14,.05],.7);for(const[x,z,sc]of CRYSTALS)flat(x,z,2.6*sc+.8,[.05,.18,.42],.9);flat(TOWERS[0][0]+1,TOWERS[0][1],3,[.25,.15,.05],.7);flat(TOWERS[1][0]+1,TOWERS[1][1],3,[.25,.15,.05],.7);}
  // portal swirl disc in the portal plane (faces +-x)
  for(const[u,q]of[[-1,-1],[1,-1],[1,1],[-1,-1],[1,1],[-1,1]])Q.push(PORTAL.x,cy+q*pr,PORTAL.z+u*pr,u,q,1,0,1,1,1,1);
  bill(PORTAL.x+.3,cy,PORTAL.z,PORTAL.r*2.1,PORTAL.r*2.1,0,[.75,.35,1.],.32*pul);bill(PORTAL.x+.4,cy,PORTAL.z,PORTAL.r*1.2,PORTAL.r*1.2,0,[1.,.7,.35],.18);
  // tower beacons + window glows + M emblems
  for(const[x,z,sc]of TOWERS){const y=this.terrain(x,z,1)-.1;bill(x,y+6.0*sc,z,1.6*sc,1.6*sc,0,[1.,.66,.25],.9*pul);if(!low){bill(x+1.05*sc,y+3.55*sc,z,.9*sc,.9*sc,0,[1.,.7,.3],.8);bill(x,y+8.6*sc,z,.5,.5,2,[1.,.9,.6],.9);}}
  // crystal halos + sparkles
- CRYSTALS.forEach(([x,z,sc],i)=>{const y=this.terrain(x,z,1);bill(x,y+1.0*sc,z,2.6*sc,2.4*sc,0,[.62,.25,1.],.6*pul);bill(x,y+.9*sc,z,1.0*sc,1.3*sc,0,[1.,.75,1.],.32*pul);if(!low)for(let j=0;j<3;j++){const ph=t*1.3+i*2.1+j*2.09,tw=Math.max(0,Math.sin(ph*2.3));bill(x+Math.cos(ph)*.45*sc,y+(.6+j*.55)*sc,z+Math.sin(ph)*.45*sc,.28*sc,.28*sc,2,[.95,.85,1.],tw);}});
+ CRYSTALS.forEach(([x,z,sc],i)=>{const y=this.terrain(x,z,1);bill(x,y+1.0*sc,z,3.0*sc,2.8*sc,0,[.25,.62,1.],.6*pul);bill(x,y+.9*sc,z,1.0*sc,1.3*sc,0,[.75,.92,1.],.4*pul);if(!low)for(let j=0;j<3;j++){const ph=t*1.3+i*2.1+j*2.09,tw=Math.max(0,Math.sin(ph*2.3));bill(x+Math.cos(ph)*.45*sc,y+(.6+j*.55)*sc,z+Math.sin(ph)*.45*sc,.28*sc,.28*sc,2,[.95,.85,1.],tw);}});
  // amber small cluster glow
- bill(CRYSTALS[1][0]+.7,this.terrain(CRYSTALS[1][0],CRYSTALS[1][1],1)+.5,CRYSTALS[1][1]+.5,1.4,1.2,0,[1.,.55,.15],.8*pul);
+ bill(CRYSTALS[1][0]+.7,this.terrain(CRYSTALS[1][0],CRYSTALS[1][1],1)+.5,CRYSTALS[1][1]+.5,1.4,1.2,0,[.3,.66,1.],.8*pul);
  // floating sparkles drifting up around the portal
  if(!low)for(let i=0;i<14;i++){const a=i*2.39996,f=((t*.12+i*.071)%1),R2=pr*(.9+.6*((i*.37)%1));const x=PORTAL.x+.6+Math.sin(a+t*.2)*.8,z=PORTAL.z+Math.cos(a)*R2,y=ty+.5+f*(PORTAL.r*2.6);bill(x,y,z,.22,.22,2,i%3?[1.,.8,.45]:[.85,.55,1.],Math.sin(f*Math.PI)*.9);}
  }
  // generic crystal glow (re-tinted camp crystals, all chapters)
- for(const[x,y,z,sz,amb]of this._v52cr||[]){bill(x,y+sz*.4,z,sz*1.6,sz*1.4,0,amb?[1.,.55,.15]:[.62,.25,1.],.2*pul);if(!low){const ph=t*1.5+x;bill(x+Math.cos(ph)*.3*sz,y+sz*(.4+.3*Math.sin(ph*.7)),z+Math.sin(ph)*.3*sz,.22*sz,.22*sz,2,[1.,.9,1.],Math.max(0,Math.sin(ph*2.1)));}}
+ const crL=(this._v52cr||[]).slice();if(this.v76Cast)for(const L of this.v76Cast.values())for(const c of L){if(Math.hypot(c.x-eye[0],c.z-eye[2])<70)crL.push([c.x,this.terrain(c.x,c.z,ch),c.z,Math.min(2.6,c.h*.5),0]);}
+ for(const[x,y,z,sz,amb]of crL){bill(x,y+sz*.6,z,sz*3.,sz*2.8,0,[.2,.5,1.],.4*pul);bill(x,y+sz*.45,z,sz*.9,sz*1.2,0,[.6,.85,1.],.18*pul);flat(x,z,sz*1.8+.6,[.10,.36,.95],1.,ch);if(!low){const ph=t*1.5+x;bill(x+Math.cos(ph)*.3*sz,y+sz*(.4+.3*Math.sin(ph*.7)),z+Math.sin(ph)*.3*sz,.22*sz,.22*sz,2,[1.,.9,1.],Math.max(0,Math.sin(ph*2.1)));}}
  // v53 rocket engine glow (all stages) and animated launch flame once the rocket is complete
  if(ch>=4&&this.v43&&this.v43.w&&this.v43.w.pad&&root.MoonRocketWorld){let[px,pz]=root.MoonRocketWorld.PAD;const top=this.v43.w.pad.top,st=root.MoonCore&&root.MoonCore.rocketStage?root.MoonCore.rocketStage(state):0;
   const ed=Math.hypot(eye[0]-px,eye[2]-pz)||1,ox=(eye[0]-px)/ed*1.25,oz=(eye[2]-pz)/ed*1.25;px+=ox;pz+=oz;if(st>=1){const fl=.8+.2*Math.sin(t*9.)*Math.sin(t*5.3);bill(px,top+.2,pz,2.2,1.0,0,[1.,.55,.2],.45*fl);

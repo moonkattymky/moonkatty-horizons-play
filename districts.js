@@ -12,7 +12,7 @@ const old={scene:R.scene,blocked:R.blocked,camera:R.cameraBlocked};
 const TAU=Math.PI*2,DRAW_R=62,BUILD_R=68,CAMP=[0,-5],CAMP_GATE=[7,9];
 const norm=v=>{const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l];},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
 function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
-const MATS={gold:[16,[1,.74,.30]],ivory:[17,[1,.92,.76]],win:[12,[1,.72,.30]],stone:[4,[.62,.58,.52]],dark:[0,[.06,.07,.09]],violet:[30,[.62,.34,1]],amber:[30,[1,.56,.16]],vcore:[12,[.78,.46,1]],acore:[12,[1,.72,.28]],path:[12,[.42,.70,1]],vpath:[12,[.70,.40,1]],rock:[4,[.40,.38,.43]],swirl:[12,[.58,.34,1]],swirl2:[12,[.28,.85,1]],fence:[12,[.40,.80,1]],chest:[0,[.34,.21,.11]],gate:[12,[1,.74,.34]],imp:[12,[1,.72,.32]],impv:[12,[.62,.32,1]]};
+const MATS={gold:[16,[1,.74,.30]],ivory:[17,[1,.92,.76]],win:[12,[1,.72,.30]],stone:[4,[.62,.58,.52]],dark:[0,[.06,.07,.09]],violet:[30,[.24,.62,1]],amber:[30,[.24,.62,1]],vcore:[12,[.62,.88,1]],acore:[12,[.62,.88,1]],path:[12,[.42,.70,1]],vpath:[12,[.70,.40,1]],rock:[4,[.40,.38,.43]],swirl:[12,[.58,.34,1]],swirl2:[12,[.28,.85,1]],fence:[12,[.40,.80,1]],chest:[0,[.34,.21,.11]],gate:[12,[1,.74,.34]],imp:[12,[1,.72,.32]],impv:[12,[.62,.32,1]]};
 const GLOW={ivory:.34,win:1.25,imp:.55,impv:.6,vcore:.8,acore:.75,path:.32,vpath:.34,swirl:.9,swirl2:.85,fence:.55,gate:.45,violet:.2,amber:.3,gold:.3};
 // ---------- layout (local: +z faces the camp) ----------
 const D={};for(const d of Core.DISTRICTS){const f=[CAMP[0]-d.x,CAMP[1]-d.z],l=Math.hypot(f[0],f[1]);D[d.id]={...d,yaw:Math.atan2(f[0]/l,f[1]/l),cols:[],chests:[],relics:[]};}

@@ -1116,7 +1116,7 @@
  "dist.crystal":"وادي الكهرمان",
  "dist.anomaly":"فوهة الشذوذ",
  "dist.gold_sub":"قباب ذهبية ونوافذ مضيئة",
- "dist.crystal_sub":"حقول بلّورات بنفسجية وكهرمانية",
+ "dist.crystal_sub":"حقول بلّورات زرقاء متوهّجة",
  "dist.anomaly_sub":"شذوذ دوّار وصخور طافية",
  "dist.discovered":"حيّ جديد: {name}",
  "dist.locked":"يُفتح {name} بعد الحياة #{n}",

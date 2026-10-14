@@ -1116,7 +1116,7 @@
  "dist.crystal":"Kehribar Vadisi",
  "dist.anomaly":"Anomali Krateri",
  "dist.gold_sub":"altın kubbeler ve parlayan pencereler",
- "dist.crystal_sub":"mor ve kehribar kristal tarlaları",
+ "dist.crystal_sub":"parlayan mavi kristal tarlaları",
  "dist.anomaly_sub":"dönen bir anomali ve havada süzülen kayalar",
  "dist.discovered":"Yeni bölge: {name}",
  "dist.locked":"{name}, Can #{n} sonrası açılır",

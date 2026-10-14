@@ -1116,7 +1116,7 @@
  "dist.crystal":"Amber Valley",
  "dist.anomaly":"Anomaly Crater",
  "dist.gold_sub":"gold domes and glowing windows",
- "dist.crystal_sub":"violet and amber crystal fields",
+ "dist.crystal_sub":"glowing blue crystal fields",
  "dist.anomaly_sub":"a swirling anomaly and floating rocks",
  "dist.discovered":"New district: {name}",
  "dist.locked":"{name} opens after Life #{n}",

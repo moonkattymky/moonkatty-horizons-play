@@ -1116,7 +1116,7 @@
  "dist.crystal":"עמק הענבר",
  "dist.anomaly":"מכתש האנומליה",
  "dist.gold_sub":"כיפות זהב וחלונות זוהרים",
- "dist.crystal_sub":"שדות גבישים סגולים וענבריים",
+ "dist.crystal_sub":"שדות גבישים כחולים זוהרים",
  "dist.anomaly_sub":"אנומליה מסתחררת וסלעים מרחפים",
  "dist.discovered":"רובע חדש: {name}",
  "dist.locked":"{name} ייפתח אחרי חיים #{n}",

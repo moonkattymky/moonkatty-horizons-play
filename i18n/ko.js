@@ -1116,7 +1116,7 @@
  "dist.crystal":"호박 계곡",
  "dist.anomaly":"이상 현상 분화구",
  "dist.gold_sub":"황금 돔과 빛나는 창문",
- "dist.crystal_sub":"보랏빛과 호박빛 크리스털 들판",
+ "dist.crystal_sub":"빛나는 푸른 크리스털 들판",
  "dist.anomaly_sub":"소용돌이치는 이상 현상과 떠다니는 바위",
  "dist.discovered":"새 구역: {name}",
  "dist.locked":"{name}은(는) Life #{n} 이후 열려요",

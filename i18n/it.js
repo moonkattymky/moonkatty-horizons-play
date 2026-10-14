@@ -1116,7 +1116,7 @@
  "dist.crystal":"Valle d’Ambra",
  "dist.anomaly":"Cratere dell’Anomalia",
  "dist.gold_sub":"cupole d’oro e finestre luminose",
- "dist.crystal_sub":"campi di cristalli viola e ambra",
+ "dist.crystal_sub":"campi di cristalli blu luminosi",
  "dist.anomaly_sub":"un’anomalia vorticosa e rocce fluttuanti",
  "dist.discovered":"Nuovo distretto: {name}",
  "dist.locked":"{name} si apre dopo la Vita #{n}",

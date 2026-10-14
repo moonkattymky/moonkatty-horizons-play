@@ -1116,7 +1116,7 @@
  "dist.crystal":"Vale de Âmbar",
  "dist.anomaly":"Cratera da Anomalia",
  "dist.gold_sub":"cúpulas douradas e janelas brilhantes",
- "dist.crystal_sub":"campos de cristais violeta e âmbar",
+ "dist.crystal_sub":"campos de cristais azuis brilhantes",
  "dist.anomaly_sub":"uma anomalia em espiral e rochas flutuantes",
  "dist.discovered":"Novo distrito: {name}",
  "dist.locked":"{name} abre depois da Vida #{n}",

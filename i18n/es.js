@@ -1116,7 +1116,7 @@
  "dist.crystal":"Valle de Ámbar",
  "dist.anomaly":"Cráter de la Anomalía",
  "dist.gold_sub":"cúpulas doradas y ventanas que brillan",
- "dist.crystal_sub":"campos de cristales violetas y ámbar",
+ "dist.crystal_sub":"campos de cristales azules brillantes",
  "dist.anomaly_sub":"una anomalía en espiral y rocas flotantes",
  "dist.discovered":"Nuevo distrito: {name}",
  "dist.locked":"{name} se abre tras la Vida #{n}",

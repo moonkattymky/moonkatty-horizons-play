@@ -1116,7 +1116,7 @@
  "dist.crystal":"Bernsteintal",
  "dist.anomaly":"Anomaliekrater",
  "dist.gold_sub":"goldene Kuppeln und leuchtende Fenster",
- "dist.crystal_sub":"violette und bernsteinfarbene Kristallfelder",
+ "dist.crystal_sub":"leuchtende blaue Kristallfelder",
  "dist.anomaly_sub":"eine wirbelnde Anomalie und schwebende Felsen",
  "dist.discovered":"Neuer Bezirk: {name}",
  "dist.locked":"{name} öffnet nach Leben #{n}",

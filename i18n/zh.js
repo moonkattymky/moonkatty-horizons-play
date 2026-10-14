@@ -1116,7 +1116,7 @@
  "dist.crystal":"琥珀山谷",
  "dist.anomaly":"异常陨坑",
  "dist.gold_sub":"金色穹顶与发光的窗户",
- "dist.crystal_sub":"紫色与琥珀色的水晶田",
+ "dist.crystal_sub":"闪耀的蓝色水晶田",
  "dist.anomaly_sub":"旋转的异常与漂浮的岩石",
  "dist.discovered":"新区域：{name}",
  "dist.locked":"{name} 将在第 {n} 条命后开放",

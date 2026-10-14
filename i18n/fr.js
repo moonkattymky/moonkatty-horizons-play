@@ -1116,7 +1116,7 @@
  "dist.crystal":"Vallée d’Ambre",
  "dist.anomaly":"Cratère de l’Anomalie",
  "dist.gold_sub":"dômes d’or et fenêtres lumineuses",
- "dist.crystal_sub":"champs de cristaux violets et ambrés",
+ "dist.crystal_sub":"champs de cristaux bleus lumineux",
  "dist.anomaly_sub":"une anomalie tourbillonnante et des rochers flottants",
  "dist.discovered":"Nouveau quartier : {name}",
  "dist.locked":"{name} s’ouvre après la Vie #{n}",
