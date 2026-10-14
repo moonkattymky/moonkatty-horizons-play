@@ -42,3 +42,4 @@
 .lk-house_observatory{background:radial-gradient(ellipse at 50% 100%,#ffd36b 40%,transparent 41%),linear-gradient(#20183a,#4a3270)}
 .chh-note{font-size:11px;opacity:.75;margin:4px 0 0}
 @media (max-width:520px){.chh-wall{grid-template-columns:96px 1fr}.chh-window{height:96px}.chh-window .earth{width:44px;height:44px;left:26px;top:24px}.chh-floor{grid-template-columns:1fr}}
+.chh-room header b{color:#fff3d6;text-shadow:0 1px 3px rgba(0,0,0,.85),0 0 10px rgba(0,0,0,.5)}
