@@ -1,11 +1,15 @@
 (function(root){'use strict';
-const RIDE={"image":"assets/moonkatty-ride-v63.webp?v=20261014-76a","imageWidth":865,"imageHeight":1099,"directions":{"up":{"x":0,"y":0,"w":385,"h":568,"anchorX":192.3,"anchorY":403.6,"bodyHeight":540.5,"hands":[[-0.791,0.448],[0.799,0.448]]},"left":{"x":391,"y":0,"w":461,"h":519,"anchorX":193.2,"anchorY":355.5,"bodyHeight":540.5,"hands":[[-0.722,0.504]]},"down":{"x":0,"y":574,"w":392,"h":514,"anchorX":196.2,"anchorY":356.1,"bodyHeight":540.5,"hands":[[-0.672,0.494],[0.695,0.494]]},"right":{"x":398,"y":574,"w":461,"h":519,"anchorX":267.8,"anchorY":355.5,"bodyHeight":540.5,"hands":[[0.722,0.504]]}}};
+const RIDE={"image":"assets/moonkatty-ride-v63.webp?v=20261014-77a","imageWidth":865,"imageHeight":1099,"directions":{"up":{"x":0,"y":0,"w":385,"h":568,"anchorX":192.3,"anchorY":403.6,"bodyHeight":540.5,"hands":[[-0.791,0.448],[0.799,0.448]]},"left":{"x":391,"y":0,"w":461,"h":519,"anchorX":193.2,"anchorY":355.5,"bodyHeight":540.5,"hands":[[-0.722,0.504]]},"down":{"x":0,"y":574,"w":392,"h":514,"anchorX":196.2,"anchorY":356.1,"bodyHeight":540.5,"hands":[[-0.672,0.494],[0.695,0.494]]},"right":{"x":398,"y":574,"w":461,"h":519,"anchorX":267.8,"anchorY":355.5,"bodyHeight":540.5,"hands":[[0.722,0.504]]}}};
 const atlas=root.MoonCharacterAtlas,R=root.MoonRenderer.prototype,originalCat=R.cat,originalScene=R.scene;
 R.scene=function(...args){this.crewSprites=[];return originalScene.apply(this,args);};
 const VERT=`attribute vec3 position;attribute vec2 texcoord;uniform mat4 vp;varying vec2 uv;varying vec3 W;void main(){uv=texcoord;W=position;gl_Position=vp*vec4(position,1.);}`;
 const FRAG=`precision mediump float;uniform sampler2D spriteMap;uniform vec4 frameUV;uniform vec3 spriteRight;uniform vec3 eye;varying vec2 uv;varying vec3 W;void main(){vec4 c=texture2D(spriteMap,uv);if(c.a<.04)discard;vec2 q=(uv-frameUV.xy)/frameUV.zw*2.-1.;q.y=-q.y;vec3 front=vec3(-spriteRight.z,0.,spriteRight.x);vec3 n=normalize(spriteRight*q.x*.65+vec3(0.,q.y*.25,0.)+front*sqrt(max(.08,1.-q.x*q.x*.42-q.y*q.y*.12)));vec3 l=normalize(vec3(-.85,.48,-.45)),key=vec3(1.22,.98,.70);vec3 lit=pow(c.rgb,vec3(2.2));lit*=pow(max(dot(lit,vec3(.2126,.7152,.0722)),.04),-.12);vec3 fillDir=vec3(.66,.30,.69);lit*=vec3(.20,.24,.32)+vec3(.16,.22,.34)*max(dot(n,fillDir),0.)+key*max(dot(n,l),0.)*1.55;float sunSide=dot(l,spriteRight)>0.?1.:-1.;float edge=1.-texture2D(spriteMap,uv+frameUV.zw*vec2(sunSide*.018,-.008)).a;float edge2=1.-texture2D(spriteMap,uv+frameUV.zw*vec2(-sunSide*.012,-.004)).a;lit+=key*pow(c.rgb,vec3(1.4))*edge*(.55+.45*q.y*.5+.25)*.95+vec3(.10,.16,.28)*edge2*.18;float fog=1.-exp(-max(distance(eye,W)-15.,0.)*.021);lit=mix(lit,vec3(.060,.078,.118),fog*.80);lit*=1.18;lit=clamp((lit*(2.51*lit+.03))/(lit*(2.43*lit+.59)+.14),0.,1.);gl_FragColor=vec4(pow(lit,vec3(1./2.2)),c.a);}`;
 const SHADOW=`precision mediump float;uniform float opacity;varying vec2 uv;void main(){float a=mix(-.62,2.35,uv.x),b=mix(-.62,.62,uv.y);float contact=exp(-(a*a+b*b)/.11);float sc=exp(-(pow(a-.95,2.)/.70+b*b/.10))*smoothstep(-.35,.25,a);float alpha=(contact*.90+sc*.85)*opacity*2.6;alpha=min(alpha,.88);if(alpha<.005)discard;gl_FragColor=vec4(.012,.016,.03,alpha);}`;
 const CYCLES={down:[0,2,4,1,3,5],up:[0,2,3,5,1,4,1,4],left:[0,1,2,3,4,5],right:[0,1,2,3,4,5]};
+// v77: billboards stay upright (cylindrical) for low cameras and lean back toward a high camera so the sprite plane faces the eye
+// instead of collapsing to a sliver; feet stay pinned to the ground so the contact shadow still lines up.
+function faceCam(eye,cx,cz,b){if(!eye)return v=>v;const dx=cx-eye[0],dz=cz-eye[2],dh=Math.hypot(dx,dz)||1e-3,el=Math.atan2(eye[1]-b,dh),th=Math.max(0,Math.min(1.25,el))*.8,cs=Math.cos(th),sn=Math.sin(th),ux=dx/dh,uz=dz/dh;
+ return v=>{const h=v[1]-b;v[0]+=ux*h*sn;v[2]+=uz*h*sn;v[1]=b+h*cs;return v;};}
 function directionFor(playerYaw,cameraYaw,previous){const a=playerYaw-cameraYaw,centers={up:0,down:Math.PI,left:Math.PI/2,right:-Math.PI/2};if(previous in centers){const d=a-centers[previous];if(Math.abs(Math.atan2(Math.sin(d),Math.cos(d)))<Math.PI/4+.12)return previous;}const c=Math.cos(a),s=Math.sin(a);return Math.abs(c)>=Math.abs(s)?(c>0?'up':'down'):(s>0?'left':'right');}
 R.initCharacterSprites=function(){
  if(this.characterSprite)return this.characterSprite;
@@ -30,7 +34,7 @@ R.initCharacterSprites=function(){
  return s;
 };
 // v69: the 3D cat parts (sculpted-cat.js, ~0.8 MB) are only the fallback while the sprite sheets load, so they are fetched on demand
-let sculptCatAsked=false;function loadSculptCat(r){if(sculptCatAsked||root.MoonSculptedCatReady||typeof document==='undefined')return;sculptCatAsked=true;setTimeout(()=>{let sp=null;try{sp=r.initCharacterSprites();}catch(e){}if(root.MoonSculptedCatReady||(sp&&sp.ready&&sp.idleReady)){sculptCatAsked=false;return;}const s=document.createElement('script');s.src='sculpted-cat.js?v=20261014-76a';s.async=true;document.head.appendChild(s);},8000);}
+let sculptCatAsked=false;function loadSculptCat(r){if(sculptCatAsked||root.MoonSculptedCatReady||typeof document==='undefined')return;sculptCatAsked=true;setTimeout(()=>{let sp=null;try{sp=r.initCharacterSprites();}catch(e){}if(root.MoonSculptedCatReady||(sp&&sp.ready&&sp.idleReady)){sculptCatAsked=false;return;}const s=document.createElement('script');s.src='sculpted-cat.js?v=20261014-77a';s.async=true;document.head.appendChild(s);},8000);}
 R.cat=function(x,z,yaw,t,moving,alt,ch,accent,hero,equipment){
  const sprite=this.initCharacterSprites();if(!sprite.ready||(!hero&&!sprite.idleReady)){loadSculptCat(this);return originalCat.call(this,x,z,yaw,t,moving,alt,ch,accent,hero,equipment);}
  if(!hero){const q=this._npcActor;(this.crewSprites||(this.crewSprites=[])).push({x,z,yaw,alt:(alt||0)+(q?q.hop:0),speed:q&&q.moving?1:0,lean:q?q.lean:0,t});return;}
@@ -49,7 +53,7 @@ R.drawCrewSprites=function(vp,state){
  const s=this.characterSprite,gl=this.gl;if(!s||!s.idleReady)return;
  if(root.MoonExportCapture)this.crewSpriteFrames=[];
  for(const actor of this.crewSprites||[]){const camera=Math.atan2(this.eye[0]-actor.x,this.eye[2]-actor.z),direction=directionFor(actor.yaw,camera),walkF=actor.speed>0&&s.ready,row=atlas.directions[direction],f=walkF?row.frames[CYCLES[direction][Math.floor((actor.t||0)*8)%CYCLES[direction].length]]:atlas.idle.directions[direction],scale=2.35/(walkF?row.referenceHeight:f.bodyHeight),right=[Math.cos(camera),-Math.sin(camera)],base=this.terrain(actor.x,actor.z,state.chapter)+actor.alt+.025,left=-f.anchorX*scale,bottom=(f.anchorY-f.h)*scale,top=f.anchorY*scale,width=f.w*scale;
- const point=(x,y,u,v)=>[actor.x+right[0]*x,base+y,actor.z+right[1]*x,u,v],IW=walkF?atlas.imageWidth:atlas.idle.imageWidth,IH=walkF?atlas.imageHeight:atlas.idle.imageHeight,u0=f.x/IW,u1=(f.x+f.w)/IW,v0=f.y/IH,v1=(f.y+f.h)/IH,ln=(actor.lean||0)*top;
+ const fc=faceCam(this.eye,actor.x,actor.z,base),point=(x,y,u,v)=>fc([actor.x+right[0]*x,base+y,actor.z+right[1]*x,u,v]),IW=walkF?atlas.imageWidth:atlas.idle.imageWidth,IH=walkF?atlas.imageHeight:atlas.idle.imageHeight,u0=f.x/IW,u1=(f.x+f.w)/IW,v0=f.y/IH,v1=(f.y+f.h)/IH,ln=(actor.lean||0)*top;
  const a=point(left+ln,top,u0,v0),b=point(left,bottom,u0,v1),c=point(left+width,bottom,u1,v1),d=point(left+width+ln,top,u1,v0),vertices=[...a,...b,...c,...a,...c,...d];
  this.drawCharacterShadow(vp,actor,state,camera);
  if(root.MoonExportCapture)this.crewSpriteFrames.push({vertices,shadowVertices:this.lastShadowVertices,opacity:.35,frameUV:[u0,v0,u1-u0,v1-v0],spriteRight:[right[0],0,right[1]],shaders:root.MoonCharacterSpriteMath,image:atlas.idle.image});
@@ -75,7 +79,7 @@ R.drawBotSprites=function(vp,state,t){const s=this.characterSprite,gl=this.gl,HP
   if(!mv&&!q.work){bob+=Math.sin(t*2.2+ph)*.012;roll=Math.sin(t*1.3+ph)*.025;}
   const sc=b.source==='stars'?1.06:1,hgt=BOT_H*sc*squash,wid=BOT_H*sc*m[4]*(2-squash),right=[Math.cos(camera),-Math.sin(camera)],base=this.terrain(x,z,ch)+.02+(q.dy||0)+bob;
   const u0=m[0],v0=m[1],u1=m[0]+m[2],v1=m[1]+m[3],cr=Math.cos(roll),sr=Math.sin(roll),fw=side?(dir==='left'?-1:1):0;
-  const pt=(px,py,u,v)=>{const sx=px+py*(lean*fw+shear),rx=sx*cr-py*sr,ry=sx*sr+py*cr;return[x+right[0]*rx,base+ry,z+right[1]*rx,u,v];};
+  const fc=faceCam(eye,x,z,base),pt=(px,py,u,v)=>{const sx=px+py*(lean*fw+shear),rx=sx*cr-py*sr,ry=sx*sr+py*cr;return fc([x+right[0]*rx,base+ry,z+right[1]*rx,u,v]);};
   const A=pt(-wid/2,hgt,u0,v0),Bq=pt(-wid/2,0,u0,v1),C=pt(wid/2,0,u1,v1),D=pt(wid/2,hgt,u1,v0),V=[...A,...Bq,...C,...A,...C,...D];
   try{this.drawCharacterShadow(vp,{x,z,alt:bob+(q.dy||0),yaw:q.yaw},state,camera);}catch(e){}
   gl.useProgram(s.program);gl.uniformMatrix4fv(s.vp,false,vp);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,s.bots.texture);gl.uniform1i(s.map,0);gl.uniform4f(s.frameUV,u0,v0,u1-u0,v1-v0);gl.uniform3fv(s.right,[right[0],0,right[1]]);gl.uniform3fv(s.eye,eye);gl.bindBuffer(gl.ARRAY_BUFFER,s.buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(V),gl.DYNAMIC_DRAW);
@@ -92,7 +96,7 @@ R.drawCharacterSprites=function(vp,p,state,t,dt){
   if(s.ride.ready){const f=RIDE.directions[direction],scale=2.35/f.bodyHeight,right=[Math.cos(camera),-Math.sin(camera)],base=rideB.y,IW=RIDE.imageWidth,IH=RIDE.imageHeight;
    const left=-f.anchorX*scale,bottom=(f.anchorY-f.h)*scale,top=f.anchorY*scale,width=f.w*scale,ln=0,bob=Math.sin((t||0)*3.1)*.004;
    const fx=p.x+Math.sin(camera)*.45,fz=p.z+Math.cos(camera)*.45;/* drawn on the camera side of the bike so the near leg and the paws sit over the hull and grips */
-   const point=(x,y,u,v)=>[fx+right[0]*x,base+y+bob,fz+right[1]*x,u,v],u0=f.x/IW,u1=(f.x+f.w)/IW,v0=f.y/IH,v1=(f.y+f.h)/IH;
+   const fc=faceCam(this.eye,fx,fz,base),point=(x,y,u,v)=>fc([fx+right[0]*x,base+y+bob,fz+right[1]*x,u,v]),u0=f.x/IW,u1=(f.x+f.w)/IW,v0=f.y/IH,v1=(f.y+f.h)/IH;
    const tl=root.MoonBike&&root.MoonBike.tilt||0,tc=Math.cos(tl*TILT_K),ts=Math.sin(tl*TILT_K),PY=-.29,rot=(x,y,u,v)=>tl?point(x*tc-(y-PY)*ts,PY+x*ts+(y-PY)*tc,u,v):point(x,y,u,v);/* v65: in the sky the rider banks and barrel-rolls with the bike (rotation in the sprite plane around the hull centre) */
    const a=rot(left+ln,top,u0,v0),b=rot(left,bottom,u0,v1),c=rot(left+width,bottom,u1,v1),d=rot(left+width+ln,top,u1,v0);this.spriteLight={frameUV:[u0,v0,u1-u0,v1-v0],spriteRight:[right[0],0,right[1]]};s.mode='ride';
    this.drawCharacterShadow(vp,p,state,camera);const gl=this.gl;gl.useProgram(s.program);gl.uniformMatrix4fv(s.vp,false,vp);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,s.ride.texture);gl.uniform1i(s.map,0);gl.uniform4f(s.frameUV,u0,v0,u1-u0,v1-v0);gl.uniform3fv(s.right,[right[0],0,right[1]]);gl.uniform3fv(s.eye,this.eye);gl.bindBuffer(gl.ARRAY_BUFFER,s.buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([...a,...b,...c,...a,...c,...d]),gl.DYNAMIC_DRAW);
@@ -106,11 +110,11 @@ R.drawCharacterSprites=function(vp,p,state,t,dt){
  const point=(x,y,u,v)=>[p.x+right[0]*x,base+y,p.z+right[1]*x,u,v];
  const source=useIdle?atlas.idle:detailed?row:atlas; s.currentImage=source.image; const u0=f.x/source.imageWidth,u1=(f.x+f.w)/source.imageWidth,v0=f.y/source.imageHeight,v1=(f.y+f.h)/source.imageHeight;
  let bot=bottom,vb=v1,dy=0;if(rideB){const cut=rideB.cut;bot=bottom+(top-bottom)*cut;vb=v1-(v1-v0)*cut;dy=rideB.y-(base+bot);}
- const P2=(x,y,u,v)=>{const q=point(x,y,u,v);q[1]+=dy;return q;};const a=P2(left,top,u0,v0),b=P2(left,bot,u0,vb),c=P2(left+width,bot,u1,vb),d=P2(left+width,top,u1,v0);this.spriteLight={frameUV:[u0,v0,u1-u0,v1-v0],spriteRight:[right[0],0,right[1]]};
+ const fc=faceCam(this.eye,p.x,p.z,base+dy),P2=(x,y,u,v)=>{const q=point(x,y,u,v);q[1]+=dy;return fc(q);};const a=P2(left,top,u0,v0),b=P2(left,bot,u0,vb),c=P2(left+width,bot,u1,vb),d=P2(left+width,top,u1,v0);this.spriteLight={frameUV:[u0,v0,u1-u0,v1-v0],spriteRight:[right[0],0,right[1]]};
  this.drawCharacterShadow(vp,p,state,camera);
  const gl=this.gl;gl.useProgram(s.program);gl.uniformMatrix4fv(s.vp,false,vp);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,useIdle?s.idleTexture:detailed?s.directionTextures[direction].texture:s.texture);gl.uniform1i(s.map,0);gl.uniform4f(s.frameUV,u0,v0,u1-u0,v1-v0);gl.uniform3fv(s.right,[right[0],0,right[1]]);gl.uniform3fv(s.eye,this.eye);gl.bindBuffer(gl.ARRAY_BUFFER,s.buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([...a,...b,...c,...a,...c,...d]),gl.DYNAMIC_DRAW);
  gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
  gl.enableVertexAttribArray(s.position);gl.vertexAttribPointer(s.position,3,gl.FLOAT,false,20,0);gl.enableVertexAttribArray(s.uv);gl.vertexAttribPointer(s.uv,2,gl.FLOAT,false,20,12);gl.drawArrays(gl.TRIANGLES,0,6);gl.disableVertexAttribArray(s.position);gl.disableVertexAttribArray(s.uv);gl.disable(gl.BLEND);
 };
-root.MoonCharacterSpriteMath={directionFor,VERT,FRAG,SHADOW,CYCLES};
+root.MoonCharacterSpriteMath={faceCam,directionFor,VERT,FRAG,SHADOW,CYCLES};
 })(globalThis);

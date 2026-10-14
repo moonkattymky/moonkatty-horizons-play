@@ -115,7 +115,7 @@ function build(r,id,ch){r.v55=r.v55||{};const k=id+':'+ch;if(r.v55[k])return r.v
  L.rocks=[];if(id==='anomaly'&&r.meshes.geology0){const rnd=rng(66);for(let i=0;i<11;i++){const a=i/11*TAU+.3,rad=5+rnd()*5,w=W(d,Math.cos(a)*rad,Math.sin(a)*rad);L.rocks.push({x:w[0],z:w[1],y:ground(r,ch,w[0],w[1])+3+rnd()*6,s:1.1+rnd()*1.5,mesh:'geology'+(i%3),ph:rnd()*TAU});}}
  L.pylons=[];for(let i=0;i<24;i++){const a=i/24*TAU,x=d.x+Math.cos(a)*d.lock,z=d.z+Math.sin(a)*d.lock;L.pylons.push([x,ground(r,ch,x,z)-.05,z]);}
  const w=W(d,0,0);L.y0=ground(r,ch,w[0],w[1]);
- L.cast=id==='crystal'?[{x:w[0],z:w[1],r:1.4,h:12,k:1},...d.field.map(([lx,lz,sc])=>{const q=W(d,lx,lz);return{x:q[0],z:q[1],r:.45*sc,h:2.6*sc,k:1};})]:[];return r.v55[k]=L;}
+ L.cast=id==='crystal'?[{x:w[0],z:w[1],r:1.4,h:12,k:1},...d.field.map(([lx,lz,sc])=>{const q=W(d,lx,lz);return{x:q[0],z:q[1],r:.75*sc,h:2.8*sc,k:1};})]:[];return r.v55[k]=L;}
 function drawList(r,list,t,mul=1){for(const[key,mat]of list){const[kind,c]=MATS[mat]||[0,[.5,.5,.5]];const g=(GLOW[mat]||0)*(mat==='win'?1+.08*Math.sin(t*1.3):mat==='swirl'||mat==='swirl2'?.8+.25*Math.sin(t*2.1):1)*mul;r.put(key,0,0,0,1,1,1,c,0,kind,g);}}
 const view={opened:[],relics:[]};
 R.scene=function(state,p,t,...args){const out=old.scene.call(this,state,p,t,...args);if(!state)return out;const ch=state.chapter||1,eye=this.eye||[p?p.x:0,0,p?p.z:0],low=this.quality==='low',U=unitMeshes(this);
