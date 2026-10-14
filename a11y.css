@@ -1,0 +1,27 @@
+/* v85 accessibility settings (see a11y.js) */
+.a11y-settings{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin:6px 0 4px}
+.a11y-settings .setting-toggle{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;font-size:13px;line-height:1.2}
+.a11y-settings .setting-toggle input{width:22px;height:22px;flex:0 0 22px;accent-color:#8ee4df;margin:0}
+.a11y-title{display:block;margin:10px 0 0;font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+/* Large text: scale panel content, the quest card and toasts (zoom keeps the layout fitting the screen width) */
+html.mk-big-text dialog>*,html.mk-big-text .mission,html.mk-big-text #toast,html.mk-big-text .cover-copy,html.mk-big-text #labels{zoom:1.15}
+html.mk-big-text small,html.mk-big-text .g-note,html.mk-big-text .small{font-size:max(12px,1em)}
+/* High contrast */
+html.mk-contrast dialog,html.mk-contrast .mission,html.mk-contrast #toast,html.mk-contrast #destination,html.mk-contrast .hud-tools button,html.mk-contrast .actions button,html.mk-contrast header button,html.mk-contrast .inventory>span{background:#02070c!important;color:#fff!important;border-color:#ffffffcc!important;text-shadow:none!important}
+html.mk-contrast dialog *{color:inherit}
+html.mk-contrast dialog small,html.mk-contrast .g-note,html.mk-contrast .small,html.mk-contrast dialog p{color:#f2f6f8!important;opacity:1!important}
+html.mk-contrast button{outline:1.5px solid #ffffffb0;outline-offset:-1.5px}
+html.mk-contrast button.primary,html.mk-contrast .g-cta{background:#ffe066!important;color:#000!important;outline-color:#000}
+html.mk-contrast :focus-visible{outline:3px solid #ffe066!important;outline-offset:2px}
+html.mk-contrast #labels *{background:#000!important;color:#fff!important}
+/* Reduce motion */
+html.mk-calm *,html.mk-calm *::before,html.mk-calm *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+/* Colour-blind safe: notification dots become a yellow "!" badge, success/fail chips get shapes */
+html.mk-cb .g-dot{background:#ffd23f!important;box-shadow:none!important;border-color:#000!important;width:16px;height:16px;display:grid;place-items:center}
+html.mk-cb .g-dot::after{content:'!';font:900 11px/1 system-ui,sans-serif;color:#000}
+html.mk-cb .progress i,html.mk-cb #fuel-fill{background-image:repeating-linear-gradient(45deg,#ffffff55 0 4px,transparent 4px 8px)!important}
+.pt-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:800;line-height:1.5;white-space:nowrap}
+.pt-badge.new{background:#ffd23f;color:#1b1400}
+.pt-badge.pending{background:#2f6fd6;color:#fff}
+.pt-badge.done{background:#e8f3ff;color:#06305f}
+.pt-badge.fail{background:#3a2a00;color:#ffd23f;outline:1px dashed #ffd23f}

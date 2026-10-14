@@ -4,7 +4,7 @@
 (function(root){'use strict';if(typeof document==='undefined')return;
 const $=s=>document.querySelector(s),T=(k,p)=>root._t?root._t(k,p):k,html=document.documentElement;
 const GRID='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="3.5"/></svg>';
-const PROXY=[['shop','🛍️','menu.shop',null],['scan','⌖','menu.scan','#scan'],['build','⌂','menu.build','#build'],['map','◈','menu.map','#world-map-button'],['cards','▱','menu.cards','#collection']];
+const PROXY=[['shop','🛍️','menu.shop',null],['scan','◎','menu.scan','#scan'],['build','⌂','menu.build','#build'],['map','◈','menu.map','#world-map-button'],['cards','▱','menu.cards','#collection']];
 let btn=null,back=null,dock=null;
 function isOpen(){return html.classList.contains('hud-menu-open');}
 function setOpen(on){html.classList.toggle('hud-menu-open',!!on);if(btn)btn.setAttribute('aria-expanded',on?'true':'false');if(on)sync();try{root.Telegram?.WebApp?.HapticFeedback?.selectionChanged?.();}catch{}}

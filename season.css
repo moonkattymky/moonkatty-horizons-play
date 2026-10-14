@@ -150,3 +150,10 @@ html[dir=rtl] .gl-marks em{transform:translateX(50%)}
 .pk-done{display:inline-flex;align-items:center;gap:5px;color:#9df0b8;font-size:12.5px;font-weight:700}.pk-done svg{width:15px;height:15px}
 .pk-buy{align-self:stretch}
 .pk-via{margin:0;font-size:11px;color:#7af0c8;font-weight:700}
+/* v85 new Stars looks */
+.cos-frame_sunrise{border-color:transparent;background:linear-gradient(#2a1630,#3b1d2a) padding-box,linear-gradient(90deg,#ff7a59,#ffcf6b,#ff7a59) border-box;box-shadow:0 0 12px -2px #ff9a5c99}
+.cos-frame_paw{border-color:transparent;background:linear-gradient(#10283a,#163246) padding-box,repeating-linear-gradient(90deg,#ffd678 0 10px,#fff3c4 10px 14px) border-box}
+.cos-frame_paw::after{content:' 🐾';font-size:.85em}
+.cos-frame_cosmos{border-color:transparent;background:linear-gradient(#0a0f2a,#1a1446) padding-box,linear-gradient(90deg,#4cc9f0,#7b2ff7,#f72585,#4cc9f0) border-box;box-shadow:0 0 14px -3px #7b2ff7aa}
+.sh-paint{position:relative;display:grid;place-items:center;width:64px;height:48px;font-size:26px}
+.sh-paint i{position:absolute;inset:auto 6px 2px 6px;height:10px;border-radius:6px;background:var(--p);box-shadow:0 0 12px var(--p)}

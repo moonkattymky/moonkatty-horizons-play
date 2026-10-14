@@ -5,7 +5,7 @@
 (function(){'use strict';
 const Game=window.MoonGame,UI=window.MoonGrowthUI,G=window.MoonGrowth,cfg=window.MoonGrowthConfig||{};if(!Game||!UI||typeof document==='undefined')return;
 const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
-const ICON={collect:'◆',scan:'⌖',deliver:'▣',stabilize:'✺'},HOLD={collect:1200,scan:2000,deliver:1500,stabilize:3000},REACH=3.5,KEY='moonkatty-daily-v46';
+const ICON={collect:'◆',scan:'◎',deliver:'▣',stabilize:'✺'},HOLD={collect:1200,scan:2000,deliver:1500,stabilize:3000},REACH=3.5,KEY='moonkatty-daily-v46';
 let data=null,at=0,busy=false,mem={day:'',track:-1,picked:{}},hold=null,pollT=null;
 try{mem={...mem,...JSON.parse(localStorage.getItem(KEY)||'{}')};}catch{}
 const keep=()=>{try{localStorage.setItem(KEY,JSON.stringify(mem));}catch{}};

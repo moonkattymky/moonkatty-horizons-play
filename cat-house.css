@@ -43,3 +43,18 @@
 .chh-note{font-size:11px;opacity:.75;margin:4px 0 0}
 @media (max-width:520px){.chh-wall{grid-template-columns:96px 1fr}.chh-window{height:96px}.chh-window .earth{width:44px;height:44px;left:26px;top:24px}.chh-floor{grid-template-columns:1fr}}
 .chh-room header b{color:#fff3d6;text-shadow:0 1px 3px rgba(0,0,0,.85),0 0 10px rgba(0,0,0,.5)}
+/* v85: the shelf plank sits under each trophy icon (labels like «Тайна сигнала» wrap below it instead of over the wood) */
+.chh-shelf .row,.chh-observatory .chh-shelf .row{background:none;padding:6px 4px 4px;align-items:flex-start}
+.chh-tro{display:flex;flex-direction:column;align-items:center}
+.chh-tro .ic{margin-bottom:0}
+.chh-tro .plank{display:block;align-self:stretch;height:7px;margin:0 -3px 5px;border-radius:2px;background:linear-gradient(#a86d3c 0 55%,#7a4a24 55%);box-shadow:0 2px 3px rgba(0,0,0,.25)}
+.chh-observatory .chh-tro .plank{background:linear-gradient(#c7963f 0 55%,#7b5a1d 55%)}
+.chh-tro small{min-height:2.3em;max-width:62px;overflow-wrap:anywhere;hyphens:auto}
+/* v85 house decor (Stars looks) */
+.chh-decor .row{display:flex;gap:8px;flex-wrap:wrap}
+.chh-dec{flex:1 1 70px;min-width:70px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:12px;background:rgba(255,255,255,.08);border:1px dashed rgba(255,255,255,.35);color:inherit;font:inherit}
+.chh-dec .ic{font-size:28px;line-height:1.1}.chh-dec small{font-size:10.5px;line-height:1.15;text-align:center}.chh-dec em{font-style:normal;font-size:11px;font-weight:800;color:#ffd678}
+.chh-dec.on{border-style:solid;border-color:#ffd678;background:radial-gradient(circle at 50% 30%,rgba(255,214,120,.25),rgba(255,255,255,.06))}
+/* v85: the room header is a normal block (the game's global header style made it float under the window on small phones) */
+.chh-room header{position:static;inset:auto;width:auto;height:auto;padding:0;background:none;pointer-events:auto;transform:none;flex-wrap:wrap}
+.chh-room header b{flex:1 1 auto;min-width:0}

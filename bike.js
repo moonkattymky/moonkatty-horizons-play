@@ -8,7 +8,7 @@
 (function(root){'use strict';
 const R=root.MoonRenderer&&root.MoonRenderer.prototype,B=root.MoonOutpostBuilder;
 const KEY='moonkatty-bike-v60';
-const PAINT={gold:[1,.74,.28],mint:[.45,.92,.74],berry:[.96,.40,.64],sky:[.44,.72,1],cocoa:[.66,.45,.32],galaxy:[.50,.36,.92],comet:[.07,.07,.09],frost:[.74,.90,1],ember:[1,.40,.16],ghost:[.66,.94,1]};   // v82 frost/ember: crafted from rare mine materials; ghost: the unique star-mine find (translucent glow)   // v64 'comet' = the Stars skin: black body, gold trim, fiery trail (looks only)
+const PAINT={gold:[1,.74,.28],mint:[.45,.92,.74],berry:[.96,.40,.64],sky:[.44,.72,1],cocoa:[.66,.45,.32],galaxy:[.50,.36,.92],comet:[.07,.07,.09],frost:[.74,.90,1],ember:[1,.40,.16],ghost:[.66,.94,1],nebula:[.62,.30,.86],ruby:[.86,.10,.24]};   // v85 nebula/ruby: Stars paints (looks only)   // v82 frost/ember: crafted from rare mine materials; ghost: the unique star-mine find (translucent glow)   // v64 'comet' = the Stars skin: black body, gold trim, fiery trail (looks only)
 const ORDER=['gold','mint','berry','sky','cocoa','galaxy'];
 const Bike=root.MoonBike={view:null,at:0,riding:false,PAINT,ORDER,flying:false,flyHold:false,spin:0,tilt:0,SKY_MAX:10.5,
  // v65 BIKE FLIGHT: free for everyone after LIFE #7 (the Sky Drive); the server says so too (/api/bike → fly), so it is retroactive
@@ -62,7 +62,7 @@ if(R&&B){
  function bRings(b){for(const z of[.5,-.5]){b.tube('ring',[0,CY-.335,z],[0,CY-.315,z],.27,28,.27);b.tube('ring',[0,CY-.34,z],[0,CY-.33,z],.15,24,.15);}}
  let mesh=null;
  R.v60Build=function(){if(mesh)return mesh;mesh=[];for(const[part,fn]of[['body',bBike],['glow',bGlow],['rings',bRings]]){const b=new B();fn(b);for(const[m,d]of b.groups){if(!d.length)continue;const key='v61_bike_'+part+'_'+m;this.addMesh(key,d);mesh.push([key,m,part]);}}return mesh;};
- const NEON={gold:[.35,1,.9],mint:[.45,1,.78],berry:[1,.42,.74],sky:[.38,.9,.96],cocoa:[1,.66,.3],galaxy:[.76,.5,1],comet:[1,.55,.15],frost:[.6,.95,1],ember:[1,.5,.12],ghost:[.55,1,1]},neonOf=k=>NEON[k]||NEON.gold;
+ const NEON={gold:[.35,1,.9],mint:[.45,1,.78],berry:[1,.42,.74],sky:[.38,.9,.96],cocoa:[1,.66,.3],galaxy:[.76,.5,1],comet:[1,.55,.15],frost:[.6,.95,1],ember:[1,.5,.12],ghost:[.55,1,1],nebula:[1,.45,.95],ruby:[1,.35,.45]},neonOf=k=>NEON[k]||NEON.gold;
  const CGOLD=[1,.76,.30];
  const TAU2=Math.PI*2,SC=1.45,S={yaw:null,roll:0,pitch:0,trail:[],lastX:null,lastZ:null};
  Bike.on=function(p){return Bike.riding&&Bike.unlocked&&p&&(p.alt<.15||Bike.flying);};
@@ -163,7 +163,7 @@ function render(){const d=dlg(),v=Bike.view,un=Bike.unlocked,pts=(Game.state&&Ga
   h+=`<button class="bike-paint${cur?' cur':''}" data-paint="${k}" data-own="${own?1:0}"><i style="background:${hex(PAINT[k])}"></i><span>${esc(T('bike.c_'+k))}</span><small>${cur?'✓ '+esc(T('bike.on')):own?esc(T('bike.use')):esc(T('bike.buy',{p:pr}))}</small></button>`;}
  h+=`</div></section>`;
  // v82 rare paints: crafted from hidden-mine materials (bots panel) or found in the star mine; never sold
- {const rare=['frost','ember','ghost'].filter(k=>(v.colors||[]).includes(k));if(rare.length){h+=`<section class="bike-sec bike-rare"><b>💠 ${esc(T('bike.rare'))}</b><div class="bike-paints">`;
+ {const rare=['frost','ember','ghost','nebula','ruby'].filter(k=>(v.colors||[]).includes(k));if(rare.length){h+=`<section class="bike-sec bike-rare"><b>💠 ${esc(T('bike.rare'))}</b><div class="bike-paints">`;
   for(const k of rare){const cur=v.color===k;h+=`<button class="bike-paint${cur?' cur':''}${k==='ghost'?' ghost':''}" data-paint="${k}" data-own="1"><i style="background:${hex(PAINT[k])}"></i><span>${esc(T('bike.c_'+k))}</span><small>${cur?'✓ '+esc(T('bike.on')):esc(T('bike.use'))}</small></button>`;}h+=`</div></section>`;}}
  // v64: the Stars skin — black + gold, fiery trail, same speed; bought through the Stars shop (server-validated)
  {const own=(v.colors||[]).includes('comet'),cur=v.color==='comet',cm=v.comet||{stars:150},sui=root.MoonSeasonUI,pay=!!(UI.online&&cm.enabled!==false&&root.Telegram?.WebApp?.openInvoice&&sui&&sui.confirmBuy);

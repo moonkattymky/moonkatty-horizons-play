@@ -69,7 +69,13 @@ const M=()=>({...G.MOON,...(rules?{story:rules.story||G.MOON.story,streak:rules.
 // Server balance → local cache (never computed on the phone).
 function gotMoon(r){if(r&&r.moon&&G.setMoon(S(),r.moon)){Game.save();updateMoon();}}
 function setCrew(c){if(c)crew=c;try{window.MoonTeamUI?.onCrew?.(crew);}catch{}}
-async function api(path,body={},timeout=9000){if(!API||!initData())throw new Error('offline');const ctrl=typeof AbortController==='function'?new AbortController():null,timer=setTimeout(()=>ctrl?.abort(),timeout);
+// v85: weak-internet retry — read-only / idempotent calls are retried twice (0.8 s, 2 s) on a network error, timeout or 502-504.
+// Paid or one-shot actions (Stars, claims with side effects, submissions) are never repeated automatically.
+const SAFE_RETRY=new Set(['/api/session','/api/moon','/api/season','/api/story','/api/crew','/api/bots','/api/bike','/api/bank','/api/daily','/api/districts','/api/leaderboard','/api/social/status','/api/stars/status','/api/save','/api/rewards/claim','/api/pack']);
+function errKind(e){if(!e)return'';if(e.message==='offline')return'offline';if(e.name==='AbortError')return'timeout';if(e.status===429||e.code==='rate_limited')return'busy';if(e.status>=500)return'server';if(!e.status)return navigator.onLine===false?'offline':'timeout';return'';}
+async function api(path,body={},timeout=9000){const tries=SAFE_RETRY.has(path)?3:1;for(let i=0;;i++){try{return await apiOnce(path,body,timeout);}catch(e){const k=errKind(e);if(k)REL?.noteErr?.(k);
+  if(i+1>=tries||!(k==='timeout'||(k==='server'&&e.status>=502&&e.status<=504))||navigator.onLine===false)throw e;await new Promise(r=>setTimeout(r,i?2000:800));}}}
+async function apiOnce(path,body={},timeout=9000){if(!API||!initData())throw new Error('offline');const ctrl=typeof AbortController==='function'?new AbortController():null,timer=setTimeout(()=>ctrl?.abort(),timeout);
  try{const r=await fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json','Authorization':path==='/api/session'?'tma '+initData():authHeader()},body:JSON.stringify(body),signal:ctrl?.signal});const data=await r.json().catch(()=>({}));
   if(r.status===401&&/session/.test(data.error||''))session=null;if(!r.ok){const e=new Error(data.error||('HTTP '+r.status));e.code=data.error||'';e.status=r.status;throw e;}gotMoon(data);return data;}finally{clearTimeout(timer);}}
 // v39 seasons / shared goal / Stars shop state (shown by season.js). Owned cosmetics are cached in the save for the cargo bay.
@@ -146,19 +152,26 @@ function openStreak(){renderStreak();open('streak');}
 
 // «Пригласи члена экипажа»
 const crewDialog=dialog('crew','crew-dialog');
+// v85 invite card (what the friend gets, at a glance) + crew milestones (server: REFERRAL_MILESTONES, Moon Points, vested).
+function inviteCard(link){const m=M(),me=esc(tgUser()?.first_name||_t('growth.chlen_ekipazha'));
+ return`<div class="inv-card" role="group" aria-label="${esc(_t('crew.card_title'))}"><div class="inv-top"><span class="inv-cat" aria-hidden="true">🚀</span><span><small>MOONKATTY · NEW HORIZONS</small><b>${_t('crew.card_from',{name:me})}</b></span></div>`+
+  `<ul class="inv-perks"><li><span aria-hidden="true">🎁</span>${_t('crew.card_gift')}</li><li><span aria-hidden="true">🌕</span>${_t('crew.card_both',{n:m.referral})}</li><li><span aria-hidden="true">🏅</span>${_t('crew.card_ms')}</li></ul>`+
+  `<code class="inv-link">${esc(link.replace(/^https:\/\//,''))}</code></div>`;}
+function msRow(){const list=crew.milestones||[{friends:3,points:300},{friends:5,points:500},{friends:10,points:1200}],n=crew.count||0;
+ return`<div class="cr-row ms"><span class="cr-step">🏅</span><span class="cr-text"><b>${_t('crew.ms_title')}</b><span class="ms-list">${list.map(x=>{const ok=x.reached||n>=x.friends;return`<span class="ms-chip ${ok?'ok':''}">${ok?'✓ ':''}${_t('crew.ms_item',{n:x.friends,p:x.points})}</span>`;}).join('')}</span><small>${_t('crew.ms_note')}</small></span></div>`;}
 function renderCrew(){const d=crewDialog,R=G.REFERRAL_REWARDS,m=M(),link=invite(),inTg=!!tgUser(),list=crew.list||[],bonus={points:m.referral,...R.full};
  const friends=list.length?`<ul class="crew-list">${list.map(f=>{const done=f.status==='completed';return`<li><span class="crew-ava">${esc((f.name||'?').slice(0,1).toUpperCase())}</span><span class="crew-name">${esc(f.name||_t('growth.chlen_ekipazha'))}<small>${done?(f.paid===false?_t('crew.done_capped'):_t('crew.done_paid',{n:m.referral})):f.life1?_t('crew.wait_days',{n:f.days||0,d:crew.minDays||m.referralDays}):_t('crew.wait_life')}</small></span><span class="crew-st ${f.status}">${done?ICON.check:'…'}</span></li>`;}).join('')}</ul>`
   :online?`<div class="crew-empty"><b>${_t('growth.poka_nikogo')}</b><span>${_t('growth.otprav_ssylku')} ${chips({points:m.referral},'small')}</span></div>`
   :`<div class="crew-soon"><span class="soon-tag">${_t('growth.skoro')}</span><b>${_t('growth.nagrady_druzey')}</b><span>${_t('growth.server_ekipazha')}</span></div>`;
  d.innerHTML=head(_t('growth.priglasi_chlena'),_t('growth.soberi_svoy'),'crew')+
   `<div class="crew-hero" style="background-image:linear-gradient(180deg,#0b213300 45%,#0b2133e6 100%),url('${esc(cfg.CREW_HERO_IMAGE||'assets/crew-hero-v33.jpg')}')"><span class="crew-count">${ICON.crew}<b>${crew.count||0}</b> ${_t('growth.ekipazhe',{n:crew.count||0})}</span>${crew.joined>crew.count?`<span class="crew-joined">${_t('crew.joined',{n:crew.joined})}</span>`:''}</div>`+
+  inviteCard(link)+`<button class="primary g-cta" id="crew-invite">${ICON.share}${_t('growth.otpravit_priglashe')}</button>`+
   `<div class="crew-rewards">
-    <div class="cr-row"><span class="cr-step">1</span><span class="cr-text"><b>${_t('growth.drug_otkryl')}</b><small>${_t('growth.tebe_srazu')}</small></span><span class="cr-chips"></span></div>
+    <div class="cr-row"><span class="cr-step">1</span><span class="cr-text"><b>${_t('growth.drug_otkryl')}</b><small>${_t('crew.step1_gift')}</small></span><span class="cr-chips">${chips(crew.welcome||{crystals:20,metal:15},'small')}</span></div>
     <div class="cr-row"><span class="cr-step">2</span><span class="cr-text"><b>${_t('growth.drug_proshel',{d:crew.minDays||m.referralDays})}</b><small>${online?_t('growth.polnaya_nagrada',{n:m.referral}):_t('growth.nagrady_druzey')}</small></span><span class="cr-chips">${chips(online?bonus:{points:m.referral})}</span></div>
-    <div class="cr-row cap"><span class="cr-step">⏱</span><span class="cr-text"><b>${_t('crew.cap_title')}</b><small>${_t('crew.cap_text',{cap:crew.cap||m.referralCap})}</small></span></div></div>`+
+    ${msRow()}<div class="cr-row cap"><span class="cr-step">⏱</span><span class="cr-text"><b>${_t('crew.cap_title')}</b><small>${_t('crew.cap_text',{cap:crew.cap||m.referralCap})}</small></span></div></div>`+
   `<div class="crew-link"><span class="cl-label">${ICON.link}${inTg?_t('growth.tvoya_lichnaya'):_t('growth.ssylka_igru')}</span><code>${esc(link.replace(/^https:\/\//,''))}</code><button id="crew-copy">${_t('growth.kopirovat')}</button></div>`+
   (inTg?'':'<p class="g-note">'+_t('growth.otkroy_igru')+'</p>')+
-  `<button class="primary g-cta" id="crew-invite">${ICON.share}${_t('growth.otpravit_priglashe')}</button>`+
   (tg()?.shareToStory?`<button class="g-secondary" id="crew-story">${_t('growth.podelitsya_istorii')}</button>`:'')+
   `<h3 class="g-sub">${_t('growth.moy_ekipazh')} <span>${crew.count||0}</span></h3>${friends}<p class="g-note">${_t('crew.cats_note',{d:crew.minDays||m.referralDays})}</p><p class="g-feedback" id="crew-feedback" role="status"></p>`;
  wireClose(d);$('#crew-copy').onclick=async()=>{const ok=await copy(link);$('#crew-feedback').textContent=ok?_t('growth.ssylka_skopirovana'):_t('growth.udalos_skopirovat');if(ok)haptic();};
@@ -167,7 +180,7 @@ function openCrew(){renderCrew();open('crew');if(online)api('/api/crew',{}).then
 
 // «Поделиться»
 const shareDialog=dialog('share','share-dialog');let shareContext='invite';
-function shareText(kind){const ch=S().chapter;if(kind==='chapter')return`${_t('growth.ya_proshel',{ch:Math.max(1,ch-1)})}`;return online?_t('growth.ya_issleduyu'):_t('share.demo_text');}
+function shareText(kind){const ch=S().chapter;if(kind==='chapter')return`${_t('growth.ya_proshel',{ch:Math.max(1,ch-1)})}`;return online?_t('crew.share_text'):_t('share.demo_text');}
 function rewardShare(){const r=G.claimShare(S());if(r.ok){commit();setTimeout(()=>toast(r.text),600);}}
 function shareChat(kind=shareContext){const link=invite(),text=shareText(kind);if(tg())openUrl(G.shareUrl(link,text));else if(navigator.share)navigator.share({title:'MOONKATTY · New Horizons',text,url:link}).catch(()=>{});else openUrl(G.shareUrl(link,text));rewardShare();}
 function shareStory(){const app=tg(),link=invite();if(!app?.shareToStory){shareChat();return;}const opts={text:_t('growth.lechu_lunu')};if(tgUser()?.is_premium)opts.widget_link={url:link,name:_t('growth.igrat_moonkatty')};else opts.text+=' '+link;
@@ -199,7 +212,7 @@ function socialPlatforms(){return G.SOCIAL_PLATFORMS.filter(id=>/^https:\/\//.te
 const SOC_TITLE={x:'gcore.chitay_moonkatty',tiktok:'gcore.podpishis_tiktok',youtube:'gcore.podpishis_youtube'};   // v45: no Instagram reward task
 function socWord(state,n){return state==='pending'?_t('soc.s_pending'):state==='approved'?_t('soc.s_approved'):state==='rejected'?_t('soc.s_rejected'):'🌕+'+n;}
 function socError(e,id,kind){const name=G.SOCIAL_NAMES[id]||id,c=e&&e.code,follow=kind==='follow';
- return c==='bad_proof'&&follow?_t('soc.e_nick',{platform:name}):c==='duplicate_proof'&&follow?_t('soc.e_nick_taken'):c==='use_google'?_t('soc.e_use_google'):c==='rate_limited'||c==='daily_max'?_t('soc.e_rate'):c==='bad_proof'?_t('soc.e_bad_proof',{platform:name}):c==='already'?_t('soc.e_already',{platform:name}):c==='daily_limit'?_t('soc.e_daily_limit',{platform:name}):c==='pending_limit'?_t('soc.e_pending_limit',{n:M().socialPending}):c==='duplicate_proof'?_t('soc.e_duplicate'):_t('growth.net_svyazi');}
+ return c==='bad_proof'&&follow?_t('soc.e_nick',{platform:name}):c==='duplicate_proof'&&follow?_t('soc.e_nick_taken'):c==='use_google'?_t('soc.e_use_google'):c==='rate_limited'||c==='daily_max'?_t('soc.e_rate'):c==='bad_proof'?_t('soc.e_bad_proof',{platform:name}):c==='already'?_t('soc.e_already',{platform:name}):c==='daily_limit'?_t('soc.e_daily_limit',{platform:name}):c==='pending_limit'?_t('soc.e_pending_limit',{n:M().socialPending}):c==='duplicate_proof'?_t('soc.e_duplicate'):(window.MoonReliability&&MoonReliability.netText?MoonReliability.netText():_t('growth.net_svyazi'));}
 // v45 follow form: subscription only. YouTube with Google OAuth on → «Check with Google»; otherwise «@nickname» + «I followed»
 // → a moderator card in the bot. Pending / approved states replace the form.
 function followForm(id,state,m){const name=G.SOCIAL_NAMES[id]||id;
@@ -207,12 +220,16 @@ function followForm(id,state,m){const name=G.SOCIAL_NAMES[id]||id;
  if(state==='pending')return`<p class="soc-state">${_t('soc.wait_follow')}</p>`;
  if(id==='youtube'&&social?.oauth?.youtube)return`<p class="soc-hint">${_t('soc.yt_hint',{n:m.social.follow})}</p><button type="button" class="primary soc-google" data-yt-google ${socBusy?'disabled':''}>${ICON.youtube||''}<span>${_t('soc.yt_google')}</span></button>`;
  return`<p class="soc-hint">${_t('soc.nick_hint',{platform:name,n:m.social.follow})}</p><div class="soc-input nick"><span class="soc-nick"><i aria-hidden="true">@</i><input name="proof" dir="ltr" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="60" value="${esc(socDraft[id]||'')}" placeholder="${esc(_t('soc.ph_follow'))}" aria-label="${esc(_t('soc.e_nick',{platform:name}))}"></span><button class="primary" type="submit" ${socBusy?'disabled':''}>${_t('soc.i_followed')}</button></div>`;}
+// v85 partner-task status badges (shape + word + colour, readable for colour-blind players): new · checking · done · try again
+function ptBadge(k){const ic={new:'✦',pending:'⏳',done:'✓',fail:'↻'}[k]||'✦';return`<span class="pt-badge ${k}">${ic} ${_t('pt.'+k)}</span>`;}
+function socState(st){if(st.follow==='approved'&&st.daily==='approved')return'done';if(st.follow==='pending'||st.daily==='pending')return'pending';if(st.follow==='rejected'||st.daily==='rejected')return'fail';if(st.follow==='approved')return'done';return'new';}
+function ptHow(){return`<details class="pt-how"><summary>${_t('pt.how_title')}</summary><ol><li>${_t('pt.how1')}</li><li>${_t('pt.how2')}</li><li>${_t('pt.how3')}</li></ol></details>`;}
 function socialHtml(){const ids=socialPlatforms(),chat=socialUrl('chat'),m=M();if(!ids.length&&!chat)return'';
  const code=online&&social?`<div class="soc-code"><span class="sc-text"><small>${_t('soc.code_title')}</small><b dir="ltr">${esc(social.code)}</b></span><button type="button" id="soc-copy">${_t('growth.kopirovat')}</button><p>${_t('soc.code_hint')}</p></div>`
   :`<div class="soc-code pending"><span class="sc-text"><small>${_t('soc.code_title')}</small><b dir="ltr">MKTY-····</b></span><p>${_t('soc.code_offline')}</p></div>`;
  const rows=ids.map(id=>{const st=social?.platforms?.[id]||{follow:'none',daily:'none'},open=online&&socOpen===id,kind=socKind[id]||(st.follow==='none'||st.follow==='rejected'?'follow':'daily'),msg=socMsg[id];
   const done=st.follow==='approved'&&st.daily==='approved',sub=online?_t('soc.line',{follow:socWord(st.follow,m.social.follow),daily:socWord(st.daily,m.social.daily)}):G.SOCIAL_NAMES[id]+' · MOONKATTY';
-  return`<div class="task-row soc-row ${done?'claimed':''} ${open?'open':''}"><span class="tr-icon">${ICON[id]}</span><span class="tr-text"><b>${_t(SOC_TITLE[id])}</b><small>${sub}</small></span><span class="tr-side"><button type="button" class="tr-btn" data-soc-open="${id}">${_t('growth.otkryt')}</button>${online?`<button class="tr-btn gold" data-soc-form="${id}" aria-expanded="${open}">${_t('soc.send')}</button>`:''}</span></div>`+
+  return`<div class="task-row soc-row ${done?'claimed':''} ${open?'open':''}"><span class="tr-icon">${ICON[id]}</span><span class="tr-text"><b>${_t(SOC_TITLE[id])}</b>${online?ptBadge(socState(st)):''}<small>${sub}</small></span><span class="tr-side"><button type="button" class="tr-btn" data-soc-open="${id}">${_t('growth.otkryt')}</button>${online?`<button class="tr-btn gold" data-soc-form="${id}" aria-expanded="${open}">${_t('soc.send')}</button>`:''}</span></div>`+
    (open?`<form class="soc-form" data-soc-submit="${id}" autocomplete="off"><div class="soc-kinds" role="tablist"><button type="button" role="tab" data-soc-kind="follow" class="${kind==='follow'?'on':''}">${_t('soc.follow')} · ${ICON.moon}+${m.social.follow}</button><button type="button" role="tab" data-soc-kind="daily" class="${kind==='daily'?'on':''}">${_t('soc.daily')} · ${ICON.moon}+${m.social.daily}</button></div>`+
     (kind==='follow'?followForm(id,st.follow,m):`<div class="soc-input"><input name="proof" dir="ltr" inputmode="url" autocapitalize="off" spellcheck="false" maxlength="300" value="${esc(socDraft[id]||'')}" placeholder="${esc(_t('soc.ph_daily'))}" aria-label="${esc(_t('soc.ph_daily'))}"><button class="primary" type="submit" ${socBusy?'disabled':''}>${_t('soc.send_btn')}</button></div>`)+
     `<p class="soc-msg ${msg?.ok?'ok':''}" role="status">${esc(msg?.text||'')}</p></form>`:'');}).join('');
@@ -220,12 +237,12 @@ function socialHtml(){const ids=socialPlatforms(),chat=socialUrl('chat'),m=M();i
  return`<h3 class="g-sub">${_t('growth.my_sotssetyah')}</h3>${code}<p class="soc-steps">${_t('soc.steps',{n:m.social.follow})}</p><div class="task-list">${rows}${chatRow}</div><p class="g-note">${online?_t('growth.zadaniya_sotssetey'):_t('soc.offline')}</p>`;}
 function renderTasks(){const d=tasksDialog,s=S(),m=M(),ch=String(cfg.CHANNEL_USERNAME||'').replace(/^@/,''),st=G.streakStatus(s),shareDone=s.growth.shareDay===G.utcDay();
  const channelDone=s.growth.channel||channelInfo.rewarded,focus=document.activeElement&&d.contains(document.activeElement)&&document.activeElement.name==='proof';
- const channel=ch?`<div class="task-hero ${channelDone?'done':''}"><div class="th-top">${ICON.telegram}<div><b>${_t('growth.podpishis_kanal')}</b><small>${_t('growth.novosti_ekspeditsi')}</small></div></div>
+ const channel=ch?`<div class="task-hero ${channelDone?'done':''}"><div class="th-top">${ICON.telegram}<div><b>${_t('growth.podpishis_kanal')}</b>${ptBadge(channelDone?'done':channelBusy?'pending':'new')}<small>${_t('growth.novosti_ekspeditsi')}</small></div></div>
    <div class="th-reward">${chips(online?{points:m.channel,...G.CHANNEL_REWARD}:{points:m.channel})}<span class="gchip badge">${_t('growth.znachok_svyazist')}</span></div>
    ${channelDone?`<div class="th-state ok">${ICON.check}${_t('growth.podpiska_podtverzh')}</div>`:`<div class="th-actions"><button type="button" class="primary" id="channel-open">${_t('growth.podpisatsya')}</button><button id="channel-check" ${online?'':'disabled'}>${channelBusy?_t('growth.proveryaem'):_t('growth.proverit')}</button></div><div class="th-state ${online?'':'pending'}">${esc(channelMsg)||(online?_t('growth.podpishis_zatem'):_t('growth.proverka_podpiski'))}</div>`}</div>`:'';
  const row=(icon,title,sub,reward,btn,cls='')=>`<div class="task-row ${cls}"><span class="tr-icon">${icon}</span><span class="tr-text"><b>${title}</b><small>${sub}</small></span><span class="tr-side">${reward}${btn}</span></div>`;
  d.innerHTML=head(_t('growth.zadaniya_bonusy'),_t('growth.svyaz_zemley'),'tasks')+
-  `<p class="g-lead">${_t('growth.pomogi_ekspeditsii')}</p>`+moonCard()+channel+(window.MoonTeamUI?window.MoonTeamUI.codeCard():'')+
+  `<p class="g-lead">${_t('growth.pomogi_ekspeditsii')}</p>`+moonCard()+ptHow()+channel+(window.MoonTeamUI?window.MoonTeamUI.codeCard():'')+
   `<div class="task-list">`+(window.MoonSeasonUI?.taskRow?window.MoonSeasonUI.taskRow():'')+
    row(ICON.gift,_t('growth.vahta_baze'),_t(st.claimed?'growth.7_nagrada':'growth.7_nagrada2',{n:st.day}),st.claimed?'':chips({points:online?st.points:0,...st.reward},'small'),`<button class="tr-btn ${st.claimed?'':'gold'}" data-go="streak">${st.claimed?_t('growth.otkryt'):_t('growth.zabrat')}</button>`,st.claimed?'claimed':'ready')+
    row(ICON.crew,_t('growth.priglasi_druga'),online?_t('growth.nagrada_kazhdogo',{n:m.referral,d:m.referralDays}):_t('growth.nagrady_druzey'),chips({points:m.referral},'small'),'<button class="tr-btn" data-go="crew">'+_t('growth.pozvat')+'</button>')+
@@ -259,7 +276,7 @@ async function refreshSocial(){if(!online)return;try{const before=followsDone(so
  if(followsDone(social)>before){try{const c=await api('/api/rewards/claim',{});applyServerRewards(c.rewards);}catch{}}if(tasksDialog.open)renderTasks();}catch{}}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&tasksDialog.open)refreshSocial();});
 async function checkChannel(){if(channelBusy||!online)return;channelBusy=true;renderTasks();try{const r=await api('/api/channel/check',{});if(r.member){channelInfo.rewarded=true;S().growth.channel=true;if(r.reward)applyServerRewards([r.reward]);else commit();channelMsg='';haptic();}else{channelMsg=r.error==='channel_not_configured'?_t('growth.proverka_kanala'):_t('growth.poka_vidim');haptic('warning');
-  const ch=String(cfg.CHANNEL_USERNAME||'').replace(/^@/,'');if(!r.error&&/^\w{4,}$/.test(ch))setTimeout(()=>openUrl('https://t.me/'+ch),700);/* v45: not subscribed → open the channel */}}catch(e){channelMsg=e&&e.code==='rate_limited'?_t('soc.e_rate'):_t('growth.net_svyazi');}channelBusy=false;renderTasks();}
+  const ch=String(cfg.CHANNEL_USERNAME||'').replace(/^@/,'');if(!r.error&&/^\w{4,}$/.test(ch))setTimeout(()=>openUrl('https://t.me/'+ch),700);/* v45: not subscribed → open the channel */}}catch(e){channelMsg=e&&e.code==='rate_limited'?_t('soc.e_rate'):(window.MoonReliability&&MoonReliability.netText?MoonReliability.netText():_t('growth.net_svyazi'));}channelBusy=false;renderTasks();}
 function openTasks(){renderTasks();open('tasks');refreshSocial();}
 
 // ---------- entry points ----------

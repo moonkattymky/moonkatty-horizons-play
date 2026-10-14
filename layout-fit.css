@@ -26,3 +26,14 @@ html[data-tg-fullscreen=true]{--st:var(--tg-safe-top,0px);--sb:max(var(--tg-safe
 .house-enter{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--sb,0px) + 150px);z-index:40;border:0;border-radius:999px;padding:11px 26px;font:700 16px system-ui;color:#3a2412;background:linear-gradient(#ffe08a,#ffb43a);box-shadow:0 3px 0 #b2701a,0 0 18px rgba(255,190,70,.7)}
 .house-enter[hidden]{display:none}
 .mine-enter{color:#fff;background:linear-gradient(#7ad7ff,#2e8fd8);box-shadow:0 3px 0 #1a5c96,0 0 18px rgba(110,210,255,.7)}
+/* v85 first-goal card (first visit only) */
+#first-goal{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + var(--tg-content-top,0px) + 196px);transform:translateX(-50%);z-index:30;width:min(92vw,380px);display:flex;align-items:center;gap:10px;padding:12px 12px 12px 14px;border-radius:18px;background:linear-gradient(160deg,#173a57f2,#0d2236f2);border:1.5px solid #ffd678;box-shadow:0 10px 28px #0008;color:#fff;animation:fg-in .35s ease-out}
+#first-goal.out{opacity:0;transition:opacity .3s}
+#first-goal .fg-ic{font-size:28px}#first-goal .fg-tx{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+#first-goal small{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#ffd678}#first-goal b{font-size:16px;line-height:1.25}#first-goal em{font-style:normal;font-size:12.5px;opacity:.9}
+#first-goal .fg-ok{min-height:44px;min-width:56px;padding:0 12px;border-radius:12px;border:0;background:#ffd678;color:#2a1a05;font-weight:800}
+#destination.fg-pulse{animation:fg-pulse 1.1s ease-in-out infinite}
+@keyframes fg-in{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes fg-pulse{50%{box-shadow:0 0 0 4px #ffd67899,0 0 18px #ffd678}}
+@media (max-height:620px){#first-goal{top:calc(env(safe-area-inset-top,0px) + 150px)}}
+@media (max-width:360px){#first-goal{gap:8px;padding:10px}#first-goal .fg-ic{display:none}#first-goal b{font-size:15px}#first-goal em{font-size:12px}#first-goal .fg-ok{padding:0 10px;font-size:14px;min-width:0}}

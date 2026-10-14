@@ -2,7 +2,7 @@
    in small batches), a non-blocking "No connection — retry" bar while the server is unreachable (progress keeps saving locally and
    is uploaded when the link is back), and a full-screen retry when the game itself fails to load. Loaded right after i18n.js. */
 (function(root){'use strict';
-const Q_KEY='mk-err-q',P_KEY='mk-sync-pending',MAX_Q=12,BUILD='20261014-84a',T=(k,d)=>{try{const v=root._t?root._t(k):k;return v&&v!==k?v:d;}catch(e){return d;}};
+const Q_KEY='mk-err-q',P_KEY='mk-sync-pending',MAX_Q=12,BUILD='20261014-85a',T=(k,d)=>{try{const v=root._t?root._t(k):k;return v&&v!==k?v:d;}catch(e){return d;}};
 let q=[];try{q=JSON.parse(localStorage.getItem(Q_KEY)||'[]');if(!Array.isArray(q))q=[];}catch(e){q=[];}
 const seen=new Set(q.map(e=>e.msg+'|'+e.src));let sending=false,transport=null,bar=null,fatal=null,netDown=false,retryFn=null;
 function store(){try{localStorage.setItem(Q_KEY,JSON.stringify(q.slice(-MAX_Q)));}catch(e){}}
@@ -34,6 +34,11 @@ function bootFail(why,force){if(fatal||!force&&root.MoonGame&&root.MoonGame.runn
 root.addEventListener('offline',()=>setNet(true,pending()));root.addEventListener('online',()=>{if(retryFn)retryFn();else setNet(false);});
 function pending(){try{return localStorage.getItem(P_KEY)==='1';}catch(e){return false;}}
 function markPending(v){try{if(v)localStorage.setItem(P_KEY,'1');else localStorage.removeItem(P_KEY);}catch(e){}}
-root.MoonReliability={report,flush,bootFail,setNet,pending,markPending,get down(){return netDown;},get queue(){return q.slice();},
+// v85 friendly network messages: the last server error is remembered by the API client (growth.js) and turned into plain words.
+let lastErr=null;function noteErr(kind){lastErr={kind:String(kind||''),at:Date.now()};}
+function netText(){const k=lastErr&&Date.now()-lastErr.at<60000?lastErr.kind:'';if(root.navigator&&root.navigator.onLine===false||k==='offline')return T('net.e_offline','No internet right now. Your progress is safe — try again when you are back online.');
+ if(k==='timeout')return T('net.e_slow','The connection is very slow. We tried a few times — please try again in a moment.');if(k==='busy')return T('net.e_busy','Too many taps at once — wait a few seconds and try again.');
+ if(k==='server')return T('net.e_server','Our server is taking a short break. Your progress is safe — try again in a minute.');return T('growth.net_svyazi','No connection to the server. Try again a bit later.');}
+root.MoonReliability={report,flush,bootFail,setNet,pending,markPending,noteErr,netText,get down(){return netDown;},get queue(){return q.slice();},
  set transport(f){transport=f;setTimeout(flush,3000);},set retry(f){retryFn=f;},BUILD};
 })(typeof window!=='undefined'?window:globalThis);
