@@ -1710,5 +1710,22 @@
  "fg.title":"Il tuo primo obiettivo",
  "fg.follow":"Segui la freccia in alto: il joystick a sinistra muove il gatto.",
  "fg.ok":"Capito",
- "fg.cover":"Primo obiettivo: {goal}"
+ "fg.cover":"Primo obiettivo: {goal}",
+ "bot.life_open":"🔓 La VITA #{n} è aperta! Il tuo gatto astronauta è pronto per il prossimo capitolo.\n\n/stop — niente promemoria",
+ "lg.eyebrow":"Una nuova vita ogni giorno",
+ "lg.title":"La prossima vita si apre tra",
+ "lg.title_n":"La vita {n} si apre tra",
+ "lg.meanwhile":"Nel frattempo: fai le missioni del giorno, manda i gatti-robot al lavoro, esplora le miniere e arreda la tua casa.",
+ "lg.invite":"Invita un amico per aprirla ora",
+ "lg.use":"Apri ora ({n} grazie agli amici)",
+ "lg.hint":"Ogni amico invitato che completa la vita 1 e gioca 3 giorni apre subito una vita.",
+ "lg.ok":"Ho capito",
+ "lg.status":"Si apre tra {t}",
+ "lg.toast":"La vita {n} si apre tra {t}. Nel frattempo: missioni del giorno, robot, miniere e casa.",
+ "lg.opened":"La vita {n} è aperta!",
+ "lg.notify":"Il bot ti scriverà quando si apre.",
+ "lg.c_daily":"Missioni del giorno",
+ "lg.c_bots":"Gatti-robot",
+ "lg.c_mines":"Miniere",
+ "lg.c_house":"Casa"
 });

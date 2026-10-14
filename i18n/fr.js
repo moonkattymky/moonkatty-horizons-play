@@ -1710,5 +1710,22 @@
  "fg.title":"Ton premier objectif",
  "fg.follow":"Suis la flèche en haut — le joystick à gauche déplace le chat.",
  "fg.ok":"Compris",
- "fg.cover":"Premier objectif : {goal}"
+ "fg.cover":"Premier objectif : {goal}",
+ "bot.life_open":"🔓 La VIE #{n} est ouverte ! Ton chat astronaute est prêt pour le prochain chapitre.\n\n/stop — plus de rappels",
+ "lg.eyebrow":"Une nouvelle vie chaque jour",
+ "lg.title":"La prochaine vie s’ouvre dans",
+ "lg.title_n":"La vie {n} s’ouvre dans",
+ "lg.meanwhile":"En attendant : fais les tâches du jour, envoie tes chats-robots au travail, fouille les mines et décore ta maison.",
+ "lg.invite":"Invite un ami pour ouvrir maintenant",
+ "lg.use":"Ouvrir maintenant ({n} grâce aux amis)",
+ "lg.hint":"Chaque ami invité qui termine la vie 1 et joue 3 jours ouvre une vie tout de suite.",
+ "lg.ok":"Compris",
+ "lg.status":"S’ouvre dans {t}",
+ "lg.toast":"La vie {n} s’ouvre dans {t}. En attendant : tâches du jour, robots, mines et ta maison.",
+ "lg.opened":"La vie {n} est ouverte !",
+ "lg.notify":"Le bot t’écrira à l’ouverture.",
+ "lg.c_daily":"Tâches du jour",
+ "lg.c_bots":"Chats-robots",
+ "lg.c_mines":"Les mines",
+ "lg.c_house":"Maison"
 });

@@ -75,9 +75,11 @@ const SAFE_RETRY=new Set(['/api/session','/api/moon','/api/season','/api/story',
 function errKind(e){if(!e)return'';if(e.message==='offline')return'offline';if(e.name==='AbortError')return'timeout';if(e.status===429||e.code==='rate_limited')return'busy';if(e.status>=500)return'server';if(!e.status)return navigator.onLine===false?'offline':'timeout';return'';}
 async function api(path,body={},timeout=9000){const tries=SAFE_RETRY.has(path)?3:1;for(let i=0;;i++){try{return await apiOnce(path,body,timeout);}catch(e){const k=errKind(e);if(k)REL?.noteErr?.(k);
   if(i+1>=tries||!(k==='timeout'||(k==='server'&&e.status>=502&&e.status<=504))||navigator.onLine===false)throw e;await new Promise(r=>setTimeout(r,i?2000:800));}}}
-async function apiOnce(path,body={},timeout=9000){if(!API||!initData())throw new Error('offline');const ctrl=typeof AbortController==='function'?new AbortController():null,timer=setTimeout(()=>ctrl?.abort(),timeout);
+// v86 reset epoch: after a server-wide reset the old local save is wiped once; saves/checkpoints carry the epoch (old clients are refused)
+const EPK='moonkatty-reset-epoch',epochGet=()=>{try{return localStorage.getItem(EPK)||'';}catch{return'';}};
+async function apiOnce(path,body={},timeout=9000){if(path==='/api/save'||path==='/api/story/checkpoint')body={...body,epoch:epochGet()};if(!API||!initData())throw new Error('offline');const ctrl=typeof AbortController==='function'?new AbortController():null,timer=setTimeout(()=>ctrl?.abort(),timeout);
  try{const r=await fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json','Authorization':path==='/api/session'?'tma '+initData():authHeader()},body:JSON.stringify(body),signal:ctrl?.signal});const data=await r.json().catch(()=>({}));
-  if(r.status===401&&/session/.test(data.error||''))session=null;if(!r.ok){const e=new Error(data.error||('HTTP '+r.status));e.code=data.error||'';e.status=r.status;throw e;}gotMoon(data);return data;}finally{clearTimeout(timer);}}
+  if(r.status===401&&/session/.test(data.error||''))session=null;if(!r.ok){const e=new Error(data.error||('HTTP '+r.status));e.code=data.error||'';e.status=r.status;e.data=data;throw e;}gotMoon(data);return data;}finally{clearTimeout(timer);}}
 // v39 seasons / shared goal / Stars shop state (shown by season.js). Owned cosmetics are cached in the save for the cargo bay.
 function setStage3(r){stage3={...(stage3||{}),...(r.season?{season:r.season}:{}),...(r.goal?{goal:r.goal}:{}),...(r.shop?{shop:r.shop}:{})};if(r.shop&&window.MoonSeason&&MoonSeason.setCos(S(),r.shop))Game.save();try{window.MoonSeasonUI?.onState?.(stage3);}catch{}}
 const tzOffset=()=>-new Date().getTimezoneOffset();
@@ -87,12 +89,14 @@ async function boot(){if(booted)return;booted=true;const ref=startParam(),s=S();
  if(ref&&ref!==myId()&&!s.growth.refBy){s.growth.refBy=ref;Game.save();setTimeout(()=>toast(online?_t('growth.ty_ekipazhe'):_t('growth.ty_ekipazhe2')),2200);}
  if(!API||!initData()){renderAll();return;}
  try{const r=await api('/api/session',{startParam:ref?'ref_'+ref:'',tzOffset:tzOffset(),local:{updatedAt:s.updatedAt,progress:G.progressScore(s)}});online=true;serverUser=r.user||null;session=r.session||null;social=r.social||null;rules=r.rules||null;setCrew(r.crew);channelInfo=r.channel||channelInfo;
+  if(r.resetEpoch&&String(r.resetEpoch)!==epochGet()){let wiped=false;try{if(G.progressScore(S())>0&&window.MoonCore&&MoonCore.initial)wiped=Game.replace(MoonCore.initial());}catch{}try{localStorage.setItem(EPK,String(r.resetEpoch));}catch{}if(wiped)storyDone=[];}
   if(r.privacy)S().growth.lbHidden=!!r.privacy.hidden;
   if(r.season||r.goal||r.shop)setStage3(r);
   if(r.save&&r.save.data&&G.pickSave(S(),r.save.data)==='remote'&&!Game.running){if(Game.replace(r.save.data))toast(_t('growth.progress_zagruzhen'));}
   else cloudSave(true);
   if(r.streak)syncServerStreak(r.streak,null);
   if(r.story)storyDone=r.story.done||[];
+  setLife(r.life);
   await claimPending(r.rewards);}catch(e){online=false;netFail(e);}
  renderAll();if(online){netOk();syncStory();}}
 // ---------- v70 offline: retry the session with backoff; the save stays local and is uploaded (with any story checkpoints) once back ----------
@@ -106,17 +110,24 @@ if(REL){REL.retry=reconnect;REL.transport=list=>online?api('/api/client/errors',
 // The save never pays. Reached checkpoints (growth-core storyCheckpoints) are posted one by one; the server stamps the
 // time and refuses checkpoints that come too fast (429 too_fast) — then we simply try again a bit later.
 let storyDone=[],storyBusy=false,storyTimer=0;
-async function syncStory(){if(!online||storyBusy)return;const next=G.checkpointsToSend(S(),storyDone)[0];if(!next)return;storyBusy=true;clearTimeout(storyTimer);let wait=0;
- try{const r=await api('/api/story/checkpoint',{id:next});if(r.story)storyDone=r.story.done||storyDone;
+// v86 daily life unlock: the server says which LIFE waits and when it opens (life-gate.js draws the countdown / lock).
+let lifeInfo=null,lifeSkew=0,lifeHold=0;
+function setLife(l){if(!l||typeof l!=='object')return;lifeInfo=l;if(Number(l.now))lifeSkew=Number(l.now)-Date.now();try{window.MoonLife?.update?.();}catch{}}
+window.MoonGrowthLife={info:()=>lifeInfo,skew:()=>lifeSkew,online:()=>online,done:()=>storyDone.slice(),
+ refresh:async()=>{const r=await api('/api/life',{});if(r.story)storyDone=r.story.done||storyDone;setLife(r.life);return r.life;},
+ unlock:async n=>{const r=await api('/api/life/unlock',{life:n});if(r.story)storyDone=r.story.done||storyDone;setLife(r.life);lifeHold=0;syncStory();return r;},
+ invite:()=>shareChat('invite')};
+async function syncStory(){if(!online||storyBusy)return;const next=G.checkpointsToSend(S(),storyDone)[0];if(!next)return;if(lifeHold&&Date.now()<lifeHold)return;storyBusy=true;clearTimeout(storyTimer);let wait=0;
+ try{const r=await api('/api/story/checkpoint',{id:next});if(r.story)storyDone=r.story.done||storyDone;setLife(r.life);
   if(r.reward&&(r.reward.pending||r.reward.points)){G.applyServerReward(S(),r.reward);Game.save();api('/api/rewards/claim',{ids:[r.reward.id]}).catch(()=>{});
    haptic();toast(r.reward.pending?_t('moon.got_pending',{n:G.formatPoints(r.reward.pending)}):G.rewardText(r.reward));}wait=400;}
- catch(e){if(e.code==='too_fast')wait=15000;else if(e.code==='out_of_order'){try{const r=await api('/api/story',{});storyDone=r.story?.done||storyDone;wait=400;}catch{wait=30000;}}else if(e.status===429)wait=60000;else wait=0;}
+ catch(e){if(e.code==='life_locked'){setLife(e.data&&e.data.life);const at=Number(lifeInfo&&lifeInfo.opensAt)-lifeSkew;wait=Math.max(5000,Math.min(3600000,(at||0)-Date.now()+2000));lifeHold=Date.now()+wait;}else if(e.code==='too_fast')wait=15000;else if(e.code==='out_of_order'){try{const r=await api('/api/story',{});storyDone=r.story?.done||storyDone;setLife(r.life);wait=400;}catch{wait=30000;}}else if(e.status===429)wait=60000;else wait=0;}
  storyBusy=false;if(wait)storyTimer=setTimeout(syncStory,wait);}
 function cloudSave(force=false){if(!online)return;const now=Date.now();if(!force&&now-lastCloud<15000){clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>cloudSave(true),15000-(now-lastCloud));return;}lastCloud=now;const s=S();
  REL?.markPending(true);api('/api/save',{data:s,updatedAt:s.updatedAt}).then(r=>{REL?.markPending(false);if(REL&&REL.down)netOk();if(r.crew)setCrew(r.crew);if(r.rewards?.length)claimPending(r.rewards);if(r.accepted===false&&r.save?.data&&!Game.running&&G.pickSave(S(),r.save.data)==='remote')Game.replace(r.save.data);}).catch(e=>{if(isNet(e)){online=false;netFail(e);}});}
 Game.onSave=()=>{if(online){cloudSave(false);if(!storyBusy)syncStory();}else if(API&&initData())REL?.markPending(true);};
 // Last chance to upload when Telegram hides or closes the Mini App (keepalive survives page unload).
-function flushCloud(){if(!online)return;try{fetch(API+'/api/save',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json','Authorization':authHeader()},body:JSON.stringify({data:S(),updatedAt:S().updatedAt})}).catch(()=>{});lastCloud=Date.now();}catch{}}
+function flushCloud(){if(!online)return;try{fetch(API+'/api/save',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json','Authorization':authHeader()},body:JSON.stringify({data:S(),updatedAt:S().updatedAt,epoch:epochGet()})}).catch(()=>{});lastCloud=Date.now();}catch{}}
 addEventListener('pagehide',flushCloud);document.addEventListener('visibilitychange',()=>{if(document.hidden)flushCloud();});
 
 // ---------- dialogs ----------

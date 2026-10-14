@@ -1,0 +1,26 @@
+/* v86 daily life unlock: «Next Life opens in» screen, end-of-chapter countdown, cover / HUD lock banner, chapter list lock */
+.life-wait{max-width:min(420px,calc(100vw - 24px));padding:22px 18px 18px;text-align:center;background:radial-gradient(ellipse at 50% 0,#2a5f80,#0b2133 64%);border:1px solid #e9c67a66;border-radius:22px;color:#f4ecd8;position:relative}
+.life-wait .close-icon{position:absolute;top:8px;inset-inline-end:8px}
+.life-wait h2{margin:4px 0 10px;font-size:1.25rem}
+.lg-clock{display:flex;align-items:center;justify-content:center;gap:10px;margin:6px auto 10px;padding:12px 16px;border-radius:18px;background:#05121dcc;border:1px solid #e9c67a55;box-shadow:inset 0 0 24px #4fc3ff22,0 6px 24px #0008;width:max-content;max-width:100%}
+.lg-lock{font-size:1.6rem;filter:drop-shadow(0 0 8px #e9c67a88)}
+.lg-count{font-variant-numeric:tabular-nums;font-size:2.1rem;letter-spacing:.04em;color:#ffe3a3;text-shadow:0 0 14px #e9c67a66;direction:ltr;unicode-bidi:isolate}
+.lg-meanwhile{margin:4px 0 10px;line-height:1.4;font-size:.95rem;opacity:.95}
+.lg-chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.lg-chips button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:8px;border-radius:14px;background:#ffffff12;border:1px solid #ffffff2a;color:inherit;font-size:.9rem;line-height:1.15}
+.lg-use,.lg-invite{display:block;width:100%;margin:6px 0 0;min-height:46px}
+.lg-invite.secondary{background:#ffffff14;border:1px solid #e9c67a77;color:#ffe3a3;border-radius:14px}
+.lg-hint{margin:10px 0 0;font-size:.8rem;opacity:.75;line-height:1.35}
+.lg-ok{margin-top:10px;background:none;border:0;color:#cfe6ff;text-decoration:underline;min-height:40px}
+#end .lg-end{margin:10px 0 12px;padding:12px 12px 10px;border-radius:18px;background:#05121d99;border:1px solid #e9c67a44;text-align:center}
+#end .lg-end h3{margin:2px 0 6px;font-size:1.05rem}
+#end .lg-end .lg-count{font-size:1.7rem}
+.lg-banner{display:flex;align-items:center;justify-content:center;gap:6px;margin:6px 0 8px;padding:8px 14px;border-radius:999px;border:1px solid #e9c67a77;background:#05121dcc;color:#ffe3a3;font-size:.92rem;min-height:40px}
+.lg-banner[hidden]{display:none}
+.lg-banner b{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+#lg-hud{position:fixed;top:calc(env(safe-area-inset-top,0px) + 62px);left:50%;transform:translateX(-50%);z-index:30;margin:0;font-size:.85rem;display:none;max-width:calc(100vw - 24px)}
+#lg-hud.on:not([hidden]){display:flex}
+.cover:not([hidden])~#lg-hud,html.mk-booting #lg-hud{display:none!important}
+.chapter-card.lg-locked{opacity:.92;border-color:#e9c67a66}
+.chapter-card.lg-locked small{color:#ffe3a3}
+html.mk-calm .lg-lock{filter:none}

@@ -1710,5 +1710,22 @@
  "fg.title":"Your first goal",
  "fg.follow":"Follow the arrow at the top — the joystick on the left moves the cat.",
  "fg.ok":"Got it",
- "fg.cover":"First goal: {goal}"
+ "fg.cover":"First goal: {goal}",
+ "bot.life_open":"🔓 LIFE #{n} is open! Your cat astronaut is ready for the next chapter of the story.\n\n/stop — no more reminders",
+ "lg.eyebrow":"Daily life unlock",
+ "lg.title":"Next Life opens in",
+ "lg.title_n":"Life {n} opens in",
+ "lg.meanwhile":"Meanwhile: do the daily tasks, send your cat-bots on shifts, dig in the mines and decorate your house.",
+ "lg.invite":"Invite a friend to open now",
+ "lg.use":"Open now ({n} friend unlocks)",
+ "lg.hint":"Every invited friend who completes Life 1 and plays 3 days opens one Life instantly.",
+ "lg.ok":"Got it",
+ "lg.status":"Opens in {t}",
+ "lg.toast":"Life {n} opens in {t}. Meanwhile: daily tasks, bots, mines and your house.",
+ "lg.opened":"Life {n} is open!",
+ "lg.notify":"The bot will message you when it opens.",
+ "lg.c_daily":"Daily tasks",
+ "lg.c_bots":"Cat-bots",
+ "lg.c_mines":"Mines",
+ "lg.c_house":"House"
 });

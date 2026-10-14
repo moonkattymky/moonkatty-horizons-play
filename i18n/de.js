@@ -1710,5 +1710,22 @@
  "fg.title":"Dein erstes Ziel",
  "fg.follow":"Folge dem Pfeil oben — der Joystick links bewegt die Katze.",
  "fg.ok":"Verstanden",
- "fg.cover":"Erstes Ziel: {goal}"
+ "fg.cover":"Erstes Ziel: {goal}",
+ "bot.life_open":"🔓 LEBEN #{n} ist offen! Deine Astronauten-Katze ist bereit für das nächste Kapitel.\n\n/stop — keine Erinnerungen",
+ "lg.eyebrow":"Jeden Tag ein neues Leben",
+ "lg.title":"Das nächste Leben öffnet in",
+ "lg.title_n":"Leben {n} öffnet in",
+ "lg.meanwhile":"Bis dahin: Tagesaufgaben erledigen, Katzen-Bots auf Schicht schicken, in den Minen graben und dein Haus einrichten.",
+ "lg.invite":"Freund einladen – jetzt öffnen",
+ "lg.use":"Jetzt öffnen ({n} durch Freunde)",
+ "lg.hint":"Jeder eingeladene Freund, der Leben 1 schafft und 3 Tage spielt, öffnet sofort ein Leben.",
+ "lg.ok":"Alles klar",
+ "lg.status":"Öffnet in {t}",
+ "lg.toast":"Leben {n} öffnet in {t}. Bis dahin: Tagesaufgaben, Bots, Minen und dein Haus.",
+ "lg.opened":"Leben {n} ist offen!",
+ "lg.notify":"Der Bot schreibt dir, wenn es offen ist.",
+ "lg.c_daily":"Tagesaufgaben",
+ "lg.c_bots":"Katzen-Bots",
+ "lg.c_mines":"Minen",
+ "lg.c_house":"Haus"
 });

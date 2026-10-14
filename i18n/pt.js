@@ -1710,5 +1710,22 @@
  "fg.title":"Seu primeiro objetivo",
  "fg.follow":"Siga a seta no topo — o joystick à esquerda move o gato.",
  "fg.ok":"Entendi",
- "fg.cover":"Primeiro objetivo: {goal}"
+ "fg.cover":"Primeiro objetivo: {goal}",
+ "bot.life_open":"🔓 A VIDA #{n} está aberta! Seu gato astronauta está pronto para o próximo capítulo.\n\n/stop — sem lembretes",
+ "lg.eyebrow":"Uma vida nova por dia",
+ "lg.title":"A próxima vida abre em",
+ "lg.title_n":"A vida {n} abre em",
+ "lg.meanwhile":"Enquanto isso: faça as tarefas do dia, mande seus gatos-robôs trabalhar, explore as minas e decore sua casa.",
+ "lg.invite":"Convide um amigo para abrir agora",
+ "lg.use":"Abrir agora ({n} por amigos)",
+ "lg.hint":"Cada amigo convidado que concluir a vida 1 e jogar 3 dias abre uma vida na hora.",
+ "lg.ok":"Entendi",
+ "lg.status":"Abre em {t}",
+ "lg.toast":"A vida {n} abre em {t}. Enquanto isso: tarefas do dia, robôs, minas e sua casa.",
+ "lg.opened":"A vida {n} está aberta!",
+ "lg.notify":"O bot vai avisar quando abrir.",
+ "lg.c_daily":"Tarefas do dia",
+ "lg.c_bots":"Gatos-robôs",
+ "lg.c_mines":"Minas",
+ "lg.c_house":"Casa"
 });

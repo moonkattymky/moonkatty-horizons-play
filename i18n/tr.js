@@ -1710,5 +1710,22 @@
  "fg.title":"İlk hedefin",
  "fg.follow":"Üstteki oku takip et — soldaki joystick kediyi yürütür.",
  "fg.ok":"Anladım",
- "fg.cover":"İlk hedef: {goal}"
+ "fg.cover":"İlk hedef: {goal}",
+ "bot.life_open":"🔓 CAN #{n} açıldı! Astronot kedin hikâyenin sonraki bölümüne hazır.\n\n/stop — hatırlatma yok",
+ "lg.eyebrow":"Her gün yeni bir can",
+ "lg.title":"Sonraki can açılıyor:",
+ "lg.title_n":"Can {n} açılıyor:",
+ "lg.meanwhile":"Bu arada: günlük görevleri yap, kedi-botlarını vardiyaya gönder, madenleri kaz ve evini döşe.",
+ "lg.invite":"Arkadaş davet et, şimdi aç",
+ "lg.use":"Şimdi aç (arkadaşlardan: {n})",
+ "lg.hint":"Davet ettiğin ve can 1’i bitirip 3 gün oynayan her arkadaş bir canı hemen açar.",
+ "lg.ok":"Anladım",
+ "lg.status":"{t} sonra açılır",
+ "lg.toast":"Can {n}, {t} sonra açılır. Bu arada: günlük görevler, botlar, madenler ve evin.",
+ "lg.opened":"Can {n} açıldı!",
+ "lg.notify":"Açıldığında bot sana yazacak.",
+ "lg.c_daily":"Günlük görevler",
+ "lg.c_bots":"Kedi-botlar",
+ "lg.c_mines":"Madenler",
+ "lg.c_house":"Ev"
 });
