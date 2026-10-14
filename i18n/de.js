@@ -1582,5 +1582,7 @@
  "net.boot_title":"Das Spiel wurde nicht geladen",
  "net.boot_text":"Beim Laden ist etwas schiefgelaufen. Versuch es noch einmal — dein Fortschritt ist sicher.",
  "net.boot_offline":"Keine Internetverbindung. Prüfe sie und versuch es noch einmal — dein Fortschritt ist sicher.",
- "net.reload":"Erneut versuchen"
+ "net.reload":"Erneut versuchen",
+ "html.quality_auto":"Auto · passend zum Handy",
+ "game.auto_low":"Das Spiel hat sich an dein Handy angepasst: Der flüssige Modus ist an (im Menü änderbar)."
 });

@@ -1582,5 +1582,7 @@
  "net.boot_title":"The game did not load",
  "net.boot_text":"Something went wrong while loading. Try again — your progress is safe.",
  "net.boot_offline":"No internet connection. Check it and try again — your progress is safe.",
- "net.reload":"Try again"
+ "net.reload":"Try again",
+ "html.quality_auto":"Auto · fits your phone",
+ "game.auto_low":"The game adapted to your phone: smooth mode is on (change it in the menu)."
 });

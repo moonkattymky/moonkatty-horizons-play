@@ -1582,5 +1582,7 @@
  "net.boot_title":"游戏没有加载成功",
  "net.boot_text":"加载时出了点问题。再试一次吧——你的进度很安全。",
  "net.boot_offline":"没有网络连接。请检查网络后再试一次——你的进度很安全。",
- "net.reload":"再试一次"
+ "net.reload":"再试一次",
+ "html.quality_auto":"自动 · 适配你的手机",
+ "game.auto_low":"游戏已适配你的手机：已开启流畅模式（可在菜单中更改）。"
 });

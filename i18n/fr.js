@@ -1582,5 +1582,7 @@
  "net.boot_title":"Le jeu ne s’est pas chargé",
  "net.boot_text":"Un problème est survenu pendant le chargement. Réessaie — ta progression est en sécurité.",
  "net.boot_offline":"Pas de connexion Internet. Vérifie-la et réessaie — ta progression est en sécurité.",
- "net.reload":"Réessayer"
+ "net.reload":"Réessayer",
+ "html.quality_auto":"Auto · adapté à ton téléphone",
+ "game.auto_low":"Le jeu s’est adapté à ton téléphone : le mode fluide est activé (modifiable dans le menu)."
 });

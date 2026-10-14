@@ -1582,5 +1582,7 @@
  "net.boot_title":"El juego no se ha cargado",
  "net.boot_text":"Algo salió mal al cargar. Inténtalo de nuevo: tu progreso está a salvo.",
  "net.boot_offline":"No hay conexión a internet. Compruébala e inténtalo de nuevo: tu progreso está a salvo.",
- "net.reload":"Reintentar"
+ "net.reload":"Reintentar",
+ "html.quality_auto":"Auto · según tu teléfono",
+ "game.auto_low":"El juego se adaptó a tu teléfono: el modo fluido está activado (puedes cambiarlo en el menú)."
 });

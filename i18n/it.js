@@ -1582,5 +1582,7 @@
  "net.boot_title":"Il gioco non si è caricato",
  "net.boot_text":"Qualcosa è andato storto durante il caricamento. Riprova: i tuoi progressi sono al sicuro.",
  "net.boot_offline":"Nessuna connessione a internet. Controllala e riprova: i tuoi progressi sono al sicuro.",
- "net.reload":"Riprova"
+ "net.reload":"Riprova",
+ "html.quality_auto":"Auto · adatta al telefono",
+ "game.auto_low":"Il gioco si è adattato al tuo telefono: la modalità fluida è attiva (puoi cambiarla nel menu)."
 });

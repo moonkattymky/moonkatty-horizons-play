@@ -1582,5 +1582,7 @@
  "net.boot_title":"Oyun yüklenmedi",
  "net.boot_text":"Yüklenirken bir sorun oldu. Tekrar dene — ilerlemen güvende.",
  "net.boot_offline":"İnternet bağlantısı yok. Kontrol edip tekrar dene — ilerlemen güvende.",
- "net.reload":"Tekrar dene"
+ "net.reload":"Tekrar dene",
+ "html.quality_auto":"Otomatik · telefonuna göre",
+ "game.auto_low":"Oyun telefonuna uyum sağladı: akıcı mod açık (menüden değiştirebilirsin)."
 });
