@@ -1,5 +1,5 @@
 (function(root){'use strict';
-const RIDE={"image":"assets/moonkatty-ride-v63.webp?v=20261014-68a","imageWidth":865,"imageHeight":1099,"directions":{"up":{"x":0,"y":0,"w":385,"h":568,"anchorX":192.3,"anchorY":403.6,"bodyHeight":540.5,"hands":[[-0.791,0.448],[0.799,0.448]]},"left":{"x":391,"y":0,"w":461,"h":519,"anchorX":193.2,"anchorY":355.5,"bodyHeight":540.5,"hands":[[-0.722,0.504]]},"down":{"x":0,"y":574,"w":392,"h":514,"anchorX":196.2,"anchorY":356.1,"bodyHeight":540.5,"hands":[[-0.672,0.494],[0.695,0.494]]},"right":{"x":398,"y":574,"w":461,"h":519,"anchorX":267.8,"anchorY":355.5,"bodyHeight":540.5,"hands":[[0.722,0.504]]}}};
+const RIDE={"image":"assets/moonkatty-ride-v63.webp?v=20261014-69a","imageWidth":865,"imageHeight":1099,"directions":{"up":{"x":0,"y":0,"w":385,"h":568,"anchorX":192.3,"anchorY":403.6,"bodyHeight":540.5,"hands":[[-0.791,0.448],[0.799,0.448]]},"left":{"x":391,"y":0,"w":461,"h":519,"anchorX":193.2,"anchorY":355.5,"bodyHeight":540.5,"hands":[[-0.722,0.504]]},"down":{"x":0,"y":574,"w":392,"h":514,"anchorX":196.2,"anchorY":356.1,"bodyHeight":540.5,"hands":[[-0.672,0.494],[0.695,0.494]]},"right":{"x":398,"y":574,"w":461,"h":519,"anchorX":267.8,"anchorY":355.5,"bodyHeight":540.5,"hands":[[0.722,0.504]]}}};
 const atlas=root.MoonCharacterAtlas,R=root.MoonRenderer.prototype,originalCat=R.cat,originalScene=R.scene;
 R.scene=function(...args){this.crewSprites=[];return originalScene.apply(this,args);};
 const VERT=`attribute vec3 position;attribute vec2 texcoord;uniform mat4 vp;varying vec2 uv;varying vec3 W;void main(){uv=texcoord;W=position;gl_Position=vp*vec4(position,1.);}`;
@@ -29,8 +29,10 @@ R.initCharacterSprites=function(){
  }catch(e){s.failed=true;console.warn('MOONKATTY character sprite fallback:',e.message);}
  return s;
 };
+// v69: the 3D cat parts (sculpted-cat.js, ~0.8 MB) are only the fallback while the sprite sheets load, so they are fetched on demand
+let sculptCatAsked=false;function loadSculptCat(r){if(sculptCatAsked||root.MoonSculptedCatReady||typeof document==='undefined')return;sculptCatAsked=true;setTimeout(()=>{let sp=null;try{sp=r.initCharacterSprites();}catch(e){}if(root.MoonSculptedCatReady||(sp&&sp.ready&&sp.idleReady)){sculptCatAsked=false;return;}const s=document.createElement('script');s.src='sculpted-cat.js?v=20261014-69a';s.async=true;document.head.appendChild(s);},8000);}
 R.cat=function(x,z,yaw,t,moving,alt,ch,accent,hero,equipment){
- const sprite=this.initCharacterSprites();if(!sprite.ready||(!hero&&!sprite.idleReady))return originalCat.call(this,x,z,yaw,t,moving,alt,ch,accent,hero,equipment);
+ const sprite=this.initCharacterSprites();if(!sprite.ready||(!hero&&!sprite.idleReady)){loadSculptCat(this);return originalCat.call(this,x,z,yaw,t,moving,alt,ch,accent,hero,equipment);}
  if(!hero){const q=this._npcActor;(this.crewSprites||(this.crewSprites=[])).push({x,z,yaw,alt:(alt||0)+(q?q.hop:0),speed:q&&q.moving?1:0,lean:q?q.lean:0,t});return;}
  const ground=this.terrain(x,z,ch);
  if(alt>.15){const camera=Math.atan2(this.eye[0]-x,this.eye[2]-z);for(const side of[-1,1])this.put('cone',x+Math.cos(camera)*side*.20,ground+alt+.10,z-Math.sin(camera)*side*.20,.055,.38+Math.sin(t*35)*.04,.055,[.04,.7,1],0,0,1,Math.PI);}

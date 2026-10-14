@@ -24,7 +24,7 @@ R.ensureWorldModels=function(){if(this.meshes.round)return;for(const[k,data]of O
  for(const[x,z,s,h]of fragments)if(!Object.values(root.MoonCore.POINTS).some(p=>Math.hypot(x-p[0],z-p[1])<s+2.0)&&!root.MoonCore.resources.some(p=>Math.hypot(x-p.x,z-p.z)<s+1.2))this.rocks.push({x,z,s,h,r:x*.73});
  this.pebbles=[];let seed=281;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};for(let i=0;i<1150;i++){const x=(rnd()-.5)*80,z=(rnd()-.5)*84-9;const path=Math.abs(x-Math.sin(z*.07)*5);this.pebbles.push({x,z,s:(.04+rnd()**3*.60)*(path<3?.38:1)});}
 };
-const originalScene=R.scene;R.scene=function(state,...args){this.ensureWorldModels();const out=originalScene.call(this,state,...args);if(state.chapter===1)this.habitat(4,-5,1);this.expeditionProps(state.chapter);this.put('geologicalHorizon',0,0,0,2.2,1.4,2.2,[.52,.51,.48],0,4);return out;};
+const originalScene=R.scene;R.scene=function(state,...args){this.ensureWorldModels();const out=originalScene.call(this,state,...args);if(state.chapter===1)this.habitat(4,-5,1);this.expeditionProps(state.chapter);return out;};
 R.cat=function(x,z,yaw,t,moving,alt,ch,accent=P.orange,hero=false,equipment={}){
  const ground=root.MoonCore.surfaceHeight(x,z,ch)+alt,bob=moving?Math.sin(t*8)*.018:Math.sin(t*1.8)*.006,c=Math.cos(yaw),s=Math.sin(yaw);
  const put=(shape,lx,y,lz,sx,sy,sz,col,kind=0,pitch=0,roll=0,glow=0)=>this.put(shape,x+c*lx+s*lz,ground+y+bob,z-s*lx+c*lz,sx,sy,sz,col,yaw,kind,glow,pitch,roll);

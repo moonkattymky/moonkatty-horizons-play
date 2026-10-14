@@ -10,17 +10,17 @@ const A='assets/cinema/';
 // from the cat to the story object. V busts GitHub Pages / Telegram caches of the old portrait files that kept the same names.
 const V='?v=38',V4='?v=43',V5='?v=57',V6='?v=58',V7='?v=65',V8='?v=67',V9='?v=68';
 // Optional titleY (fraction of the screen height) moves the title card off the key object; default 66%.
-const CH1={img:A+'ch1-awakening.jpg'+V,from:[.355,.42,1.08],to:[.60,.62,1.1],sky:.3,fx:['stars','dust'],glows:[[.415,.51,.05,'blue'],[.60,.54,.05,'amber'],[.083,.68,.03,'blue'],[.168,.835,.035,'blue'],[.79,.85,.035,'blue'],[.915,.75,.03,'blue'],[.78,.23,.14,'earth']],
+const CH1={img:A+'ch1-awakening.webp'+V,from:[.355,.42,1.08],to:[.60,.62,1.1],sky:.3,fx:['stars','dust'],glows:[[.415,.51,.05,'blue'],[.60,.54,.05,'amber'],[.083,.68,.03,'blue'],[.168,.835,.035,'blue'],[.79,.85,.035,'blue'],[.915,.75,.03,'blue'],[.78,.23,.14,'earth']],
  title:[_t('life.n',{n:1}),_t('chapter.1')],kicker:_t('cine.zadanie'),text:_t('cine.naydi_bortovoy'),mood:'title',mark:'ch1'};
 const SCENES={
  intro:{name:_t('cine.vstuplenie'),frames:chapter=>[
-  {img:A+'intro-1-voyage.jpg',from:[.40,.50,1.06],to:[.62,.42,1.0],sky:.8,fx:['stars','dust'],glows:[[.285,.585,.035,'amber'],[.25,.62,.03,'amber'],[.725,.25,.12,'earth'],[.10,.39,.03,'earth']],
+  {img:A+'intro-1-voyage.webp',from:[.40,.50,1.06],to:[.62,.42,1.0],sky:.8,fx:['stars','dust'],glows:[[.285,.585,.035,'amber'],[.25,.62,.03,'amber'],[.725,.25,.12,'earth'],[.10,.39,.03,'earth']],
    kicker:_t('cine.ekspeditsiya_novye'),text:_t('cine.korabl_gorizont'),mood:'space'},
-  {img:A+'intro-2-crash.jpg',from:[.49,.46,1.16],to:[.47,.64,1.02],sky:.25,fx:['meteors','fall','dust'],impact:{at:2400,x:.44,y:.70},glows:[[.47,.66,.05,'amber'],[.58,.45,.035,'amber'],[.64,.30,.03,'amber'],[.45,.18,.09,'earth']],
+  {img:A+'intro-2-crash.webp',from:[.49,.46,1.16],to:[.47,.64,1.02],sky:.25,fx:['meteors','fall','dust'],impact:{at:2400,x:.44,y:.70},glows:[[.47,.66,.05,'amber'],[.58,.45,.035,'amber'],[.64,.30,.03,'amber'],[.45,.18,.09,'earth']],
    kicker:_t('cine.trevoga_meteoritny'),text:_t('cine.udar_kapsulu'),mood:'danger'},
-  {img:A+'intro-3-capsule.jpg',from:[.58,.38,1.3],to:[.55,.42,1.04],fx:['wake','alarm','dust'],glows:[[.955,.235,.025,'amber'],[.27,.04,.02,'amber'],[.12,.42,.08,'earth']],
+  {img:A+'intro-3-capsule.webp',from:[.58,.38,1.3],to:[.55,.42,1.04],fx:['wake','alarm','dust'],glows:[[.955,.235,.025,'amber'],[.27,.04,.02,'amber'],[.12,.42,.08,'earth']],
    kicker:_t('cine.kapsula_svyazi'),text:_t('cine.tishina_migaet'),mood:'alarm'},
-  {img:A+'intro-4-earth.jpg',from:[.34,.58,1.14],to:[.66,.44,1.0],sky:.3,fx:['stars','dust'],glows:[[.085,.69,.03,'blue'],[.43,.84,.035,'blue'],[.79,.33,.2,'earth'],[.80,.78,.03,'amber']],
+  {img:A+'intro-4-earth.webp',from:[.34,.58,1.14],to:[.66,.44,1.0],sky:.3,fx:['stars','dust'],glows:[[.085,.69,.03,'blue'],[.43,.84,.035,'blue'],[.79,.33,.2,'earth'],[.80,.78,.03,'amber']],
    kicker:'MOONKATTY',text:_t('cine.tam_nad'),mood:'hope'},
   ...(chapter===1?[CH1]:[])],marks:chapter=>chapter===1?['intro','ch1']:['intro']},
  ch1:{name:_t('life.title',{n:1,name:_t('chapter.1')}),frames:()=>[CH1],marks:()=>['ch1']},
