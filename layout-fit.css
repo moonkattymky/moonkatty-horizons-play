@@ -1,0 +1,20 @@
+/* v73b iPhone fit (loaded last): one safe-area model for top and bottom, a right-hand column that never stacks on itself,
+   button labels that stay inside their own column, a single footer line above the home indicator. Portrait phones only. */
+html{--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)}
+html[data-tg-fullscreen=true]{--st:var(--tg-safe-top,0px);--sb:max(var(--tg-safe-bottom,0px),env(safe-area-inset-bottom,0px))}
+@media (orientation:portrait) and (max-width:520px) and (min-height:600px){
+ /* right column under the quest card: menu → energy → compass */
+ #app-viewport .hud-menu{top:max(214px,calc(var(--st) + 204px))!important}
+ html #app-viewport .dm-energy{top:max(284px,calc(var(--st) + 274px))!important;right:max(10px,env(safe-area-inset-right))!important}
+ html #app-viewport .dm-compass.dm-compass{top:max(326px,calc(var(--st) + 316px))!important;right:max(10px,env(safe-area-inset-right))!important;left:auto!important}
+ /* bottom: footer line → button labels → buttons */
+ html #app-viewport>footer{bottom:calc(var(--sb) + 4px)!important;left:12px!important;right:12px!important;display:flex!important;justify-content:space-between;gap:8px;font-size:9.5px!important;line-height:1.2}
+ html #app-viewport>footer>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;max-width:50%;padding:3px 6px!important}
+ html #app-viewport>.controls{bottom:calc(var(--sb) + 62px)!important}
+ html #app-viewport .actions{gap:14px!important}
+ html #app-viewport .actions button>span,html #app-viewport .actions #interact>span{position:absolute!important;top:calc(100% + 5px)!important;bottom:auto!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important;
+  width:auto!important;max-width:84px!important;min-width:56px;min-height:0!important;padding:3px 6px!important;font-size:11px!important;line-height:1.15!important;white-space:normal!important;overflow:hidden;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;width:max-content!important;text-align:center}
+ html #app-viewport>.fuel{bottom:calc(var(--sb) + 62px + 92px)!important}
+}
+/* the jetpack meter shows only while it is used or refilling */
+#app-viewport>.fuel{opacity:0;transition:opacity .25s;pointer-events:none}#app-viewport>.fuel.on{opacity:1}
