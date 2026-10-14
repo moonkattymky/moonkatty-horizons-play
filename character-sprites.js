@@ -1,5 +1,5 @@
 (function(root){'use strict';
-const RIDE={"image":"assets/moonkatty-ride-v63.webp?v=20261014-86c","imageWidth":865,"imageHeight":1099,"directions":{"up":{"x":0,"y":0,"w":385,"h":568,"anchorX":192.3,"anchorY":403.6,"bodyHeight":540.5,"hands":[[-0.791,0.448],[0.799,0.448]]},"left":{"x":391,"y":0,"w":461,"h":519,"anchorX":193.2,"anchorY":355.5,"bodyHeight":540.5,"hands":[[-0.722,0.504]]},"down":{"x":0,"y":574,"w":392,"h":514,"anchorX":196.2,"anchorY":356.1,"bodyHeight":540.5,"hands":[[-0.672,0.494],[0.695,0.494]]},"right":{"x":398,"y":574,"w":461,"h":519,"anchorX":267.8,"anchorY":355.5,"bodyHeight":540.5,"hands":[[0.722,0.504]]}}};
+const RIDE={"image":"assets/moonkatty-ride-v63.webp?v=20261014-87a","imageWidth":865,"imageHeight":1099,"directions":{"up":{"x":0,"y":0,"w":385,"h":568,"anchorX":192.3,"anchorY":403.6,"bodyHeight":540.5,"hands":[[-0.791,0.448],[0.799,0.448]]},"left":{"x":391,"y":0,"w":461,"h":519,"anchorX":193.2,"anchorY":355.5,"bodyHeight":540.5,"hands":[[-0.722,0.504]]},"down":{"x":0,"y":574,"w":392,"h":514,"anchorX":196.2,"anchorY":356.1,"bodyHeight":540.5,"hands":[[-0.672,0.494],[0.695,0.494]]},"right":{"x":398,"y":574,"w":461,"h":519,"anchorX":267.8,"anchorY":355.5,"bodyHeight":540.5,"hands":[[0.722,0.504]]}}};
 const atlas=root.MoonCharacterAtlas,R=root.MoonRenderer.prototype,originalCat=R.cat,originalScene=R.scene;
 R.scene=function(...args){this.crewSprites=[];return originalScene.apply(this,args);};
 const VERT=`attribute vec3 position;attribute vec2 texcoord;uniform mat4 vp;varying vec2 uv;varying vec3 W;void main(){uv=texcoord;W=position;gl_Position=vp*vec4(position,1.);}`;
@@ -34,7 +34,7 @@ R.initCharacterSprites=function(){
  return s;
 };
 // v69: the 3D cat parts (sculpted-cat.js, ~0.8 MB) are only the fallback while the sprite sheets load, so they are fetched on demand
-let sculptCatAsked=false;function loadSculptCat(r){if(sculptCatAsked||root.MoonSculptedCatReady||typeof document==='undefined')return;sculptCatAsked=true;setTimeout(()=>{let sp=null;try{sp=r.initCharacterSprites();}catch(e){}if(root.MoonSculptedCatReady||(sp&&sp.ready&&sp.idleReady)){sculptCatAsked=false;return;}const s=document.createElement('script');s.src='sculpted-cat.js?v=20261014-86c';s.async=true;document.head.appendChild(s);},8000);}
+let sculptCatAsked=false;function loadSculptCat(r){if(sculptCatAsked||root.MoonSculptedCatReady||typeof document==='undefined')return;sculptCatAsked=true;setTimeout(()=>{let sp=null;try{sp=r.initCharacterSprites();}catch(e){}if(root.MoonSculptedCatReady||(sp&&sp.ready&&sp.idleReady)){sculptCatAsked=false;return;}const s=document.createElement('script');s.src='sculpted-cat.js?v=20261014-87a';s.async=true;document.head.appendChild(s);},8000);}
 R.cat=function(x,z,yaw,t,moving,alt,ch,accent,hero,equipment){
  const sprite=this.initCharacterSprites();if(!sprite.ready||(!hero&&!sprite.idleReady)){loadSculptCat(this);return originalCat.call(this,x,z,yaw,t,moving,alt,ch,accent,hero,equipment);}
  if(!hero){const q=this._npcActor;(this.crewSprites||(this.crewSprites=[])).push({x,z,yaw,alt:(alt||0)+(q?q.hop:0),speed:q&&q.moving?1:0,lean:q?q.lean:0,t});return;}
@@ -110,7 +110,15 @@ R.drawCharacterSprites=function(vp,p,state,t,dt){
  const point=(x,y,u,v)=>[p.x+right[0]*x,base+y,p.z+right[1]*x,u,v];
  const source=useIdle?atlas.idle:detailed?row:atlas; s.currentImage=source.image; const u0=f.x/source.imageWidth,u1=(f.x+f.w)/source.imageWidth,v0=f.y/source.imageHeight,v1=(f.y+f.h)/source.imageHeight;
  let bot=bottom,vb=v1,dy=0;if(rideB){const cut=rideB.cut;bot=bottom+(top-bottom)*cut;vb=v1-(v1-v0)*cut;dy=rideB.y-(base+bot);}
- const fc=faceCam(this.eye,p.x,p.z,base+dy),P2=(x,y,u,v)=>{const q=point(x,y,u,v);q[1]+=dy;return fc(q);};const a=P2(left,top,u0,v0),b=P2(left,bot,u0,vb),c=P2(left+width,bot,u1,vb),d=P2(left+width,top,u1,v0);this.spriteLight={frameUV:[u0,v0,u1-u0,v1-v0],spriteRight:[right[0],0,right[1]]};
+ /* v87 procedural life on the hero sprite: run bob + squash/stretch, takeoff stretch / landing squash, idle breathing, happy bounce (MoonFX.joy) */
+ const FXo=root.MoonFX,still=!!(FXo&&FXo.calm&&FXo.calm()),tt=t||0,air=p.alt>.15;let sy=1,bobY=0;
+ if(!rideB){if(walking){const ph=Math.abs(Math.sin(s.time*Math.PI*2));bobY=ph*.045;sy=1+(ph-.5)*.05;}
+  else if(air){const vv=p.velocity||0;sy=1+Math.max(-.06,Math.min(.1,vv*.02));}
+  else if(!still)sy=1+Math.sin(tt*2.4)*.012;
+  if(s.wasAir&&!air)s.landAt=tt;s.wasAir=air;const la=tt-(s.landAt||-9);if(!air&&la<.28&&!still)sy*=1-.11*Math.sin(la/.28*Math.PI);
+  const jk=FXo&&!still?(performance.now()-FXo.joy)/900:9;if(jk>=0&&jk<1&&!air&&!walking){const b=Math.abs(Math.sin(jk*Math.PI*2));bobY+=b*.32*(1-jk);sy*=1+(b-.35)*.10*(1-jk);}}
+ const sx=1/Math.sqrt(sy);
+ const fc=faceCam(this.eye,p.x,p.z,base+dy),P2=(x,y,u,v)=>{const q=point(x*sx,y*sy+bobY,u,v);q[1]+=dy;return fc(q);};const a=P2(left,top,u0,v0),b=P2(left,bot,u0,vb),c=P2(left+width,bot,u1,vb),d=P2(left+width,top,u1,v0);this.spriteLight={frameUV:[u0,v0,u1-u0,v1-v0],spriteRight:[right[0],0,right[1]]};
  this.drawCharacterShadow(vp,p,state,camera);
  const gl=this.gl;gl.useProgram(s.program);gl.uniformMatrix4fv(s.vp,false,vp);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,useIdle?s.idleTexture:detailed?s.directionTextures[direction].texture:s.texture);gl.uniform1i(s.map,0);gl.uniform4f(s.frameUV,u0,v0,u1-u0,v1-v0);gl.uniform3fv(s.right,[right[0],0,right[1]]);gl.uniform3fv(s.eye,this.eye);gl.bindBuffer(gl.ARRAY_BUFFER,s.buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([...a,...b,...c,...a,...c,...d]),gl.DYNAMIC_DRAW);
  gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
