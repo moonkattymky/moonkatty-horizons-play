@@ -2,7 +2,7 @@
    in small batches), a non-blocking "No connection — retry" bar while the server is unreachable (progress keeps saving locally and
    is uploaded when the link is back), and a full-screen retry when the game itself fails to load. Loaded right after i18n.js. */
 (function(root){'use strict';
-const Q_KEY='mk-err-q',P_KEY='mk-sync-pending',MAX_Q=12,BUILD='20261014-87a',T=(k,d)=>{try{const v=root._t?root._t(k):k;return v&&v!==k?v:d;}catch(e){return d;}};
+const Q_KEY='mk-err-q',P_KEY='mk-sync-pending',MAX_Q=12,BUILD='20261014-87c',T=(k,d)=>{try{const v=root._t?root._t(k):k;return v&&v!==k?v:d;}catch(e){return d;}};
 let q=[];try{q=JSON.parse(localStorage.getItem(Q_KEY)||'[]');if(!Array.isArray(q))q=[];}catch(e){q=[];}
 const seen=new Set(q.map(e=>e.msg+'|'+e.src));let sending=false,transport=null,bar=null,fatal=null,netDown=false,retryFn=null;
 function store(){try{localStorage.setItem(Q_KEY,JSON.stringify(q.slice(-MAX_Q)));}catch(e){}}
