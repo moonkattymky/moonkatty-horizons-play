@@ -1368,7 +1368,7 @@
  "pack.boost_limit":"Zaten 2 destek botu çalışıyor; bunu sonra al.",
  "bike.comet":"Ay Kuyruklu Yıldızı",
  "bike.comet_d":"Siyah ve altın, alevli iz ve 'Yarışçı' çerçevesi. Hız aynı.",
- "bike.stars":"{n} Stars",
+ "bike.stars":"{n} ⭐",
  "menu.open":"Menü",
  "menu.title":"Bölümler",
  "menu.shop":"Mağaza",

@@ -1368,7 +1368,7 @@
  "pack.boost_limit":"Já há 2 bots de impulso trabalhando: pegue este mais tarde.",
  "bike.comet":"Cometa Lunar",
  "bike.comet_d":"Preto e dourado, rastro de fogo e a moldura «Piloto». Mesma velocidade.",
- "bike.stars":"{n} Stars",
+ "bike.stars":"{n} ⭐",
  "menu.open":"Menu",
  "menu.title":"Seções",
  "menu.shop":"Loja",

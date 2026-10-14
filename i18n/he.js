@@ -1368,7 +1368,7 @@
  "pack.boost_limit":"כבר עובדים 2 בוטי בוסט — קח את זה אחר כך.",
  "bike.comet":"השביט הירחי",
  "bike.comet_d":"שחור וזהב, שובל אש ומסגרת „רוכב מירוץ”. אותה מהירות.",
- "bike.stars":"{n} Stars",
+ "bike.stars":"{n} ⭐",
  "menu.open":"תפריט",
  "menu.title":"אזורים",
  "menu.shop":"חנות",
