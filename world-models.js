@@ -18,7 +18,7 @@ R.ensureWorldModels=function(){if(this.meshes.round)return;for(const[k,data]of O
  this.addMesh('capsuleHull',lathe([[0,0],[.74,0],[.94,.14],[1,.38],[.85,.65],[.57,.86],[.32,.97],[0,1.03]]));
  // Keep wide approach corridors around every quest item and resource.
  this.rocks=this.rocks.filter((r,i)=>i%3!==0);for(const r of this.rocks){r.h=1.8+r.h*.5;r.s*=.85;}
- const authored=[[-2,14.8,.9,1.2],[2.5,13.5,1.3,1.3],[-2.8,18,1.9,1.4],[4.5,18,1.8,1.5],[-4,18,1.8,1.7],[-3.5,21,1.8,1.7],[4,23,2.2,1.8],[-7,15,2.8,3.1],[7,6,2.3,1.5],[-13,13,3.3,3.8],[10,10,3.0,2.0],[19,1,4.0,3.9],[-23,-3,4,4.5],[5,-15,2.4,1.8],[-23,-30,2.5,3.2],[10,-32,2.8,3.2],[24,-20,3.4,3.4],[-9,-21,2.3,2.5]];
+ const authored=[[-2,14.8,.9,1.2],[2.5,13.5,1.3,1.3],[-2.8,18,1.9,1.4],[4.5,18,1.8,1.5],[-4,18,1.8,1.7],[-3.5,21,1.8,1.7],[4,23,2.2,1.8],[-7,15,2.8,3.1],[7,6,2.3,1.5],[-13,13,3.3,3.8],[10,10,3.0,2.0],[19,1,4.0,3.9],[-26,-3,4,4.5],[5,-15,2.4,1.8],[-23,-30,2.5,3.2],[10,-32,2.8,3.2],[24,-20,3.4,3.4],[-9,-21,2.3,2.5]];
  for(const[x,z,s,h]of authored){if(!Object.values(root.MoonCore.POINTS).some(p=>Math.hypot(x-p[0],z-p[1])<s*.7+2.0))this.rocks.push({x,z,s,h,r:x*.57});}
  const fragments=[[-8,13,2.6,2.1],[-8,9,2.3,2.0],[-5.5,12,1.4,1.3],[8,13,2.4,2.3],[8.5,8,1.5,1.4],[-18,7,2.6,1.8],[15,6,2.6,1.9],[20,-10,3.1,2.5],[-18,-23,2.1,1.8]];
  for(const[x,z,s,h]of fragments)if(!Object.values(root.MoonCore.POINTS).some(p=>Math.hypot(x-p[0],z-p[1])<s+2.0)&&!root.MoonCore.resources.some(p=>Math.hypot(x-p.x,z-p.z)<s+1.2))this.rocks.push({x,z,s,h,r:x*.73});
