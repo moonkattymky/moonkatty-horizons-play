@@ -14,7 +14,7 @@ const old={scene:R.scene,render:R.render,blocked:R.blocked,camera:R.cameraBlocke
 const TAU=Math.PI*2,DRAW_R=150,CH=5,F=Core.FORGE,P=Core.POINTS;
 const norm=v=>{const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l];},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
 function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
-const MATS={ivory:[17,[.97,.94,.86]],gold:[16,[1,.76,.30]],pgold:[16,[1,.82,.38]],stone:[4,[.60,.55,.50]],amber:[12,[1,.62,.18]],aCrystal:[12,[.98,.48,.10]],aHi:[12,[1,.80,.40]],aCore:[12,[1,.88,.55]],vCrystal:[12,[.30,.08,.66]],vHi:[12,[.70,.42,1]],vCore:[12,[1,.82,1]],lens:[12,[1,.86,.45]],tile:[16,[.86,.62,.26]],tile2:[17,[.92,.86,.72]],dark:[0,[.07,.07,.09]]};
+const MATS={ivory:[17,[.97,.94,.86]],gold:[16,[1,.76,.30]],pgold:[16,[1,.82,.38]],stone:[4,[.60,.55,.50]],amber:[12,[1,.62,.18]],aCrystal:[30,[.98,.52,.14]],aHi:[12,[1,.80,.40]],aCore:[12,[1,.88,.55]],vCrystal:[30,[.42,.16,.82]],vHi:[12,[.70,.42,1]],vCore:[12,[1,.82,1]],lens:[12,[1,.86,.45]],tile:[16,[.86,.62,.26]],tile2:[17,[.92,.86,.72]],dark:[0,[.07,.07,.09]]};
 const GATE={x:F.x,z:F.z-1.2,r:2.7},BOWL=[F.x,F.z+3.1],SPIRES=[[F.x-7.2,F.z-3.4,1.15],[F.x+7.2,F.z-3.4,1.15]];
 const SPARKS=['spark1','spark2','spark3'].map(id=>({id,x:P[id][0],z:P[id][1]}));
 const CRYST=[[F.x-9.6,F.z+2.6,1.0,1],[F.x+9.4,F.z+2.2,.9,1],[F.x-4.4,F.z-8.6,.8,0],[F.x+4.6,F.z-8.4,.85,1],[F.x-10.5,F.z-6.5,.7,0],[F.x+10.8,F.z-6.0,.75,0]];

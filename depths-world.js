@@ -16,8 +16,8 @@ const TAU=Math.PI*2,DRAW_R=120,CH=6,D=Core.DEEP,P=Core.POINTS;
 const norm=v=>{const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l];},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
 function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
 const MATS={stoneB:[4,[.80,.76,.98]],stoneL:[4,[.84,.82,.96]],silver:[17,[.88,.94,1]],gold:[16,[1,.78,.34]],
- tCrystal:[12,[.10,.90,.84]],tHi:[12,[.55,1,1]],tCore:[12,[.86,1,1]],pCrystal:[12,[.82,.20,.62]],pHi:[12,[1,.56,.86]],pCore:[12,[1,.9,.98]],
- vCrystal:[12,[.40,.16,.80]],vHi:[12,[.72,.52,1]],vCore:[12,[.95,.88,1]],stem:[17,[.90,.96,.94]],capT:[12,[.22,.92,.92]],capP:[12,[1,.44,.78]],
+ tCrystal:[30,[.14,.88,.84]],tHi:[12,[.55,1,1]],tCore:[12,[.86,1,1]],pCrystal:[30,[.86,.28,.66]],pHi:[12,[1,.56,.86]],pCore:[12,[1,.9,.98]],
+ vCrystal:[30,[.48,.22,.86]],vHi:[12,[.72,.52,1]],vCore:[12,[.95,.88,1]],stem:[17,[.90,.96,.94]],capT:[12,[.22,.92,.92]],capP:[12,[1,.44,.78]],
  bell0:[12,[.30,1,.92]],bell1:[12,[1,.48,.84]],bell2:[12,[.66,.46,1]],bell3:[12,[1,.78,.30]],pool:[12,[.22,.96,.90]],moss:[12,[.18,.72,.62]],heart:[12,[1,.62,.86]],heartHi:[12,[1,.92,.62]],dark:[0,[.07,.07,.10]]};
 const CRY={t:['tCrystal','tHi','tCore'],p:['pCrystal','pHi','pCore'],v:['vCrystal','vHi','vCore']};
 const ECHO=['echo1','echo2','echo3'].map((id,i)=>({id,x:P[id][0],z:P[id][1],c:['t','p','v'][i]}));

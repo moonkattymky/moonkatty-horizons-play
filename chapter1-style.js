@@ -13,7 +13,7 @@ const R=root.MoonRenderer&&root.MoonRenderer.prototype,Core=root.MoonCore,B=root
 const old={scene:R.scene,render:R.render,blocked:R.blocked,put:R.put};
 const TAU=Math.PI*2,norm=v=>{const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l];},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
 function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
-const MATS={ivory:[17,[.93,.91,.86]],gold:[16,[.98,.70,.28]],pgold:[16,[1.0,.78,.34]],amber:[12,[1,.66,.22]],violet:[12,[.78,.36,1.0]],membrane:[12,[.30,.10,.62]],crystal:[12,[.20,.05,.52]],crystalHi:[12,[.66,.40,1.0]],core:[12,[1.0,.80,1.0]],aCrystal:[12,[.95,.46,.12]],aCrystalHi:[12,[1.0,.80,.42]],aCore:[12,[1.0,.95,.70]],stone:[4,[.62,.60,.64]]};
+const MATS={ivory:[17,[.93,.91,.86]],gold:[16,[.98,.70,.28]],pgold:[16,[1.0,.78,.34]],amber:[12,[1,.66,.22]],violet:[12,[.78,.36,1.0]],membrane:[12,[.30,.10,.62]],crystal:[30,[.36,.16,.78]],crystalHi:[12,[.66,.40,1.0]],core:[12,[1.0,.80,1.0]],aCrystal:[30,[.98,.54,.16]],aCrystalHi:[12,[1.0,.80,.42]],aCore:[12,[1.0,.95,.70]],stone:[4,[.62,.60,.64]]};
 // sites (checked clear of story points, resources and daily beacons; see tests/chapter1-style.cjs)
 const PORTAL={x:-24,z:12,yaw:Math.PI/2,r:3.2},TOWERS=[[-27.5,17.5,1.25],[-27.5,6.5,1.25],[-13,39,1.1]],CRYSTALS=[[-20.5,7.5,1.0],[-20.5,16.8,.85],[-16.5,37.5,1.1],[-9.5,38.5,.8]];
 const PEDESTALS=[-1,1].map(s=>[PORTAL.x,PORTAL.z+s*(PORTAL.r+.35)]);

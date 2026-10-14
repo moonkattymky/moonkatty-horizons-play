@@ -12,7 +12,7 @@ const old={scene:R.scene,blocked:R.blocked,camera:R.cameraBlocked};
 const TAU=Math.PI*2,DRAW_R=62,BUILD_R=68,CAMP=[0,-5],CAMP_GATE=[7,9];
 const norm=v=>{const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l];},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
 function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
-const MATS={gold:[16,[1,.74,.30]],ivory:[17,[1,.92,.76]],win:[12,[1,.72,.30]],stone:[4,[.62,.58,.52]],dark:[0,[.06,.07,.09]],violet:[17,[.58,.26,1]],amber:[12,[1,.46,.05]],vcore:[12,[.78,.46,1]],acore:[12,[1,.72,.28]],path:[12,[.42,.70,1]],vpath:[12,[.70,.40,1]],rock:[4,[.40,.38,.43]],swirl:[12,[.58,.34,1]],swirl2:[12,[.28,.85,1]],fence:[12,[.40,.80,1]],chest:[0,[.34,.21,.11]],gate:[12,[1,.74,.34]],imp:[12,[1,.72,.32]],impv:[12,[.62,.32,1]]};
+const MATS={gold:[16,[1,.74,.30]],ivory:[17,[1,.92,.76]],win:[12,[1,.72,.30]],stone:[4,[.62,.58,.52]],dark:[0,[.06,.07,.09]],violet:[30,[.62,.34,1]],amber:[30,[1,.56,.16]],vcore:[12,[.78,.46,1]],acore:[12,[1,.72,.28]],path:[12,[.42,.70,1]],vpath:[12,[.70,.40,1]],rock:[4,[.40,.38,.43]],swirl:[12,[.58,.34,1]],swirl2:[12,[.28,.85,1]],fence:[12,[.40,.80,1]],chest:[0,[.34,.21,.11]],gate:[12,[1,.74,.34]],imp:[12,[1,.72,.32]],impv:[12,[.62,.32,1]]};
 const GLOW={ivory:.34,win:1.25,imp:.55,impv:.6,vcore:.8,acore:.75,path:.32,vpath:.34,swirl:.9,swirl2:.85,fence:.55,gate:.45,violet:.2,amber:.3,gold:.3};
 // ---------- layout (local: +z faces the camp) ----------
 const D={};for(const d of Core.DISTRICTS){const f=[CAMP[0]-d.x,CAMP[1]-d.z],l=Math.hypot(f[0],f[1]);D[d.id]={...d,yaw:Math.atan2(f[0]/l,f[1]/l),cols:[],chests:[],relics:[]};}
@@ -114,12 +114,13 @@ function build(r,id,ch){r.v55=r.v55||{};const k=id+':'+ch;if(r.v55[k])return r.v
  // floating rocks (anomaly) and fence pylons
  L.rocks=[];if(id==='anomaly'&&r.meshes.geology0){const rnd=rng(66);for(let i=0;i<11;i++){const a=i/11*TAU+.3,rad=5+rnd()*5,w=W(d,Math.cos(a)*rad,Math.sin(a)*rad);L.rocks.push({x:w[0],z:w[1],y:ground(r,ch,w[0],w[1])+3+rnd()*6,s:1.1+rnd()*1.5,mesh:'geology'+(i%3),ph:rnd()*TAU});}}
  L.pylons=[];for(let i=0;i<24;i++){const a=i/24*TAU,x=d.x+Math.cos(a)*d.lock,z=d.z+Math.sin(a)*d.lock;L.pylons.push([x,ground(r,ch,x,z)-.05,z]);}
- const w=W(d,0,0);L.y0=ground(r,ch,w[0],w[1]);return r.v55[k]=L;}
+ const w=W(d,0,0);L.y0=ground(r,ch,w[0],w[1]);
+ L.cast=id==='crystal'?[{x:w[0],z:w[1],r:1.4,h:12,k:1},...d.field.map(([lx,lz,sc])=>{const q=W(d,lx,lz);return{x:q[0],z:q[1],r:.45*sc,h:2.6*sc,k:1};})]:[];return r.v55[k]=L;}
 function drawList(r,list,t,mul=1){for(const[key,mat]of list){const[kind,c]=MATS[mat]||[0,[.5,.5,.5]];const g=(GLOW[mat]||0)*(mat==='win'?1+.08*Math.sin(t*1.3):mat==='swirl'||mat==='swirl2'?.8+.25*Math.sin(t*2.1):1)*mul;r.put(key,0,0,0,1,1,1,c,0,kind,g);}}
 const view={opened:[],relics:[]};
 R.scene=function(state,p,t,...args){const out=old.scene.call(this,state,p,t,...args);if(!state)return out;const ch=state.chapter||1,eye=this.eye||[p?p.x:0,0,p?p.z:0],low=this.quality==='low',U=unitMeshes(this);
- for(const id in D){const d=D[id],dist=Math.hypot(eye[0]-d.x,eye[2]-d.z);if(dist>DRAW_R-2&&dist<215){const y=this.terrain(d.x,d.z,ch)-.2,f=Math.min(1,(dist-DRAW_R+2)/10);for(const[k,m]of impostor(this,id)){const[kind,cc]=MATS[m];this.put(k,d.x,y,d.z,1,1,1,cc,d.yaw,kind,GLOW[m]*f);}}if(dist>BUILD_R)continue;const L=build(this,id,ch);if(dist>DRAW_R)continue;
-  drawList(this,L.main,t);if(!low)drawList(this,L.det,t);
+ for(const id in D){const d=D[id],dist=Math.hypot(eye[0]-d.x,eye[2]-d.z);if(dist>DRAW_R-2&&dist<215){const y=this.terrain(d.x,d.z,ch)-.2,f=Math.min(1,(dist-DRAW_R+2)/10);for(const[k,m]of impostor(this,id)){const[kind,cc]=MATS[m];this.put(k,d.x,y,d.z,1,1,1,cc,d.yaw,kind,GLOW[m]*f);}}if(dist>BUILD_R||dist>DRAW_R){if(this.v76Cast)this.v76Cast.delete(id);if(dist>BUILD_R)continue;}const L=build(this,id,ch);if(dist>DRAW_R)continue;
+  drawList(this,L.main,t);if(!low)drawList(this,L.det,t);(this.v76Cast=this.v76Cast||new Map()).set(id,L.cast||[]);
   if(!isOpen(d,state))for(const[x,y,z]of L.pylons)for(const[k,m]of U.pylon){const[kind,cc]=MATS[m];this.put(k,x,y,z,1,1,1,cc,0,kind,.45+.2*Math.sin(t*2+x));}
   for(const c of d.chests){const y=this.terrain(c.x,c.z,ch)-.02,done=view.opened.includes(c.id),s=c.big?1.25:1;for(const[k,m]of U.chest){const[kind,cc]=MATS[m];this.put(k,c.x,y,c.z,s,s,s,cc,d.yaw,kind,m==='gold'?.1:0);}
    if(!done){for(const[k,m]of U.lid){const[kind,cc]=MATS[m];this.put(k,c.x,y,c.z,s,s,s,cc,d.yaw,kind,m==='gold'?.1:0);}for(const[k,m]of U.loot){const[kind,cc]=MATS[m];this.put(k,c.x,y+.25+.06*Math.sin(t*2.4+c.x),c.z,s,s,s,cc,d.yaw,kind,.75+.25*Math.sin(t*3+c.z));}}}

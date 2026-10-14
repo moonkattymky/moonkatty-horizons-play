@@ -15,7 +15,7 @@ const old={scene:R.scene,render:R.render,blocked:R.blocked,camera:R.cameraBlocke
 const TAU=Math.PI*2,DRAW_R=95,H=Core.HOME,STEPS=Core.HOME_STEPS;
 const MATS={ivory:[17,[1,.95,.86]],white:[17,[.97,.97,1]],steel:[17,[.70,.76,.84]],dark:[0,[.08,.09,.12]],gold:[16,[1,.76,.32]],stone:[4,[.80,.76,.90]],
  teal:[12,[.20,.95,.86]],tealHi:[12,[.70,1,.96]],amber:[12,[1,.66,.24]],pink:[17,[1,.62,.80]],pinkG:[12,[1,.52,.80]],roofP:[17,[.96,.46,.66]],roofB:[17,[.36,.70,.96]],
- glass:[12,[.30,.80,.66]],overall:[17,[.24,.42,.86]],mPocket:[17,[.18,.30,.66]],mHelmet:[17,[1,.56,.14]],vest:[17,[1,.62,.10]],reflect:[12,[1,1,.80]],bag:[17,[.62,.38,.20]],leaf:[17,[.36,.86,.52]],panel:[16,[.24,.40,.86]],wood:[17,[.86,.62,.38]],crystA:[12,[1,.62,.26]],crystV:[12,[.70,.40,1]],
+ glass:[12,[.30,.80,.66]],overall:[17,[.24,.42,.86]],mPocket:[17,[.18,.30,.66]],mHelmet:[17,[1,.56,.14]],vest:[17,[1,.62,.10]],reflect:[12,[1,1,.80]],bag:[17,[.62,.38,.20]],leaf:[17,[.36,.86,.52]],panel:[16,[.24,.40,.86]],wood:[17,[.86,.62,.38]],crystA:[30,[1,.62,.26]],crystV:[30,[.70,.40,1]],
  eye:[12,[.40,1,.96]],aMiner:[17,[1,.62,.22]],aMech:[17,[.24,.84,.92]],aBuild:[17,[1,.84,.24]],aCour:[17,[1,.50,.72]],hat:[17,[1,.82,.22]],box:[17,[.90,.66,.40]],lamp:[12,[1,.86,.50]],rock:[4,[.58,.54,.64]],rockD:[4,[.42,.39,.50]],rockL:[4,[.72,.68,.78]],weld:[12,[.75,.95,1]],flame:[12,[1,.62,.24]],rail:[16,[.62,.66,.74]]};
 const ACC={miner:'aMiner',mechanic:'aMech',builder:'aBuild',courier:'aCour'};
 // ---------- layout (local, +z = south, the gate faces the camp at -z) ----------
@@ -170,7 +170,7 @@ function courierFlying(t){const M=view();if(!M)return false;return(M.view.bots||
 const on=s=>!!s;
 R.scene=function(state,p,t,...args){const out=old.scene.call(this,state,p,t,...args);if(!on(state))return out;const eye=this.eye||[0,0,0];if(Math.hypot(eye[0]-H.x,eye[2]-H.z)>DRAW_R)return out;
  const v=this.v59Build(),ch=state.chapter||1,low=this.quality==='low',st=stageOf(state),pl=plotOf(state),lvl=pl?pl.level|0:1,G=(lx,lz)=>this.terrain(H.x+lx,H.z+lz,ch);
- const draw=(name,lx,lz,yaw=0,dy=0,sc=1,pitch=0,roll=0)=>{const y=G(lx,lz)+dy;for(const[key,mat]of v.L[name]||[]){const[kind,col]=MATS[mat];const g=kind===12?(mat==='glass'?.12:mat==='teal'?.55+.1*Math.sin(t*1.6):.8):mat==='gold'?.1:0;this.put(key,H.x+lx,y,H.z+lz,sc,sc,sc,col,yaw,kind,g,pitch,roll);}};
+ const draw=(name,lx,lz,yaw=0,dy=0,sc=1,pitch=0,roll=0)=>{const y=G(lx,lz)+dy;for(const[key,mat]of v.L[name]||[]){const[kind,col]=MATS[mat];const g=kind===30?.35:kind===12?(mat==='glass'?.12:mat==='teal'?.55+.1*Math.sin(t*1.6):.8):mat==='gold'?.1:0;this.put(key,H.x+lx,y,H.z+lz,sc,sc,sc,col,yaw,kind,g,pitch,roll);}};
  draw('base',0,0,0,-.04);if(st>=1)draw('road',0,0,0,-.04);if(st>=2)draw('lamps',0,0,0,-.04);
  for(const k of['house','workshop','garden','house2','solar','tower']){const idx=STEPS.indexOf(k);if(st>idx)draw(k,POS[k][0],POS[k][1],BYAW[k]||0,-.05);else if(st===idx)draw('scaffold',POS[k][0],POS[k][1],Math.atan2(-POS[k][0],-POS[k][1])+Math.PI/2,-.05);}
  if(st>=STEPS.length)draw('scaffold',SPARE[0],SPARE[1],Math.atan2(-SPARE[0],-SPARE[1])+Math.PI/2,-.05);

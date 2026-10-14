@@ -20,6 +20,8 @@ function casters(r,state){const groups=new Map(),ch=state.chapter;
   const key=Math.round(m[12]*4)+','+Math.round(m[14]*4);let g=groups.get(key);if(!g)groups.set(key,g={x:m[12],z:m[14],lo:[1e9,1e9,1e9],hi:[-1e9,-1e9,-1e9]});for(let i=0;i<3;i++){g.lo[i]=Math.min(g.lo[i],center[i]-ext[i]);g.hi[i]=Math.max(g.hi[i],center[i]+ext[i]);}}
  const out=[];for(const g of groups.values()){const cx=(g.lo[0]+g.hi[0])/2,cz=(g.lo[2]+g.hi[2])/2,rad=Math.max(g.hi[0]-g.lo[0],g.hi[2]-g.lo[2])/2,ground=r.terrain(cx,cz,ch),h=g.hi[1]-ground;if(h<.22||rad>6.5||rad<.08)continue;out.push({x:cx,z:cz,r:rad*.82,h:Math.min(h,9),k:1});}
  for(const k of r.rocks)out.push({x:k.x,z:k.z,r:k.s*.75,h:k.h*.62,k:.9});
+ // v76: merged crystal fields register one caster per crystal (a merged mesh is too wide to cast a single shadow)
+ if(r.v76Cast)for(const list of r.v76Cast.values())for(const c of list)out.push(c);
  return out;}
 function buildShadows(r,state,list){const data=[],ch=state.chapter;
  for(const c of list){const L=Math.min(c.h*1.55,10),r0=c.r,a0=-r0*1.35,a1=L+r0*1.35,b0=-r0*1.35,b1=r0*1.35,na=Math.max(2,Math.min(9,Math.ceil((a1-a0)/1.4))),nb=Math.max(2,Math.min(4,Math.ceil((b1-b0)/1.6)));
