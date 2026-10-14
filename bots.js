@@ -5,7 +5,7 @@
 const Game=window.MoonGame,UI=window.MoonGrowthUI;if(!Game||!UI||typeof document==='undefined')return;
 const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]),T=(k,p)=>window._t?_t(k,p):k;
 const ICON={miner:'⛏️',mechanic:'🔧',builder:'🧱',courier:'📦'},BICON={road:'🐾',lamps:'💡',house:'🏠',workshop:'🛠️',garden:'🌱',house2:'🏡',solar:'☀️',tower:'🗼'};
-const KEY='moonkatty-bots-v59';
+const KEY='moonkatty-bots-v59',MICON={ice:'❄️',fire:'🔥',star:'✨'},MAT={ice:'mat_ice',fire:'mat_fire',star:'mat_star'};
 let view=null,at=0,busy=false,tick=null,pick=null,refresh=null;
 try{const c=JSON.parse(localStorage.getItem(KEY)||'null');if(c&&c.view&&c.at){view=c.view;at=c.at;}}catch{}
 const toast=t=>t&&Game.toast&&Game.toast(t),buzz=k=>{try{window.Telegram?.WebApp?.HapticFeedback?.notificationOccurred(k);}catch{}};
@@ -26,7 +26,7 @@ function plotHtml(p){const n=p.stage,m=p.steps.length,done=n>=m,lo=p.prevAt,hi=p
  h+=`<div class="ret-fill bots-fill"><i style="width:${Math.round(f*100)}%"></i></div><p class="ret-meta">${esc(done?T('bots.plot_done'):T('bots.plot_next',{b:T('bots.b_'+p.next),a:p.build,c:p.nextAt}))}</p>`;
  if(p.bonus&&(p.bonus.energy||p.bonus.workshop))h+=`<p class="ret-meta">${esc(T('bots.bonus',{e:p.bonus.energy,w:p.bonus.workshop}))}</p>`;return h+'</section>';}
 function botHtml(b){const st=stateOf(b),left=st==='working'?Math.max(0,(b.endsAt-now())/1000):0,f=st==='working'?1-left/Math.max(1,b.shiftSec):st==='ready'?1:0;
- let h=`<li class="bot-card ${st}${b.source==='stars'?' boost':''}" data-bot="${b.id}"><span class="bot-ava a-${b.prof}"><i>🤖</i><em>${ICON[b.prof]}</em></span><div class="bot-main"><div class="bot-top"><b>${esc(T('bots.p_'+b.prof))}</b><span class="bot-lv">${esc(T('bots.level',{n:b.level}))}</span>${b.source==='life'?`<span class="bot-tag">${esc(T('bots.free',{n:b.slot.slice(4)}))}</span>`:''}${b.source==='stars'&&b.expiresInSec!=null?`<span class="bot-tag gold">⭐ ${esc(T('bots.boost_left',{t:fmt(b.expiresInSec-(Date.now()-at)/1000)}))}</span>`:''}</div>`;
+ let h=`<li class="bot-card ${st}${b.source==='stars'?' boost':''}" data-bot="${b.id}"><span class="bot-ava a-${b.prof}"><i>🤖</i><em>${ICON[b.prof]}</em></span><div class="bot-main"><div class="bot-top"><b>${esc(T('bots.p_'+b.prof))}</b><span class="bot-lv">${esc(T('bots.level',{n:b.level}))}</span>${b.site?`<span class="bot-tag mine-tag">${MICON[b.site]||'⛏️'} ${esc(T('mine.'+b.site))}</span>`:''}${b.source==='life'?`<span class="bot-tag">${esc(T('bots.free',{n:b.slot.slice(4)}))}</span>`:''}${b.source==='stars'&&b.expiresInSec!=null?`<span class="bot-tag gold">⭐ ${esc(T('bots.boost_left',{t:fmt(b.expiresInSec-(Date.now()-at)/1000)}))}</span>`:''}</div>`;
  h+=`<div class="ret-fill bot-fill"><i style="width:${Math.round(f*100)}%"></i></div><div class="bot-sub"><span data-left="${b.id}">${esc(st==='working'?T('bots.working',{t:fmt(left)}):st==='ready'?T('bots.ready'):T('bots.idle'))}</span><small>${esc(outText(b.out))}</small></div>`;
  if(st==='idle'){if(pick===b.id){h+='<div class="bot-profs">'+(b.source==='stars'?['miner','mechanic','builder']:view.profs).map(p=>`<button type="button" data-prof="${p}" data-for="${b.id}" class="${p===b.prof?'on':''}">${ICON[p]} ${esc(T('bots.p_'+p))}<small>${esc(T('bots.d_'+p))}</small></button>`).join('')+'</div>';}
   h+=`<div class="ret-row"><button type="button" class="ret-ghost" data-pick="${b.id}">${esc(T('bots.choose'))}</button><button type="button" class="ret-main" data-start="${b.id}">${esc(T('bots.start'))}</button></div>`;}
@@ -44,6 +44,18 @@ function render(){const d=dlg();let h=head();
   if(mi.price==null)h+=`<p class="ret-note small">${esc(T('bots.mine_max'))}</p>`;else if(!mi.open)h+=`<p class="ret-note small">${esc(T('bots.hire_locked'))}</p>`;
   else h+=`<button type="button" class="ret-main ret-wide" data-mine ${busy?'disabled':''}>${esc(T('bots.mine_up',{n:mi.level+1,p:mi.price,c:mi.perLevel}))}</button>${typeof mp==='number'&&mp<mi.price?`<p class="ret-meta">${esc(T('bots.hire_poor'))}</p>`:''}`;
   h+='</section>';}
+ // v82 hidden map mines: found by exploring; send a miner for a rare material; craft with rare materials (never Stars)
+ const hd=v.hidden;if(hd){const freeMiner=v.bots.find(b=>b.prof==='miner'&&b.source!=='stars'&&stateOf(b)==='idle');
+  h+=`<section class="bots-hmines"><h3 class="bots-h">🗺️ ${esc(T('mine.hidden'))}</h3><div class="hm-mats">`+['ice','fire','star'].map(k=>`<span class="hm-mat m-${k}">${MICON[k]} <b>${hd.mat[k]|0}</b><small>${esc(T('mine.'+MAT[k]))}</small></span>`).join('')+'</div><ul class="hm-list">';
+  for(const m of hd.mines){const away=v.bots.filter(b=>b.site===m.id),wk=away.find(b=>stateOf(b)==='working'),rd=away.find(b=>stateOf(b)==='ready');
+   h+=`<li class="hm-row${m.found?' found':''} m-${m.id}"><span class="hm-ico">${m.found?MICON[m.id]:'❔'}</span><div><b>${esc(m.found?T('mine.'+m.id):T('mine.unknown'))}</b><small>${esc(!m.found?(!m.open?T('mine.locked'):m.fly?T('mine.need_fly'):T('mine.explore')):wk?T('mine.away',{t:fmt((wk.endsAt-now())/1000)}):rd?T('mine.back'):T('mine.trip',{t:fmt(m.tripSec)})+' · +'+m.yield+' '+MICON[m.mat]+' '+T('mine.'+MAT[m.mat]))}</small></div>`;
+   if(m.found&&!wk&&!rd)h+=`<button type="button" class="ret-main" data-hsend="${m.id}" ${freeMiner&&!busy?'':'disabled'}>${esc(T('mine.send'))}</button>`;h+='</li>';}
+  h+='</ul>';if(!freeMiner&&hd.mines.some(m=>m.found))h+=`<p class="ret-meta">${esc(T('mine.no_miner'))}</p>`;
+  const cost=k=>['ice','fire','star'].filter(x=>k[x]).map(x=>k[x]+MICON[x]).join(' '),can=k=>['ice','fire','star'].every(x=>(hd.mat[x]|0)>=(k[x]|0));
+  const rows=[];if(hd.speed<hd.maxSpeed){const k=hd.craft['speed'+(hd.speed+1)];rows.push(['speed',T('mine.speed',{n:hd.speed,m:hd.maxSpeed}),k]);}
+  for(const pn of['frost','ember'])if(!hd.paints.includes(pn))rows.push([pn,T('mine.paint_'+pn),hd.craft[pn]]);
+  if(rows.length)h+=`<h3 class="bots-h">🛠️ ${esc(T('mine.craft'))}</h3><div class="hm-craft">`+rows.map(([id,label,k])=>`<button type="button" data-hcraft="${id}" ${can(k)&&!busy?'':'disabled'}><b>${esc(label)}</b><small>${cost(k)}</small></button>`).join('')+'</div>';
+  h+=`<p class="ret-meta">💠 ${esc(hd.ghost?T('mine.ghost')+' ✓':T('mine.ghost_hint'))}</p><p class="ret-note small">${esc(T('mine.rare_note'))}</p></section>`;}
  // hire for Moon Points
  h+=`<section class="bots-shop"><h3 class="bots-h">${esc(T('bots.hire_title'))}</h3>`;
  if(!hi.open)h+=`<p class="ret-note small">${esc(T('bots.hire_locked'))}</p>`;else if(hi.price==null)h+=`<p class="ret-note small">${esc(T('bots.hire_full',{n:v.bots.filter(b=>b.source!=='stars').length}))}</p>`;
@@ -58,12 +70,15 @@ function render(){const d=dlg();let h=head();
 function wire(d){const q=(s,f)=>d.querySelectorAll(s).forEach(b=>b.onclick=()=>f(b));
  q('[data-collect]',()=>collect());q('[data-startall]',()=>start(view.bots.filter(b=>stateOf(b)==='idle').map(b=>b.id)));
  q('[data-pick]',b=>{pick=pick===Number(b.dataset.pick)?null:Number(b.dataset.pick);render();});q('[data-prof]',b=>start([Number(b.dataset.for)],b.dataset.prof));q('[data-start]',b=>start([Number(b.dataset.start)]));
- q('[data-hire]',b=>hire(b.dataset.hire));q('[data-mine]',()=>mineUp());q('[data-boost]',b=>boost(b.dataset.boost));}
-async function call(path,body){if(busy)return null;busy=true;try{const r=await UI.api(path,body);setView(r.bots);apply(r);return r;}catch(e){const er=e&&e.code||'';toast(er==='not_enough_points'?T('bots.hire_poor'):er==='busy'||er==='collect_first'?T('bots.busy'):er==='need_life1'?T('bots.hire_locked'):er==='max'?T('bots.mine_max'):T('bots.err'));try{setView((await UI.api('/api/bots',{})).bots);}catch{}return null;}finally{busy=false;render();}}
+ q('[data-hire]',b=>hire(b.dataset.hire));q('[data-mine]',()=>mineUp());q('[data-boost]',b=>boost(b.dataset.boost));
+ q('[data-hsend]',b=>hsend(b.dataset.hsend));q('[data-hcraft]',b=>hcraft(b.dataset.hcraft));}
+async function call(path,body){if(busy)return null;busy=true;try{const r=await UI.api(path,body);setView(r.bots);apply(r);return r;}catch(e){const er=e&&e.code||'';toast(er==='not_enough_rare'?T('mine.craft'):er==='miners_only'||er==='not_found_yet'?T('mine.no_miner'):er==='not_enough_points'?T('bots.hire_poor'):er==='busy'||er==='collect_first'?T('bots.busy'):er==='need_life1'?T('bots.hire_locked'):er==='max'?T('bots.mine_max'):T('bots.err'));try{setView((await UI.api('/api/bots',{})).bots);}catch{}return null;}finally{busy=false;render();}}
 async function load(){if(!UI.online){render();return;}try{const r=await UI.api('/api/bots',{});setView(r.bots);}catch{}if(dlg().open)render();}
-async function collect(){const r=await call('/api/bots/collect',{});if(!r)return;const c=r.collected;if(!c||!c.shifts){toast(T('bots.nothing'));return;}buzz('success');
+async function collect(){const r=await call('/api/bots/collect',{});if(!r)return;const c=r.collected,tr=r.trips||[];if(tr.length){buzz('success');toast(T('bots.got',{list:tr.map(x=>'+'+x.n+' '+MICON[x.mine]).join(' · ')}));if(tr.some(x=>x.ghost))setTimeout(()=>toast('💠 '+T('mine.ghost')+'!'),1700);}if(!c||!c.shifts){if(!tr.length)toast(T('bots.nothing'));return;}buzz('success');
  const list=[];if(c.crystals)list.push('+'+c.crystals+' 💎');if(c.metal)list.push('+'+c.metal+' ⚙️');if(c.points)list.push('+'+c.points+' 🌙');if(c.energy)list.push('+'+c.energy+' ⚡');if(c.build)list.push('+'+c.build+' 🧱');
  toast(T('bots.got',{list:list.join(' · ')}));if(c.built&&c.built.length)setTimeout(()=>toast(T('bots.built',{b:c.built.map(b=>T('bots.b_'+b)).join(', ')})),1600);else if(c.levelUps)setTimeout(()=>toast(T('bots.levelup')),1600);}
+async function hsend(mine){const b=view&&view.bots.find(x=>x.prof==='miner'&&x.source!=='stars'&&stateOf(x)==='idle');if(!b)return;const r=await call('/api/mines/send',{mine,id:b.id});if(r&&r.sent)buzz('success');}
+async function hcraft(item){const r=await call('/api/mines/craft',{item});if(r&&r.crafted){buzz('success');toast('✓ '+(item==='speed'?T('mine.speed',{n:r.bots.hidden.speed,m:r.bots.hidden.maxSpeed}):T('mine.paint_'+item)));window.MoonBike?.load?.();}}
 async function start(ids,prof){pick=null;const r=await call('/api/bots/start',prof?{ids,prof}:{ids});if(r)buzz('success');}
 async function mineUp(){const r=await call('/api/bots/mine',{});if(r&&r.mine){buzz('success');toast(T('bots.mine_done',{n:r.mine.level}));}}
 async function hire(prof){const r=await call('/api/bots/hire',{prof});if(r&&r.hired){buzz('success');toast(T('bots.hired',{p:T('bots.p_'+prof)}));}}

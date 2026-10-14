@@ -25,3 +25,4 @@ html[data-tg-fullscreen=true]{--st:var(--tg-safe-top,0px);--sb:max(var(--tg-safe
 /* v81 cat house door button (the interior css is lazy: cat-house.css) */
 .house-enter{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--sb,0px) + 150px);z-index:40;border:0;border-radius:999px;padding:11px 26px;font:700 16px system-ui;color:#3a2412;background:linear-gradient(#ffe08a,#ffb43a);box-shadow:0 3px 0 #b2701a,0 0 18px rgba(255,190,70,.7)}
 .house-enter[hidden]{display:none}
+.mine-enter{color:#fff;background:linear-gradient(#7ad7ff,#2e8fd8);box-shadow:0 3px 0 #1a5c96,0 0 18px rgba(110,210,255,.7)}

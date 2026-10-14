@@ -82,6 +82,12 @@ function svg(state,player,regions,target,label){const seen=seenList(state),o=[];
  for(const r of regions){const v=seen.includes(r.id),x=f1(r.x),z=f1(r.z),k=iconKey(r.id);
   o.push(`<g class="mk-place ${v?'seen':'fog'}" data-region="${esc(r.id)}" transform="translate(${x} ${z})">`+(v?`<circle r="11" fill="url(#mkGold)"/>`:'')+`<circle r="7.2" fill="${v?'#2a1f12':'#2c2a40'}" stroke="${v?'#ffd36a':'#9aa3c0'}" stroke-width="${v?.9:.5}" opacity="${v?1:.85}"/><g transform="scale(1.08)" opacity="${v?1:.6}"${v?'':' filter="grayscale(1)"'}>${IC[k]}</g>`+
    `<text y="-9.6" text-anchor="middle" font-size="4.3" font-weight="700" fill="${v?'#ffe9b0':'#d8deef'}" stroke="#120e22" stroke-width="1.1" paint-order="stroke" opacity="${v?1:.85}">${esc(r.name)}</text></g>`);}
+ // v82 hidden mines: a '?' until found (server view), then the mine icon in its material colour
+ {const HMv=root.MoonBots&&root.MoonBots.view&&root.MoonBots.view.hidden,HMs=root.MoonHiddenMines&&root.MoonHiddenMines.HM||{},C={ice:'#9fe4ff',fire:'#ff8a3a',star:'#ffe7a0'};
+  const list=HMv&&HMv.mines?HMv.mines:Object.keys(HMs).map(id=>({id,x:HMs[id].x,z:HMs[id].z,found:false}));
+  for(const m of list){const x=f1(m.x),z=f1(m.z),T=root._t||(k=>k);
+   o.push(m.found?`<g class="mk-hmine found" data-hmine="${esc(m.id)}" transform="translate(${x} ${z})"><circle r="6.6" fill="#1d1630" stroke="${C[m.id]}" stroke-width=".9"/><path d="M-4 3A4 4.6 0 0 1 4 3Z" fill="#5a5078"/><path d="M-1.7 3A1.7 2.2 0 0 1 1.7 3Z" fill="#120e22"/><path d="M-.5 2.6L0 .4L.5 2.6Z M1.6 1.6L2.3-.6L2.8 1.8Z" fill="${C[m.id]}" filter="url(#mkGlow)"/><text y="-8.6" text-anchor="middle" font-size="3.8" font-weight="700" fill="${C[m.id]}" stroke="#120e22" stroke-width="1" paint-order="stroke">${esc(T('mine.'+m.id))}</text></g>`
+    :`<g class="mk-hmine unknown" data-hmine="${esc(m.id)}" transform="translate(${x} ${z})"><circle r="5.4" fill="#2c2a40" stroke="#c9b6ff" stroke-width=".6" stroke-dasharray="1.4 1"/><text y="2.3" text-anchor="middle" font-size="7" font-weight="800" fill="#e8dcff">?</text></g>`);}}
  // the player: a golden paw with a pulse
  o.push(`<g class="mk-me" transform="translate(${px} ${pz})"><circle r="5" fill="none" stroke="#ffd36a" stroke-width=".8"><animate attributeName="r" values="4;8;4" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".9;0;.9" dur="2s" repeatCount="indefinite"/></circle><circle r="5.4" fill="#2a1a05" opacity=".55"/><g filter="url(#mkGlow)">${paw('#ffcf4a')}</g></g>`);
  return o.join('')+'</svg>';}

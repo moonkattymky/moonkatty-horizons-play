@@ -17,7 +17,8 @@ const MATS={ivory:[17,[1,.95,.86]],white:[17,[.97,.97,1]],steel:[17,[.70,.76,.84
  teal:[12,[.20,.95,.86]],tealHi:[12,[.70,1,.96]],amber:[12,[1,.66,.24]],pink:[17,[1,.62,.80]],pinkG:[12,[1,.52,.80]],roofP:[17,[.96,.46,.66]],roofB:[17,[.36,.70,.96]],
  glass:[12,[.30,.80,.66]],overall:[17,[.24,.42,.86]],mPocket:[17,[.18,.30,.66]],mHelmet:[17,[1,.56,.14]],vest:[17,[1,.62,.10]],reflect:[12,[1,1,.80]],bag:[17,[.62,.38,.20]],leaf:[17,[.36,.86,.52]],panel:[16,[.24,.40,.86]],wood:[17,[.86,.62,.38]],crystA:[30,[1,.62,.26]],crystV:[30,[.70,.40,1]],
  eye:[12,[.40,1,.96]],aMiner:[17,[1,.62,.22]],aMech:[17,[.24,.84,.92]],aBuild:[17,[1,.84,.24]],aCour:[17,[1,.50,.72]],hat:[17,[1,.82,.22]],box:[17,[.90,.66,.40]],lamp:[12,[1,.86,.50]],rock:[4,[.58,.54,.64]],rockD:[4,[.42,.39,.50]],rockL:[4,[.72,.68,.78]],weld:[12,[.75,.95,1]],flame:[12,[1,.62,.24]],rail:[16,[.62,.66,.74]],
- roofW:[17,[1,.60,.46]],winW:[12,[1,.80,.46]],glassD:[13,[.62,.80,.95]],pool:[12,[.25,.85,1]],flower:[17,[1,.56,.76]],cushion:[17,[.98,.74,.58]]};
+ roofW:[17,[1,.60,.46]],winW:[12,[1,.80,.46]],glassD:[13,[.62,.80,.95]],pool:[12,[.25,.85,1]],flower:[17,[1,.56,.76]],cushion:[17,[.98,.74,.58]],
+ iceM:[30,[.70,.90,1]],fireM:[12,[1,.44,.14]],fireC:[12,[1,.72,.30]],starM:[12,[1,.92,.62]],starC:[12,[.86,.80,1]],frostR:[4,[.86,.92,1]],emberR:[4,[.50,.34,.32]]};
 const ACC={miner:'aMiner',mechanic:'aMech',builder:'aBuild',courier:'aCour'};
 // ---------- layout (local, +z = south, the gate faces the camp at -z) ----------
 // v74: the plot is wider (fence 11.6 m) and every place has its own spot on a ring around the cat's plaza in the centre;
@@ -76,6 +77,15 @@ function bMine(b){const lump=(m,x,y,z,r,h)=>{const k=new B();dome(k,m,r,h,0);for
  b.tube('steel',[.0,1.83,2.12],[.0,2.05,2.12],.02,5);ball(b,'lamp',0,1.58,2.3,.13);
  // rails + sleepers to the cart stop
  for(let z=2.0;z<4.1;z+=.42)b.box('wood',.4,.03,z,.95,.06,.16);for(const x of[.12,.68])b.box('rail',x,.09,3.05,.05,.06,2.2);b.box('wood',.4,.2,4.18,.9,.4,.12);}
+// v82 hidden mines: the same rock-hill mine (no slab) in the region's stone, with glowing crystal veins of its material,
+// a lamp string over the mouth and a loaded cart on rails
+const HMAT={ice:['iceM','iceM','frostR'],fire:['fireM','fireC','emberR'],star:['starM','starC','rockL']};
+function bHidden(b,id){const[m1,m2,rk]=HMAT[id];bMine(b);
+ {const g=b.groups.get(rk)||[];for(const mm of['rock','rockL']){if(mm===rk)continue;const d=b.groups.get(mm);if(d){for(let i=0;i<d.length;i++)g.push(d[i]);b.groups.delete(mm);}}b.groups.set(rk,g);}
+ for(const[x,y,z,h,lean,dir,j]of[[1.25,.5,1.25,.9,.35,.6,0],[1.55,.4,.85,.6,.4,1.2,1],[-1.3,.5,1.15,.85,.3,-.6,0],[-1.6,.35,.7,.55,.45,-1.3,1],[.6,1.9,.5,.7,.25,.3,1],[-.4,2.1,-.2,.55,.3,-.4,0],[1.95,.25,-.3,.7,.3,1.5,0],[-2.0,.2,-.4,.6,.35,-1.5,1]])crystal(b,j?m2:m1,x,y,z,.16+.04*h,h,lean,dir);
+ for(let i=0;i<5;i++){const a=-.9+i*.45;ball(b,'lamp',Math.sin(a)*1.05,1.95+Math.cos(a)*.2,2.18,.08);}b.tube('steel',[-.95,1.95,2.18],[.95,1.95,2.18],.012,4);
+ const c=new B();bCart(c);for(const[mm,d]of c.groups){const g=b.groups.get(mm)||[];for(let i=0;i<d.length;i+=6)g.push(d[i]+.4,d[i+1]+.05,d[i+2]+3.6,d[i+3],d[i+4],d[i+5]);b.groups.set(mm,g);}
+ for(const[x,z,h,j]of[[.4,3.6,.5,0],[.24,3.82,.36,1],[.56,3.4,.4,1],[.57,3.84,.3,0]])crystal(b,j?m2:m1,x,.65,z,.08,h,.25,x*9+z);}
 function bCart(b){b.box('steel',0,.42,0,.62,.36,.86);b.box('wood',0,.62,0,.66,.06,.9);b.box('dark',0,.6,0,.5,.03,.74);for(const z of[-.28,.28])for(const s of[-1,1])b.tube('dark',[s*.3,.15,z],[s*.36,.15,z],.14,10);b.tube('gold',[0,.62,-.47],[0,.86,-.62],.025,5);}
 function bCartLoad(b){for(const[x,z,h,m]of[[0,0,.5,'crystA'],[-.16,.22,.36,'crystV'],[.16,-.2,.4,'crystV'],[.17,.24,.3,'crystA'],[-.18,-.22,.32,'crystA']])crystal(b,m,x,.6,z,.08,h,.25,x*9+z);}
 function bMineLevel(b,l){const C=[[1.0,1.9,-.6],[-.9,1.7,.5],[.3,2.6,-1.2],[1.8,1.3,.3]][l-2];const[x,y,z]=C;for(let j=0;j<3;j++)crystal(b,j%2?'crystV':'crystA',x+(j-1)*.24,y-.15,z+(j%2)*.18,.17+.04*j,.8+.2*j,.3,j*2.1+l);}
@@ -149,7 +159,7 @@ function bTool(b,prof){if(prof==='miner'){b.tube('wood',[0,0,0],[0,0,.55],.025,6
 function build(r){const L={},add=(n,b)=>{const map=new Map();merge(map,b);L[n]=[];for(const[mat,data]of map){if(!data.length)continue;const key='v59_'+n+'_'+mat;r.addMesh(key,data);L[n].push([key,mat]);}};
  const mk=f=>{const b=new B();f(b);return b;};
  add('base',mk(bBase));add('road',mk(bRoad));add('lamps',mk(bLamps));add('house',mk(b=>bHouse(b,'roofB')));add('house2',mk(b=>bHouse(b,'roofP')));add('workshop',mk(bWorkshop));add('garden',mk(bGarden));add('solar',mk(bSolar));add('tower',mk(bTower));
- add('catCozy',mk(bCozy));add('catVilla',mk(bVilla));add('catObs',mk(bObsBase));add('catObsRoof',mk(bObsRoof));add('scaffold',mk(b=>bScaffold(b,1.5)));add('mine',mk(bMine));add('cart',mk(bCart));add('cartLoad',mk(bCartLoad));add('rocket',mk(bRocket));for(const l of[2,3,4,5])add('mineL'+l,mk(b=>bMineLevel(b,l)));for(const l of[2,3,4])add('lvl'+l,mk(b=>bLevel(b,l)));
+ add('catCozy',mk(bCozy));add('catVilla',mk(bVilla));add('catObs',mk(bObsBase));add('catObsRoof',mk(bObsRoof));add('scaffold',mk(b=>bScaffold(b,1.5)));add('mine',mk(bMine));add('cart',mk(bCart));add('cartLoad',mk(bCartLoad));add('rocket',mk(bRocket));for(const id of['ice','fire','star'])add('hm_'+id,mk(b=>bHidden(b,id)));for(const l of[2,3,4,5])add('mineL'+l,mk(b=>bMineLevel(b,l)));for(const l of[2,3,4])add('lvl'+l,mk(b=>bLevel(b,l)));
  for(const p of Core.BOT_PROFS){add('bot_'+p,mk(b=>bBot(b,p)));if(p!=='courier')add('tool_'+p,mk(b=>bTool(b,p)));}
  return{L};}
 R.v59Build=function(){if(this.v59)return this.v59;return this.v59=build(this);};
@@ -170,7 +180,7 @@ function go(a,b,f,extra){const p=lerp(a,b,Math.max(0,Math.min(1,f)));return{x:p[
 const COUR_LOOP=40;
 // courier rocket flight on a 40 s loop: walk to the pad, board, lift off, away, land with a parcel, walk home
 function rocketAt(t,ph){const f=(t+ph)%COUR_LOOP;if(f<7||f>=31)return{y:0,on:true,fly:0};if(f<12){const k=(f-7)/5;return{y:k*k*34,on:true,fly:1,up:1};}if(f<25)return{on:false};const k=(31-f)/6;return{y:k*k*34,on:true,fly:1,up:0};}
-function botPose(b,i,n,st,t,cIdx=0){const ph=i*1.7,ready=b.state==='ready',idle=b.state==='idle',hm=home(i,n);
+function botPose(b,i,n,st,t,cIdx=0){const ph=i*1.7,ready=b.state==='ready',idle=b.state==='idle',hm=home(i,n);if(b.site&&!ready)return{x:0,z:0,yaw:0,hide:true,away:b.site};
  if(idle){const[x,z]=hm;return{x,z,yaw:Math.atan2(-x,-z)+Math.PI+Math.sin(t*.7+ph)*.3,moving:false,work:0,hop:0,sit:true};}
  if(b.prof==='miner'){
   if(ready){const o=at(MINE_OUT,0,(i%3)*.5-.5,0);return{x:o[0]+.3*(i%2),z:o[1],yaw:Math.atan2(MINE_CART[0]-o[0],MINE_CART[1]-o[1]),moving:false,work:0,hop:Math.abs(Math.sin(t*3.2+ph))*.14,cart:true};}
@@ -199,7 +209,14 @@ R.v59Poses=function(t){const M=view();if(!M)return[];const bots=(M.view.bots||[]
 function mineLvl(){const M=view();return M&&M.view.mine?Math.max(1,Math.min(5,M.view.mine.level|0)):1;}
 function courierFlying(t){const M=view();if(!M)return false;return(M.view.bots||[]).some(b=>b.prof==='courier'&&b.state==='working'&&!(b.endsAt&&serverNow(M)>=b.endsAt));}
 const on=s=>!!s;
-R.scene=function(state,p,t,...args){const out=old.scene.call(this,state,p,t,...args);if(!on(state))return out;const eye=this.eye||[0,0,0];if(Math.hypot(eye[0]-H.x,eye[2]-H.z)>DRAW_R)return out;
+// v82 hidden map mines (server: HMINES; the client list is only for drawing, the server checks every find)
+const HM={ice:{x:-23,z:70,face:[-6,52]},fire:{x:-24,z:-70,face:[-40,-76]},star:{x:-25.5,z:11.5,face:[-25.2,2],fly:true}},HM_SC=1.1,HM_R=2.35*HM_SC,HM_DRAW=80;
+for(const k in HM){const m=HM[k];m.yaw=Math.atan2(m.face[0]-m.x,m.face[1]-m.z);const d=rot(m.yaw,0,3.3*HM_SC);m.door=[m.x+d[0],m.z+d[1]];}
+function hmFound(id){const v=view(),h=v&&v.view.hidden;const m=h&&h.mines&&h.mines.find(x=>x.id===id);return!!(m&&m.found);}
+function drawHidden(r,state,t){if(!r.v59)r.v59Build();const v=r.v59,eye=r.eye||[0,0,0],ch=state.chapter||1;
+ for(const id in HM){const m=HM[id];if(Math.hypot(eye[0]-m.x,eye[2]-m.z)>HM_DRAW)continue;const y=r.terrain(m.x,m.z,ch)-.15;
+  for(const[key,mat]of v.L['hm_'+id]||[]){const[kind,col]=MATS[mat];const g=kind===30?.4:kind===12?(mat==='lamp'?.9:.75+.15*Math.sin(t*2+key.length)):mat==='gold'?.1:0;r.put(key,m.x,y,m.z,HM_SC,HM_SC,HM_SC,col,m.yaw,kind,g,0,0);}}}
+R.scene=function(state,p,t,...args){const out=old.scene.call(this,state,p,t,...args);if(!on(state))return out;try{drawHidden(this,state,t);}catch(e){}const eye=this.eye||[0,0,0];if(Math.hypot(eye[0]-H.x,eye[2]-H.z)>DRAW_R)return out;
  const v=this.v59Build(),ch=state.chapter||1,low=this.quality==='low',st=stageOf(state),pl=plotOf(state),lvl=pl?pl.level|0:1,G=(lx,lz)=>this.terrain(H.x+lx,H.z+lz,ch);
  const draw=(name,lx,lz,yaw=0,dy=0,sc=1,pitch=0,roll=0)=>{const y=G(lx,lz)+dy;for(const[key,mat]of v.L[name]||[]){const[kind,col]=MATS[mat];const g=kind===30?.35:kind===12?(mat==='glass'?.12:mat==='teal'?.55+.1*Math.sin(t*1.6):.8):mat==='gold'?.1:0;this.put(key,H.x+lx,y,H.z+lz,sc,sc,sc,col,yaw,kind,g,pitch,roll);}};
  draw('base',0,0,0,-.04);{const hs=houseStyle(state);if(hs==='house_villa')draw('catVilla',0,0,0,-.04,HS);else if(hs==='house_observatory'){draw('catObs',0,0,0,-.04,HS);draw('catObsRoof',0,0,t*.25,1.98*HS,HS);}else draw('catCozy',0,0,0,-.04,HS);}if(st>=1)draw('road',0,0,0,-.04);if(st>=2)draw('lamps',0,0,0,-.04);
@@ -221,7 +238,8 @@ const houseDoor=state=>[0,-(CH_R[houseStyle(state)]+.75)];
 function insideHome(x,z,state){const lx=x-H.x,lz=z-H.z;if(Math.hypot(lx,lz)>FENCE_R+1)return false;if(Math.hypot(lx,lz)<CH_R[houseStyle(state)])return true;const st=stageOf(state);
  for(const k of['house','workshop','garden','house2','solar','tower']){const idx=STEPS.indexOf(k);if(st>=idx&&Math.hypot(lx-POS[k][0],lz-POS[k][1])<RAD[k]*(st===idx?.9:1))return true;}
  for(const s of[-1,1])if(Math.hypot(lx-s*1.8,lz-GATE[1])<.3)return true;if(Math.hypot(lx-MINE[0],lz-MINE[1])<2.3*MS)return true;if(Math.hypot(lx-PAD[0],lz-PAD[1])<.75)return true;return false;}
-R.blocked=function(x,z,state,alt=0){if(state&&alt<2.4&&insideHome(x,z,state))return true;return old.blocked.call(this,x,z,state,alt);};
+function inHidden(x,z){for(const id in HM){const m=HM[id];if(Math.hypot(x-m.x,z-m.z)<HM_R)return true;}return false;}
+R.blocked=function(x,z,state,alt=0){if(state&&alt<2.4&&(insideHome(x,z,state)||inHidden(x,z)))return true;return old.blocked.call(this,x,z,state,alt);};
 if(old.camera)R.cameraBlocked=function(x,z,state,alt=0){if(state&&alt<1.4&&insideHome(x,z,state))return true;return old.camera.call(this,x,z,state,alt);};
 (root.MoonRockZones=root.MoonRockZones||[]).push({ch:1,out:r=>Math.hypot(r.x-H.x,r.z-H.z)<=H.r+3+r.s*.6||(Math.abs(r.x-H.x)<3.5+r.s*.6&&r.z<H.z&&r.z>H.z-24)});
 // ---------- fx: halos, hologram of the next building, sparks, ready markers ----------
@@ -235,7 +253,21 @@ function doorUpdate(state,p){const d=root.document;if(!d||!d.body||!d.createElem
  if(!doorBtn&&near){doorBtn=d.createElement('button');doorBtn.className='house-enter';doorBtn.id='house-enter';doorBtn.addEventListener('click',()=>{loadHouse().then(()=>root.MoonCatHouseRoom.open()).catch(()=>{});});d.body.appendChild(doorBtn);}
  if(doorBtn){if(near)doorBtn.textContent='🏠 '+(root._t?root._t('house.enter'):'Enter');doorBtn.hidden=!near;}}
 root.MoonCatHouse={load:loadHouse,open:()=>loadHouse().then(()=>root.MoonCatHouseRoom.open())};
-R.render=function(state,p,t,dt,yaw,pitch,scan){old.render.call(this,state,p,t,dt,yaw,pitch,scan);try{doorUpdate(state,p);}catch(e){}if(!on(state)||!this.v59||!this.vp||!this.gl||!this.v50Prog||this._v59Off)return;
+// v82: walking up to a hidden mine reports the find to the server (once); near a found mine's mouth a «Войти в шахту» button
+// opens the lazy mine interior (mine-interior.js/.css)
+let mineBtn=null,mineLoading=null,finding={},mineAt=null;
+function loadMine(){if(root.MoonMineRoom)return Promise.resolve();if(mineLoading)return mineLoading;const d=root.document;
+ mineLoading=new Promise((ok,bad)=>{const l=d.createElement('link');l.rel='stylesheet';l.href='mine-interior.css?v='+VER;d.head.appendChild(l);const s=d.createElement('script');s.src='mine-interior.js?v='+VER;s.onload=()=>ok();s.onerror=e=>{mineLoading=null;bad(e);};d.head.appendChild(s);});return mineLoading;}
+function mineUpdate(state,p){const d=root.document;if(!d||!d.body||!d.createElement||!p)return;const M=view(),UI=root.MoonGrowthUI;let near=null;
+ for(const id in HM){const m=HM[id],dist=Math.hypot(p.x-m.x,p.z-m.z);
+  if(dist<6&&M&&M.view.hidden&&!hmFound(id)&&UI&&UI.online&&UI.api&&!finding[id]){finding[id]=1;UI.api('/api/mines/discover',{mine:id,x:p.x,z:p.z}).then(r=>{if(r&&r.bots&&root.MoonBots.setView)root.MoonBots.setView(r.bots);
+    if(r&&r.found){const G=root.MoonGame;G&&G.toast&&G.toast('⛏️ '+(root._t?root._t('mine.found',{n:root._t('mine.'+id)}):id));try{root.Telegram?.WebApp?.HapticFeedback?.notificationOccurred('success');}catch(e){}}}).catch(()=>{setTimeout(()=>{finding[id]=0;},15000);});}
+  if(hmFound(id)&&Math.hypot(p.x-m.door[0],p.z-m.door[1])<2.2&&(p.alt||0)<.6)near=id;}
+ near=near&&!d.body.classList.contains('in-mine')?near:null;mineAt=near;
+ if(!mineBtn&&near){mineBtn=d.createElement('button');mineBtn.className='house-enter mine-enter';mineBtn.id='mine-enter';mineBtn.addEventListener('click',()=>{const id=mineAt;if(id)loadMine().then(()=>root.MoonMineRoom.open(id)).catch(()=>{});});d.body.appendChild(mineBtn);}
+ if(mineBtn){if(near)mineBtn.textContent='⛏️ '+(root._t?root._t('mine.enter'):'Enter');mineBtn.hidden=!near;}}
+root.MoonHiddenMines={HM,load:loadMine,open:id=>loadMine().then(()=>root.MoonMineRoom.open(id)),found:hmFound};
+R.render=function(state,p,t,dt,yaw,pitch,scan){old.render.call(this,state,p,t,dt,yaw,pitch,scan);try{doorUpdate(state,p);mineUpdate(state,p);}catch(e){}if(!on(state)||!this.v59||!this.vp||!this.gl||!this.v50Prog||this._v59Off)return;
  try{const P5=this.v50Prog();if(!P5)return;const gl=this.gl,low=this.quality==='low',eye=this.eye||[0,0,0],Q=[],V=this.vp,rl=Math.hypot(V[0],V[8])||1,rx=V[0]/rl,rz=V[8]/rl;
   if(Math.hypot(eye[0]-H.x,eye[2]-H.z)>DRAW_R)return;const ch=state.chapter||1,T=(lx,lz)=>this.terrain(H.x+lx,H.z+lz,ch),st=stageOf(state);
   const bill=(lx,y,lz,sx,sy,k,c,w)=>{const x=H.x+lx,z=H.z+lz;for(const[u,q]of[[-1,-1],[1,-1],[1,1],[-1,-1],[1,1],[-1,1]])Q.push(x+rx*u*sx,y+q*sy,z+rz*u*sx,u,q,k,0,c[0],c[1],c[2],w);};
@@ -266,5 +298,5 @@ R.render=function(state,p,t,dt,yaw,pitch,scan){old.render.call(this,state,p,t,dt
   gl.enableVertexAttribArray(P5.pos);gl.vertexAttribPointer(P5.pos,3,gl.FLOAT,false,44,0);gl.enableVertexAttribArray(P5.info);gl.vertexAttribPointer(P5.info,4,gl.FLOAT,false,44,12);gl.enableVertexAttribArray(P5.tone);gl.vertexAttribPointer(P5.tone,4,gl.FLOAT,false,44,28);
   gl.drawArrays(gl.TRIANGLES,0,data.length/11);gl.disableVertexAttribArray(P5.pos);gl.disableVertexAttribArray(P5.info);gl.disableVertexAttribArray(P5.tone);
   gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(true);gl.disable(gl.BLEND);this.v59Stats={fxQuads:data.length/66|0};}catch(e){this._v59Off=true;if(typeof console!=='undefined')console.warn('v59 fx off',e);}};
-root.MoonHomePlot={houseStyle,houseDoor,CH_R,H,POS,RAD,VEIN,MINE,PAD,PARCEL,GATE,LAMPS,FENCE_R,SPOKES,MINE_DOOR,WS_DOOR,rocketAt,inside:insideHome,walk,botPose,commute};
+root.MoonHomePlot={HM,HM_R,inHidden,houseStyle,houseDoor,CH_R,H,POS,RAD,VEIN,MINE,PAD,PARCEL,GATE,LAMPS,FENCE_R,SPOKES,MINE_DOOR,WS_DOOR,rocketAt,inside:insideHome,walk,botPose,commute};
 })(typeof window!=='undefined'?window:globalThis);

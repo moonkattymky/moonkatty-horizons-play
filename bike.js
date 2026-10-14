@@ -8,7 +8,7 @@
 (function(root){'use strict';
 const R=root.MoonRenderer&&root.MoonRenderer.prototype,B=root.MoonOutpostBuilder;
 const KEY='moonkatty-bike-v60';
-const PAINT={gold:[1,.74,.28],mint:[.45,.92,.74],berry:[.96,.40,.64],sky:[.44,.72,1],cocoa:[.66,.45,.32],galaxy:[.50,.36,.92],comet:[.07,.07,.09]};   // v64 'comet' = the Stars skin: black body, gold trim, fiery trail (looks only)
+const PAINT={gold:[1,.74,.28],mint:[.45,.92,.74],berry:[.96,.40,.64],sky:[.44,.72,1],cocoa:[.66,.45,.32],galaxy:[.50,.36,.92],comet:[.07,.07,.09],frost:[.74,.90,1],ember:[1,.40,.16],ghost:[.66,.94,1]};   // v82 frost/ember: crafted from rare mine materials; ghost: the unique star-mine find (translucent glow)   // v64 'comet' = the Stars skin: black body, gold trim, fiery trail (looks only)
 const ORDER=['gold','mint','berry','sky','cocoa','galaxy'];
 const Bike=root.MoonBike={view:null,at:0,riding:false,PAINT,ORDER,flying:false,flyHold:false,spin:0,tilt:0,SKY_MAX:10.5,
  // v65 BIKE FLIGHT: free for everyone after LIFE #7 (the Sky Drive); the server says so too (/api/bike → fly), so it is retroactive
@@ -62,7 +62,7 @@ if(R&&B){
  function bRings(b){for(const z of[.5,-.5]){b.tube('ring',[0,CY-.335,z],[0,CY-.315,z],.27,28,.27);b.tube('ring',[0,CY-.34,z],[0,CY-.33,z],.15,24,.15);}}
  let mesh=null;
  R.v60Build=function(){if(mesh)return mesh;mesh=[];for(const[part,fn]of[['body',bBike],['glow',bGlow],['rings',bRings]]){const b=new B();fn(b);for(const[m,d]of b.groups){if(!d.length)continue;const key='v61_bike_'+part+'_'+m;this.addMesh(key,d);mesh.push([key,m,part]);}}return mesh;};
- const NEON={gold:[.35,1,.9],mint:[.45,1,.78],berry:[1,.42,.74],sky:[.38,.9,.96],cocoa:[1,.66,.3],galaxy:[.76,.5,1],comet:[1,.55,.15]},neonOf=k=>NEON[k]||NEON.gold;
+ const NEON={gold:[.35,1,.9],mint:[.45,1,.78],berry:[1,.42,.74],sky:[.38,.9,.96],cocoa:[1,.66,.3],galaxy:[.76,.5,1],comet:[1,.55,.15],frost:[.6,.95,1],ember:[1,.5,.12],ghost:[.55,1,1]},neonOf=k=>NEON[k]||NEON.gold;
  const CGOLD=[1,.76,.30];
  const TAU2=Math.PI*2,SC=1.45,S={yaw:null,roll:0,pitch:0,trail:[],lastX:null,lastZ:null};
  Bike.on=function(p){return Bike.riding&&Bike.unlocked&&p&&(p.alt<.15||Bike.flying);};
@@ -85,7 +85,7 @@ if(R&&B){
   const rl=S.roll+Bike.spin,col1=(r0)=>{const cy=Math.cos(yaw),sy=Math.sin(yaw),cx=Math.cos(S.pitch),sx=Math.sin(S.pitch),cz=Math.cos(r0),sz=Math.sin(r0);return[-cy*sz+sy*sx*cz,cx*cz,sy*sz+cy*sx*cz];},
    a0=col1(0),a1=col1(rl),off=[(a0[0]-a1[0])*CY*SC,(a0[1]-a1[1])*CY*SC,(a0[2]-a1[2])*CY*SC];   /* roll around the hull's centre line, not its belly */
   S.spinPivot={x,y:y+CY*SC,z};
-  for(const[key,mat,part]of m){const kind=MATS[mat],c=mat==='paint'?pc:comet&&(mat==='cream'||mat==='chrome')?CGOLD:mat==='neon'||mat==='ring'||mat==='flame'?nc:COL[mat],g=part==='glow'?thr:part==='rings'?pulse:mat==='neon'?.85:mat==='lamp'?.9:mat==='gold'?.2:mat==='glass'?.0:0;this.put(key,x+off[0],y+off[1],z+off[2],SC,SC,SC,c,yaw,kind,g,S.pitch,rl);}
+  const ghost=Bike.color==='ghost';for(const[key,mat,part]of m){const gb=ghost&&(mat==='paint'||mat==='cream'||mat==='seat'),kind=gb?30:MATS[mat],c=mat==='paint'?pc:comet&&(mat==='cream'||mat==='chrome')?CGOLD:mat==='neon'||mat==='ring'||mat==='flame'?nc:COL[mat],g=part==='glow'?thr:part==='rings'?pulse:mat==='neon'?.85:mat==='lamp'?.9:mat==='gold'?.2:mat==='glass'?.0:0;const g2=gb?.85+.15*Math.sin(t*2.4):g;this.put(key,x+off[0],y+off[1],z+off[2],SC,SC,SC,gb?pc:c,yaw,kind,g2,S.pitch,rl);}
   S.pose={x,y,z,yaw,t,speed:p.speed};Bike.seat={y:y+(CY+.2)*SC,cut:.30};
   if(p.speed>.25||Bike.flying&&p.speed>.08){const last=S.trail[S.trail.length-1],gap=Bike.flying?.25:.35;if(!last||Math.hypot(last.x-x,last.z-z,(last.y-y+.1)*.8)>gap)S.trail.push({x:x+Math.sin(yaw)*1.15,z:z+Math.cos(yaw)*1.15,y:y-.1+CY*SC*.4,t,air:Bike.flying&&alt>1.2,sp:Bike.spin});}
   const sp=this.characterSprite;if(sp&&sp.ride&&sp.ride.ready)return;return oldCat.call(this,x,z,yaw,t,false,alt+hov+.62,ch,col,isPlayer,...rest);};
@@ -162,6 +162,9 @@ function render(){const d=dlg(),v=Bike.view,un=Bike.unlocked,pts=(Game.state&&Ga
  for(const k of ORDER){const own=(v.colors||[]).includes(k),cur=v.color===k,pr=(v.prices||{})[k]|0;
   h+=`<button class="bike-paint${cur?' cur':''}" data-paint="${k}" data-own="${own?1:0}"><i style="background:${hex(PAINT[k])}"></i><span>${esc(T('bike.c_'+k))}</span><small>${cur?'✓ '+esc(T('bike.on')):own?esc(T('bike.use')):esc(T('bike.buy',{p:pr}))}</small></button>`;}
  h+=`</div></section>`;
+ // v82 rare paints: crafted from hidden-mine materials (bots panel) or found in the star mine; never sold
+ {const rare=['frost','ember','ghost'].filter(k=>(v.colors||[]).includes(k));if(rare.length){h+=`<section class="bike-sec bike-rare"><b>💠 ${esc(T('bike.rare'))}</b><div class="bike-paints">`;
+  for(const k of rare){const cur=v.color===k;h+=`<button class="bike-paint${cur?' cur':''}${k==='ghost'?' ghost':''}" data-paint="${k}" data-own="1"><i style="background:${hex(PAINT[k])}"></i><span>${esc(T('bike.c_'+k))}</span><small>${cur?'✓ '+esc(T('bike.on')):esc(T('bike.use'))}</small></button>`;}h+=`</div></section>`;}}
  // v64: the Stars skin — black + gold, fiery trail, same speed; bought through the Stars shop (server-validated)
  {const own=(v.colors||[]).includes('comet'),cur=v.color==='comet',cm=v.comet||{stars:150},sui=root.MoonSeasonUI,pay=!!(UI.online&&cm.enabled!==false&&root.Telegram?.WebApp?.openInvoice&&sui&&sui.confirmBuy);
   h+=`<section class="bike-sec bike-comet${cur?' cur':''}"><div class="bc-art" aria-hidden="true"><i class="bc-trail"></i><i class="bc-body"></i><i class="bc-paw">🐾</i></div><div class="bc-txt"><b>☄️ ${esc(T('bike.comet'))}</b><small>${esc(T('bike.comet_d'))}</small></div>`+
