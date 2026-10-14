@@ -1573,5 +1573,14 @@
  "ch9.fin3":"Halkalar dönüyor, Yıldız Anahtarı parlıyor — ve Kapı’nın ardında mavi bir gök açılıyor.",
  "ch9.end_sub":"9 canın hepsi tamamlandı",
  "ch9.end_kicker":"SON · OYNADIĞIN İÇİN TEŞEKKÜRLER",
- "ch9.end_card":"Dokuz can. Tek bir Ay. Tek bir ekip — yeniden bir arada. Bu yolu MOONKATTY ile yürüdüğün için teşekkürler."
+ "ch9.end_card":"Dokuz can. Tek bir Ay. Tek bir ekip — yeniden bir arada. Bu yolu MOONKATTY ile yürüdüğün için teşekkürler.",
+ "net.offline_title":"Bağlantı yok",
+ "net.offline_text":"Oynamaya devam edebilirsin — ilerleme bu telefonda kaydediliyor.",
+ "net.offline_pending":"İlerleme bu telefonda kaydedildi ve bağlantı geri gelince gönderilecek.",
+ "net.retry":"Tekrar dene",
+ "net.back":"Bağlantı geri geldi — ilerleme gönderildi",
+ "net.boot_title":"Oyun yüklenmedi",
+ "net.boot_text":"Yüklenirken bir sorun oldu. Tekrar dene — ilerlemen güvende.",
+ "net.boot_offline":"İnternet bağlantısı yok. Kontrol edip tekrar dene — ilerlemen güvende.",
+ "net.reload":"Tekrar dene"
 });

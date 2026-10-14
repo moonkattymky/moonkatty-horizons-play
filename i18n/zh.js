@@ -1573,5 +1573,14 @@
  "ch9.fin3":"圆环旋转，星之钥匙闪耀——星门之后，一片蓝天展开。",
  "ch9.end_sub":"9条命全部完成",
  "ch9.end_kicker":"终 · 谢谢你的游玩",
- "ch9.end_card":"九条命。一个月球。一支船员队伍——再次团聚。谢谢你和MOONKATTY一起走完这段旅程。"
+ "ch9.end_card":"九条命。一个月球。一支船员队伍——再次团聚。谢谢你和MOONKATTY一起走完这段旅程。",
+ "net.offline_title":"没有网络连接",
+ "net.offline_text":"你可以继续玩——进度会保存在这台手机上。",
+ "net.offline_pending":"进度已保存在这台手机上，网络恢复后会自动上传。",
+ "net.retry":"重试",
+ "net.back":"连接已恢复——进度已上传",
+ "net.boot_title":"游戏没有加载成功",
+ "net.boot_text":"加载时出了点问题。再试一次吧——你的进度很安全。",
+ "net.boot_offline":"没有网络连接。请检查网络后再试一次——你的进度很安全。",
+ "net.reload":"再试一次"
 });

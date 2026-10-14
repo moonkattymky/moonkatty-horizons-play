@@ -1573,5 +1573,14 @@
  "ch9.fin3":"Gli anelli girano, la Chiave stellare brilla — e oltre il portale si apre un cielo azzurro.",
  "ch9.end_sub":"Tutte e 9 le vite completate",
  "ch9.end_kicker":"FINE · GRAZIE PER AVER GIOCATO",
- "ch9.end_card":"Nove vite. Una Luna. Un equipaggio — di nuovo unito. Grazie per aver fatto questa strada con MOONKATTY."
+ "ch9.end_card":"Nove vite. Una Luna. Un equipaggio — di nuovo unito. Grazie per aver fatto questa strada con MOONKATTY.",
+ "net.offline_title":"Nessuna connessione",
+ "net.offline_text":"Puoi continuare a giocare: i progressi sono salvati su questo telefono.",
+ "net.offline_pending":"I progressi sono salvati su questo telefono e verranno inviati quando torna la connessione.",
+ "net.retry":"Riprova",
+ "net.back":"Connessione ripristinata: progressi inviati",
+ "net.boot_title":"Il gioco non si è caricato",
+ "net.boot_text":"Qualcosa è andato storto durante il caricamento. Riprova: i tuoi progressi sono al sicuro.",
+ "net.boot_offline":"Nessuna connessione a internet. Controllala e riprova: i tuoi progressi sono al sicuro.",
+ "net.reload":"Riprova"
 });

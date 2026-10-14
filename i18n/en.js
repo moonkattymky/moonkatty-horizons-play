@@ -1573,5 +1573,14 @@
  "ch9.fin3":"The rings spin, the Star Key glows — and beyond the Gate a blue sky opens.",
  "ch9.end_sub":"All 9 lives complete",
  "ch9.end_kicker":"THE END · THANK YOU FOR PLAYING",
- "ch9.end_card":"Nine lives. One Moon. One crew — together again. Thank you for walking this road with MOONKATTY."
+ "ch9.end_card":"Nine lives. One Moon. One crew — together again. Thank you for walking this road with MOONKATTY.",
+ "net.offline_title":"No connection",
+ "net.offline_text":"You can keep playing — progress is saved on this phone.",
+ "net.offline_pending":"Progress is saved on this phone and will be sent when the connection is back.",
+ "net.retry":"Retry",
+ "net.back":"Connection restored — progress sent",
+ "net.boot_title":"The game did not load",
+ "net.boot_text":"Something went wrong while loading. Try again — your progress is safe.",
+ "net.boot_offline":"No internet connection. Check it and try again — your progress is safe.",
+ "net.reload":"Try again"
 });

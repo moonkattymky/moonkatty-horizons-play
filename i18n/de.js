@@ -1573,5 +1573,14 @@
  "ch9.fin3":"Die Ringe drehen sich, der Sternenschlüssel leuchtet — und hinter dem Tor öffnet sich ein blauer Himmel.",
  "ch9.end_sub":"Alle 9 Leben geschafft",
  "ch9.end_kicker":"ENDE · DANKE FÜRS SPIELEN",
- "ch9.end_card":"Neun Leben. Ein Mond. Eine Crew — wieder vereint. Danke, dass du diesen Weg mit MOONKATTY gegangen bist."
+ "ch9.end_card":"Neun Leben. Ein Mond. Eine Crew — wieder vereint. Danke, dass du diesen Weg mit MOONKATTY gegangen bist.",
+ "net.offline_title":"Keine Verbindung",
+ "net.offline_text":"Du kannst weiterspielen — der Fortschritt wird auf diesem Handy gespeichert.",
+ "net.offline_pending":"Der Fortschritt ist auf diesem Handy gespeichert und wird gesendet, sobald die Verbindung zurück ist.",
+ "net.retry":"Erneut versuchen",
+ "net.back":"Verbindung wiederhergestellt — Fortschritt gesendet",
+ "net.boot_title":"Das Spiel wurde nicht geladen",
+ "net.boot_text":"Beim Laden ist etwas schiefgelaufen. Versuch es noch einmal — dein Fortschritt ist sicher.",
+ "net.boot_offline":"Keine Internetverbindung. Prüfe sie und versuch es noch einmal — dein Fortschritt ist sicher.",
+ "net.reload":"Erneut versuchen"
 });

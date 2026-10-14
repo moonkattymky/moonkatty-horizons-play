@@ -1573,5 +1573,14 @@
  "ch9.fin3":"Os anéis giram, a Chave estelar brilha — e para lá do portal abre-se um céu azul.",
  "ch9.end_sub":"As 9 vidas concluídas",
  "ch9.end_kicker":"FIM · OBRIGADO POR JOGARES",
- "ch9.end_card":"Nove vidas. Uma Lua. Uma tripulação — de novo junta. Obrigado por fazeres este caminho com MOONKATTY."
+ "ch9.end_card":"Nove vidas. Uma Lua. Uma tripulação — de novo junta. Obrigado por fazeres este caminho com MOONKATTY.",
+ "net.offline_title":"Sem ligação",
+ "net.offline_text":"Podes continuar a jogar — o progresso fica guardado neste telemóvel.",
+ "net.offline_pending":"O progresso está guardado neste telemóvel e será enviado quando a ligação voltar.",
+ "net.retry":"Tentar de novo",
+ "net.back":"Ligação restabelecida — progresso enviado",
+ "net.boot_title":"O jogo não carregou",
+ "net.boot_text":"Algo correu mal ao carregar. Tenta de novo — o teu progresso está seguro.",
+ "net.boot_offline":"Sem ligação à internet. Verifica-a e tenta de novo — o teu progresso está seguro.",
+ "net.reload":"Tentar de novo"
 });

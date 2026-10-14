@@ -87,8 +87,15 @@ async function boot(){if(booted)return;booted=true;const ref=startParam(),s=S();
   else cloudSave(true);
   if(r.streak)syncServerStreak(r.streak,null);
   if(r.story)storyDone=r.story.done||[];
-  await claimPending(r.rewards);}catch(e){online=false;}
- renderAll();if(online)syncStory();}
+  await claimPending(r.rewards);}catch(e){online=false;netFail(e);}
+ renderAll();if(online){netOk();syncStory();}}
+// ---------- v70 offline: retry the session with backoff; the save stays local and is uploaded (with any story checkpoints) once back ----------
+const REL=window.MoonReliability;let netTry=0,netTimer=0;
+const isNet=e=>!e||!e.status||e.status>=500||e.name==='AbortError'||e.name==='TypeError';
+function netFail(e){if(!API||!initData()||!isNet(e))return;REL?.setNet(true,REL.pending());clearTimeout(netTimer);netTimer=setTimeout(reconnect,[5000,15000,30000,60000,120000][Math.min(netTry++,4)]);}
+function netOk(){netTry=0;clearTimeout(netTimer);if(REL&&REL.down)REL.setNet(false);if(REL?.pending()){cloudSave(true);}}
+async function reconnect(){clearTimeout(netTimer);if(!API||!initData())return;if(online){try{await api('/api/save',{data:S(),updatedAt:S().updatedAt});REL?.markPending(false);netOk();syncStory();}catch(e){netFail(e);}return;}booted=false;await boot();}
+if(REL){REL.retry=reconnect;REL.transport=list=>online?api('/api/client/errors',{list}):Promise.reject(new Error('offline'));}
 // ---------- v41 story checkpoint journal: the server pays LIFE #1/#2/#3 only from checkpoints posted in order ----------
 // The save never pays. Reached checkpoints (growth-core storyCheckpoints) are posted one by one; the server stamps the
 // time and refuses checkpoints that come too fast (429 too_fast) — then we simply try again a bit later.
@@ -100,8 +107,8 @@ async function syncStory(){if(!online||storyBusy)return;const next=G.checkpoints
  catch(e){if(e.code==='too_fast')wait=15000;else if(e.code==='out_of_order'){try{const r=await api('/api/story',{});storyDone=r.story?.done||storyDone;wait=400;}catch{wait=30000;}}else if(e.status===429)wait=60000;else wait=0;}
  storyBusy=false;if(wait)storyTimer=setTimeout(syncStory,wait);}
 function cloudSave(force=false){if(!online)return;const now=Date.now();if(!force&&now-lastCloud<15000){clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>cloudSave(true),15000-(now-lastCloud));return;}lastCloud=now;const s=S();
- api('/api/save',{data:s,updatedAt:s.updatedAt}).then(r=>{if(r.crew)setCrew(r.crew);if(r.rewards?.length)claimPending(r.rewards);if(r.accepted===false&&r.save?.data&&!Game.running&&G.pickSave(S(),r.save.data)==='remote')Game.replace(r.save.data);}).catch(()=>{});}
-Game.onSave=()=>{if(online){cloudSave(false);if(!storyBusy)syncStory();}};
+ REL?.markPending(true);api('/api/save',{data:s,updatedAt:s.updatedAt}).then(r=>{REL?.markPending(false);if(REL&&REL.down)netOk();if(r.crew)setCrew(r.crew);if(r.rewards?.length)claimPending(r.rewards);if(r.accepted===false&&r.save?.data&&!Game.running&&G.pickSave(S(),r.save.data)==='remote')Game.replace(r.save.data);}).catch(e=>{if(isNet(e)){online=false;netFail(e);}});}
+Game.onSave=()=>{if(online){cloudSave(false);if(!storyBusy)syncStory();}else if(API&&initData())REL?.markPending(true);};
 // Last chance to upload when Telegram hides or closes the Mini App (keepalive survives page unload).
 function flushCloud(){if(!online)return;try{fetch(API+'/api/save',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json','Authorization':authHeader()},body:JSON.stringify({data:S(),updatedAt:S().updatedAt})}).catch(()=>{});lastCloud=Date.now();}catch{}}
 addEventListener('pagehide',flushCloud);document.addEventListener('visibilitychange',()=>{if(document.hidden)flushCloud();});

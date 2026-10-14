@@ -1573,5 +1573,14 @@
  "ch9.fin3":"Les anneaux tournent, la Clé d’étoile brille — et derrière la porte s’ouvre un ciel bleu.",
  "ch9.end_sub":"Les 9 vies sont terminées",
  "ch9.end_kicker":"FIN · MERCI D’AVOIR JOUÉ",
- "ch9.end_card":"Neuf vies. Une Lune. Un équipage — de nouveau réuni. Merci d’avoir fait ce chemin avec MOONKATTY."
+ "ch9.end_card":"Neuf vies. Une Lune. Un équipage — de nouveau réuni. Merci d’avoir fait ce chemin avec MOONKATTY.",
+ "net.offline_title":"Pas de connexion",
+ "net.offline_text":"Tu peux continuer à jouer — la progression est enregistrée sur ce téléphone.",
+ "net.offline_pending":"La progression est enregistrée sur ce téléphone et sera envoyée au retour de la connexion.",
+ "net.retry":"Réessayer",
+ "net.back":"Connexion rétablie — progression envoyée",
+ "net.boot_title":"Le jeu ne s’est pas chargé",
+ "net.boot_text":"Un problème est survenu pendant le chargement. Réessaie — ta progression est en sécurité.",
+ "net.boot_offline":"Pas de connexion Internet. Vérifie-la et réessaie — ta progression est en sécurité.",
+ "net.reload":"Réessayer"
 });
