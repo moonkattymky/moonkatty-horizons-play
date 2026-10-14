@@ -264,7 +264,7 @@ function mineUpdate(state,p){const d=root.document;if(!d||!d.body||!d.createElem
     if(r&&r.found){const G=root.MoonGame;G&&G.toast&&G.toast('⛏️ '+(root._t?root._t('mine.found',{n:root._t('mine.'+id)}):id));try{root.Telegram?.WebApp?.HapticFeedback?.notificationOccurred('success');}catch(e){}}}).catch(()=>{setTimeout(()=>{finding[id]=0;},15000);});}
   if(hmFound(id)&&Math.hypot(p.x-m.door[0],p.z-m.door[1])<2.2&&(p.alt||0)<.6)near=id;}
  near=near&&!d.body.classList.contains('in-mine')?near:null;mineAt=near;
- if(!mineBtn&&near){mineBtn=d.createElement('button');mineBtn.className='house-enter mine-enter';mineBtn.id='mine-enter';mineBtn.addEventListener('click',()=>{const id=mineAt;if(id)loadMine().then(()=>root.MoonMineRoom.open(id)).catch(()=>{});});d.body.appendChild(mineBtn);}
+ if(!mineBtn&&near){mineBtn=d.createElement('button');mineBtn.className='house-enter mine-enter';mineBtn.id='mine-enter';mineBtn.addEventListener('click',()=>{const id=mineAt;if(id)loadMine().then(()=>{root.MoonSfx&&root.MoonSfx('mine');root.MoonMineRoom.open(id);}).catch(()=>{});});d.body.appendChild(mineBtn);}
  if(mineBtn){if(near)mineBtn.textContent='⛏️ '+(root._t?root._t('mine.enter'):'Enter');mineBtn.hidden=!near;}}
 root.MoonHiddenMines={HM,load:loadMine,open:id=>loadMine().then(()=>root.MoonMineRoom.open(id)),found:hmFound};
 R.render=function(state,p,t,dt,yaw,pitch,scan){old.render.call(this,state,p,t,dt,yaw,pitch,scan);try{doorUpdate(state,p);mineUpdate(state,p);}catch(e){}if(!on(state)||!this.v59||!this.vp||!this.gl||!this.v50Prog||this._v59Off)return;

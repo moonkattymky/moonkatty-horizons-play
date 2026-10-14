@@ -996,7 +996,7 @@
  "ch4.btn_ignite":"Ignition check",
  "boot.loading":"Loading the Moon…",
  "cover.next_goal":"Next goal: {goal}",
- "cover.demo_note":"Story demo · Lives 1–9 · free",
+ "cover.demo_note":"Lives 1–9 · free",
  "cover.share":"Share with friends",
  "share.demo_text":"MOONKATTY: New Horizons — a free story game right in Telegram 🚀 A cat astronaut, a lost crew and a rocket that won’t start. Lives 1–9 are ready — come play:",
  "share.demo_lead":"A cat-astronaut picture and a link to the free story demo.",
@@ -1654,5 +1654,8 @@
  "bike.c_ember":"Ember",
  "bike.c_ghost":"Crystal Ghost",
  "bike.rare":"Rare paints",
- "mine.explore":"Explore the world — the hidden mine is near a landmark"
+ "mine.explore":"Explore the world — the hidden mine is near a landmark",
+ "html.opt_music":"Music",
+ "html.opt_sfx":"Sounds",
+ "html.privacy_link":"Privacy policy"
 });

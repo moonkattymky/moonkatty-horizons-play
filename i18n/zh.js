@@ -996,7 +996,7 @@
  "ch4.btn_ignite":"点火检查",
  "boot.loading":"正在加载月球…",
  "cover.next_goal":"下一个目标：{goal}",
- "cover.demo_note":"剧情试玩 · 第1–9条命 · 免费",
+ "cover.demo_note":"第1–9条命 · 免费",
  "cover.share":"分享给朋友",
  "share.demo_text":"MOONKATTY: New Horizons — 在 Telegram 里直接玩的免费剧情游戏 🚀 猫咪宇航员、失踪的船员和一枚无法点火的火箭。第1–9条命已上线，快来玩：",
  "share.demo_lead":"一张猫咪宇航员图片和免费剧情试玩的链接。",
@@ -1654,5 +1654,8 @@
  "bike.c_ember":"余烬",
  "bike.c_ghost":"水晶幽灵",
  "bike.rare":"稀有涂装",
- "mine.explore":"探索世界——秘密矿洞就在某个地标附近"
+ "mine.explore":"探索世界——秘密矿洞就在某个地标附近",
+ "html.opt_music":"音乐",
+ "html.opt_sfx":"音效",
+ "html.privacy_link":"隐私政策"
 });

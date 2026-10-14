@@ -996,7 +996,7 @@
  "ch4.btn_ignite":"Ateşleme testi",
  "boot.loading":"Ay yükleniyor…",
  "cover.next_goal":"Sıradaki hedef: {goal}",
- "cover.demo_note":"Hikâye demosu · Canlar 1–9 · ücretsiz",
+ "cover.demo_note":"Canlar 1–9 · ücretsiz",
  "cover.share":"Arkadaşlarınla paylaş",
  "share.demo_text":"MOONKATTY: New Horizons — doğrudan Telegram’da ücretsiz bir hikâye oyunu 🚀 Astronot bir kedi, kayıp bir mürettebat ve çalışmayan bir roket. Canlar 1–9 hazır — gel oyna:",
  "share.demo_lead":"Astronot kedi görseli ve ücretsiz hikâye demosunun bağlantısı.",
@@ -1654,5 +1654,8 @@
  "bike.c_ember":"Kor",
  "bike.c_ghost":"Kristal Hayalet",
  "bike.rare":"Nadir boyalar",
- "mine.explore":"Dünyayı keşfet — gizli maden bir simge yerin yakınında"
+ "mine.explore":"Dünyayı keşfet — gizli maden bir simge yerin yakınında",
+ "html.opt_music":"Müzik",
+ "html.opt_sfx":"Sesler",
+ "html.privacy_link":"Gizlilik politikası"
 });

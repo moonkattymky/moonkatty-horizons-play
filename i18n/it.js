@@ -996,7 +996,7 @@
  "ch4.btn_ignite":"Test di accensione",
  "boot.loading":"Caricamento della Luna…",
  "cover.next_goal":"Prossimo obiettivo: {goal}",
- "cover.demo_note":"Demo della storia · Vite 1–9 · gratis",
+ "cover.demo_note":"Vite 1–9 · gratis",
  "cover.share":"Condividi con gli amici",
  "share.demo_text":"MOONKATTY: New Horizons — un gioco narrativo gratis direttamente su Telegram 🚀 Un gatto astronauta, un equipaggio scomparso e un razzo che non parte. Le vite 1–9 sono pronte — vieni a giocare:",
  "share.demo_lead":"Un’immagine del gatto astronauta e un link alla demo gratuita della storia.",
@@ -1654,5 +1654,8 @@
  "bike.c_ember":"Brace",
  "bike.c_ghost":"Fantasma di cristallo",
  "bike.rare":"Vernici rare",
- "mine.explore":"Esplora il mondo: la miniera segreta è vicino a un luogo noto"
+ "mine.explore":"Esplora il mondo: la miniera segreta è vicino a un luogo noto",
+ "html.opt_music":"Musica",
+ "html.opt_sfx":"Suoni",
+ "html.privacy_link":"Informativa sulla privacy"
 });

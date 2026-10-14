@@ -996,7 +996,7 @@
  "ch4.btn_ignite":"점화 점검",
  "boot.loading":"달을 불러오는 중…",
  "cover.next_goal":"다음 목표: {goal}",
- "cover.demo_note":"스토리 데모 · 목숨 1–9 · 무료",
+ "cover.demo_note":"목숨 1–9 · 무료",
  "cover.share":"친구에게 공유",
  "share.demo_text":"MOONKATTY: New Horizons — 텔레그램에서 바로 즐기는 무료 스토리 게임 🚀 고양이 우주비행사, 사라진 승무원, 시동이 걸리지 않는 로켓. 목숨 1–9 준비 완료 — 함께 플레이하세요:",
  "share.demo_lead":"고양이 우주비행사 그림과 무료 스토리 데모 링크.",
@@ -1654,5 +1654,8 @@
  "bike.c_ember":"불씨",
  "bike.c_ghost":"크리스털 유령",
  "bike.rare":"희귀 페인트",
- "mine.explore":"세계를 탐험하세요 — 비밀 광산은 랜드마크 근처에 있어요"
+ "mine.explore":"세계를 탐험하세요 — 비밀 광산은 랜드마크 근처에 있어요",
+ "html.opt_music":"음악",
+ "html.opt_sfx":"효과음",
+ "html.privacy_link":"개인정보 처리방침"
 });

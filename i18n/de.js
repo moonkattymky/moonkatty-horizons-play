@@ -996,7 +996,7 @@
  "ch4.btn_ignite":"Zündtest",
  "boot.loading":"Der Mond lädt…",
  "cover.next_goal":"Nächstes Ziel: {goal}",
- "cover.demo_note":"Story-Demo · Leben 1–9 · kostenlos",
+ "cover.demo_note":"Leben 1–9 · kostenlos",
  "cover.share":"Mit Freunden teilen",
  "share.demo_text":"MOONKATTY: New Horizons — ein kostenloses Story-Spiel direkt in Telegram 🚀 Ein Katzen-Astronaut, eine verschollene Crew und eine Rakete, die nicht zündet. Leben 1–9 sind fertig — spiel mit:",
  "share.demo_lead":"Ein Bild mit der Astronautenkatze und ein Link zur kostenlosen Story-Demo.",
@@ -1654,5 +1654,8 @@
  "bike.c_ember":"Glut",
  "bike.c_ghost":"Kristallgeist",
  "bike.rare":"Seltene Farben",
- "mine.explore":"Erkunde die Welt — die geheime Mine liegt nahe einem Wahrzeichen"
+ "mine.explore":"Erkunde die Welt — die geheime Mine liegt nahe einem Wahrzeichen",
+ "html.opt_music":"Musik",
+ "html.opt_sfx":"Geräusche",
+ "html.privacy_link":"Datenschutzerklärung"
 });
