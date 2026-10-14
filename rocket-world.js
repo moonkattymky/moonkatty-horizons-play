@@ -13,7 +13,7 @@ if(!R||!Core||!B)return;
 const old={ensure:R.ensureWorldModels,scene:R.scene,render:R.render,blocked:R.blocked,camera:R.cameraBlocked};
 const TAU=Math.PI*2,norm=v=>{const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l];},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
 function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
-const MATS={ivory:[17,[.97,.96,.93]],rgold:[16,[1.0,.76,.32]],fpaint:[12,[.95,.60,.22]],port:[12,[1.0,.62,.20]],hull:[17,[.64,.62,.58]],pad:[17,[.52,.52,.50]],gold:[16,[.92,.63,.25]],steel:[0,[.23,.28,.31]],dark:[0,[.045,.065,.085]],rust:[0,[.30,.21,.15]],amber:[12,[1,.57,.14]],blue:[12,[.10,.62,1.0]],holo:[12,[.18,.66,1.0]],crystal:[13,[.06,.34,1.0]],core:[12,[.35,.80,1.0]],stone:[4,[.56,.56,.575]]};
+const MATS={ivory:[17,[.97,.96,.93]],rgold:[16,[1.0,.76,.32]],fpaint:[12,[.95,.60,.22]],port:[12,[1.0,.62,.20]],hull:[17,[.64,.62,.58]],pad:[17,[.52,.52,.50]],gold:[16,[.92,.63,.25]],steel:[0,[.23,.28,.31]],dark:[0,[.045,.065,.085]],rust:[0,[.30,.21,.15]],amber:[12,[1,.57,.14]],blue:[12,[.10,.62,1.0]],holo:[12,[.18,.66,1.0]],crystal:[30,[.24,.62,1.0]],core:[12,[.35,.80,1.0]],stone:[4,[.56,.56,.575]]};
 const SITES=Core.ROCKET_SITES||{pad:[28,4],wreck:[-25,55],cave:[69,4],hangar:[-58,26]};
 const PAD=SITES.pad,WRECK={c:[-25,57],a:[-31.6,57.9],b:[-18.6,56.2],r:2.25},ENGINE=[-28.6,52.4],CAVE=SITES.cave,HANGAR={x0:-66,x1:-51,z:26,r:6,door:2.8,doorH:3.9};
 const HEART=[75.3,6.9],CAVE_ROCKS=[],PLINTH=4.4;

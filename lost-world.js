@@ -17,9 +17,9 @@ const TAU=Math.PI*2,DRAW_R=150,CH=7,L0=Core.LOST,P=Core.POINTS;
 const norm=v=>{const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l];},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
 function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
 // kinds: 17 bright/ivory, 4 stone, 12 emissive, 13 glass, 16 gold metal, 21 glossy, 0 matte
-const MATS={snow:[18,[2.3,2.45,2.75]],iceRock:[4,[.60,.70,.86]],drift:[17,[.94,.97,1]],ice:[12,[.52,.86,.92]],iceHi:[12,[.80,.98,1]],iceCore:[12,[.95,1,1]],
+const MATS={snow:[18,[2.3,2.45,2.75]],iceRock:[4,[.60,.70,.86]],drift:[17,[.94,.97,1]],ice:[30,[.24,.62,1]],iceHi:[12,[.06,.32,1]],iceCore:[12,[.22,.58,1]],
  tent:[21,[1,.50,.16]],tentB:[21,[1,.80,.36]],cream:[21,[1,.95,.86]],dark:[0,[.08,.09,.12]],steel:[17,[.80,.84,.90]],gold:[16,[1,.78,.34]],
- hull:[21,[.92,.93,.96]],foil:[16,[1,.70,.25]],frost:[13,[.76,.92,1]],lampG:[12,[1,.82,.38]],drive:[12,[.45,1,.92]],driveHi:[12,[1,.9,.5]],screen:[12,[1,.72,.32]],flag:[21,[.30,.62,.96]],crate:[21,[.62,.42,.26]]};
+ hull:[21,[.92,.93,.96]],foil:[16,[1,.70,.25]],frost:[30,[.24,.62,1]],lampG:[12,[1,.82,.38]],drive:[12,[.45,1,.92]],driveHi:[12,[1,.9,.5]],screen:[12,[1,.72,.32]],flag:[21,[.30,.62,.96]],crate:[21,[.62,.42,.26]]};
 const C=[L0.x,L0.z];
 const TENTS=[[-3.4,59.8,1.65,'tent'],[11.2,64.0,1.5,'tent'],[9.6,55.6,1.25,'tentB']];
 const LANDER=[6.6,70.2],MAST=[4,56.6],HANGAR=[-5.4,69.8,2.5],DRIVE=[-4.65,67.75];
