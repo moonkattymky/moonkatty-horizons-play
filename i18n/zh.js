@@ -1584,5 +1584,11 @@
  "net.boot_offline":"没有网络连接。请检查网络后再试一次——你的进度很安全。",
  "net.reload":"再试一次",
  "html.quality_auto":"自动 · 适配你的手机",
- "game.auto_low":"游戏已适配你的手机：已开启流畅模式（可在菜单中更改）。"
+ "game.auto_low":"游戏已适配你的手机：已开启流畅模式（可在菜单中更改）。",
+ "bots.mine_title":"水晶矿",
+ "bots.mine_lvl":"等级 {n}/{m}",
+ "bots.mine_sub":"矿工在矿洞里挖掘。当前加成：每个矿工班次 +{c} 💎。",
+ "bots.mine_up":"升级到 {n} 级 · {p} Moon Points（每班 +{c} 💎）",
+ "bots.mine_max":"矿洞已达最高等级",
+ "bots.mine_done":"矿洞已升级到 {n} 级！"
 });

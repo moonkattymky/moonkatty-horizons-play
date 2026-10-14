@@ -14,7 +14,7 @@ const REGIONS4=[{id:'pad',name:_t('ch4.place_pad'),x:28,z:4},{id:'wreck',name:_t
 const RELIEF_KEEP=['wreck','wreckPanel','wreckHull'];
 // v55 explorable districts (same ids/coords/need as server/src/logic.js DISTRICTS). need = completed Lives.
 // v59 the player's home plot (worker cat-bots build it; server PLOT_STEPS = HOME_STEPS, professions = server BOT_PROFS)
-const HOME={x:10,z:27,r:9},HOME_STEPS=['road','lamps','house','workshop','garden','house2','solar','tower'],BOT_PROFS=['miner','mechanic','builder','courier'];
+const HOME={x:10,z:27,r:12},HOME_STEPS=['road','lamps','house','workshop','garden','house2','solar','tower'],BOT_PROFS=['miner','mechanic','builder','courier'];
 const DISTRICTS=[{id:'gold',x:-62,z:60,r:15,lock:12.5,need:0},{id:'crystal',x:64,z:34,r:15,lock:12.5,need:1},{id:'anomaly',x:45,z:-66,r:15,lock:12.5,need:2}];
 function districtLives(s){if(!s)return 0;const ch=s.chapter||1;return(ch>=2||s.complete===true?1:0)+(ch>=3?1:0)+(ch>=3&&s.chapter3Complete===true?1:0)+(ch>=4&&s.chapter4Complete===true?1:0)+(ch>=5&&s.chapter5Complete===true?1:0)+(ch>=6&&s.chapter6Complete===true?1:0)+(ch>=7&&s.chapter7Complete===true?1:0)+(ch>=8&&s.chapter8Complete===true?1:0)+(ch>=9&&s.chapter9Complete===true?1:0);}
 function districtRegions(s){const n=districtLives(s);return[...DISTRICTS.map(d=>({id:'district_'+d.id,name:_t('dist.'+d.id)+(n>=d.need?'':' · '+_t('dist.locked_short',{n:d.need})),x:d.x,z:d.z})),{id:'home',name:_t('bots.map'),x:HOME.x,z:HOME.z}];}

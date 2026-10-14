@@ -1584,5 +1584,11 @@
  "net.boot_offline":"Keine Internetverbindung. Prüfe sie und versuch es noch einmal — dein Fortschritt ist sicher.",
  "net.reload":"Erneut versuchen",
  "html.quality_auto":"Auto · passend zum Handy",
- "game.auto_low":"Das Spiel hat sich an dein Handy angepasst: Der flüssige Modus ist an (im Menü änderbar)."
+ "game.auto_low":"Das Spiel hat sich an dein Handy angepasst: Der flüssige Modus ist an (im Menü änderbar).",
+ "bots.mine_title":"Kristallmine",
+ "bots.mine_lvl":"Stufe {n}/{m}",
+ "bots.mine_sub":"Bergleute arbeiten in der Mine. Bonus jetzt: +{c} 💎 pro Bergmann-Schicht.",
+ "bots.mine_up":"Auf Stufe {n} ausbauen · {p} Moon Points (+{c} 💎 pro Schicht)",
+ "bots.mine_max":"Die Mine ist auf höchster Stufe",
+ "bots.mine_done":"Mine auf Stufe {n} ausgebaut!"
 });

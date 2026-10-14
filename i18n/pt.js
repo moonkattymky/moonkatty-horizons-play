@@ -1584,5 +1584,11 @@
  "net.boot_offline":"Sem ligação à internet. Verifica-a e tenta de novo — o teu progresso está seguro.",
  "net.reload":"Tentar de novo",
  "html.quality_auto":"Auto · ajustado ao telemóvel",
- "game.auto_low":"O jogo ajustou-se ao teu telemóvel: o modo fluido está ativo (podes mudá-lo no menu)."
+ "game.auto_low":"O jogo ajustou-se ao teu telemóvel: o modo fluido está ativo (podes mudá-lo no menu).",
+ "bots.mine_title":"Mina de cristais",
+ "bots.mine_lvl":"Nível {n}/{m}",
+ "bots.mine_sub":"Os mineiros cavam dentro da mina. Bônus atual: +{c} 💎 por turno de mineiro.",
+ "bots.mine_up":"Melhorar para o nível {n} · {p} Moon Points (+{c} 💎 por turno)",
+ "bots.mine_max":"A mina está no nível máximo",
+ "bots.mine_done":"Mina melhorada para o nível {n}!"
 });

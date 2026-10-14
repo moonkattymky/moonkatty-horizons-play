@@ -1584,5 +1584,11 @@
  "net.boot_offline":"No internet connection. Check it and try again — your progress is safe.",
  "net.reload":"Try again",
  "html.quality_auto":"Auto · fits your phone",
- "game.auto_low":"The game adapted to your phone: smooth mode is on (change it in the menu)."
+ "game.auto_low":"The game adapted to your phone: smooth mode is on (change it in the menu).",
+ "bots.mine_title":"Crystal mine",
+ "bots.mine_lvl":"Level {n}/{m}",
+ "bots.mine_sub":"Miners dig inside the mine. Bonus now: +{c} 💎 per miner shift.",
+ "bots.mine_up":"Upgrade to level {n} · {p} Moon Points (+{c} 💎 a shift)",
+ "bots.mine_max":"The mine is at the top level",
+ "bots.mine_done":"Mine upgraded to level {n}!"
 });

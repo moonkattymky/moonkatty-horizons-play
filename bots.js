@@ -33,14 +33,19 @@ function botHtml(b){const st=stateOf(b),left=st==='working'?Math.max(0,(b.endsAt
  return h+'</div></li>';}
 function render(){const d=dlg();let h=head();
  if(!view){d.innerHTML=h+`<p class="ret-note">${esc(UI.online?'…':T('bots.offline'))}</p>`;show(d);return;}
- const v=view,ready=readyCount(),idle=v.bots.filter(b=>stateOf(b)==='idle').length;
+ const v=view,hi=v.hire,mp=Game.state?.growth?.moon?.points,ready=readyCount(),idle=v.bots.filter(b=>stateOf(b)==='idle').length;
  h+=`<p class="ret-sub">${esc(T('bots.sub'))}</p>`+plotHtml(v.plot);
  h+=`<div class="ret-row bots-actions"><button type="button" class="ret-main ret-wide" data-collect ${ready&&!busy?'':'disabled'}>${esc(ready?T('bots.collect_n',{n:ready}):T('bots.collect'))}</button>${idle>1?`<button type="button" class="ret-ghost" data-startall>${esc(T('bots.start_all'))}</button>`:''}</div>`;
  h+=`<h3 class="bots-h">${esc(T('bots.crew',{n:v.bots.length}))}</h3><ul class="bot-list">`+v.bots.map(botHtml).join('');
  for(const f of v.free)if(!f.got)h+=`<li class="bot-card locked"><span class="bot-ava"><i>🔒</i></span><div class="bot-main"><b>${esc(T('bots.free_locked',{n:f.lives}))}</b></div></li>`;h+='</ul>';
  h+=`<p class="ret-meta">📦 ${esc(T('bots.courier_cap',{n:v.courier.today,m:v.courier.cap}))}</p>`;
+ // v74 crystal mine on the plot: levels 2..5 for Moon Points (server-side)
+ const mi=v.mine;if(mi){h+=`<section class="bots-mine"><div class="bots-plot-row"><b>⛏️ ${esc(T('bots.mine_title'))}</b><span class="bots-lvl">${esc(T('bots.mine_lvl',{n:mi.level,m:mi.max}))}</span></div><p class="ret-meta">${esc(T('bots.mine_sub',{c:(mi.level-1)*mi.perLevel}))}</p>`;
+  if(mi.price==null)h+=`<p class="ret-note small">${esc(T('bots.mine_max'))}</p>`;else if(!mi.open)h+=`<p class="ret-note small">${esc(T('bots.hire_locked'))}</p>`;
+  else h+=`<button type="button" class="ret-main ret-wide" data-mine ${busy?'disabled':''}>${esc(T('bots.mine_up',{n:mi.level+1,p:mi.price,c:mi.perLevel}))}</button>${typeof mp==='number'&&mp<mi.price?`<p class="ret-meta">${esc(T('bots.hire_poor'))}</p>`:''}`;
+  h+='</section>';}
  // hire for Moon Points
- const hi=v.hire,mp=Game.state?.growth?.moon?.points;h+=`<section class="bots-shop"><h3 class="bots-h">${esc(T('bots.hire_title'))}</h3>`;
+ h+=`<section class="bots-shop"><h3 class="bots-h">${esc(T('bots.hire_title'))}</h3>`;
  if(!hi.open)h+=`<p class="ret-note small">${esc(T('bots.hire_locked'))}</p>`;else if(hi.price==null)h+=`<p class="ret-note small">${esc(T('bots.hire_full',{n:v.bots.filter(b=>b.source!=='stars').length}))}</p>`;
  else{h+='<div class="bots-hire">'+view.profs.map(p=>`<button type="button" data-hire="${p}" ${busy?'disabled':''}><span>${ICON[p]}</span><b>${esc(T('bots.p_'+p))}</b><small>${esc(T('bots.d_'+p))}</small></button>`).join('')+'</div>';
   h+=`<p class="ret-meta bots-price">🌙 ${esc(T('bots.hire',{p:hi.price}))}${typeof mp==='number'&&mp<hi.price?' · '+esc(T('bots.hire_poor')):''}</p>`;}
@@ -53,13 +58,14 @@ function render(){const d=dlg();let h=head();
 function wire(d){const q=(s,f)=>d.querySelectorAll(s).forEach(b=>b.onclick=()=>f(b));
  q('[data-collect]',()=>collect());q('[data-startall]',()=>start(view.bots.filter(b=>stateOf(b)==='idle').map(b=>b.id)));
  q('[data-pick]',b=>{pick=pick===Number(b.dataset.pick)?null:Number(b.dataset.pick);render();});q('[data-prof]',b=>start([Number(b.dataset.for)],b.dataset.prof));q('[data-start]',b=>start([Number(b.dataset.start)]));
- q('[data-hire]',b=>hire(b.dataset.hire));q('[data-boost]',b=>boost(b.dataset.boost));}
-async function call(path,body){if(busy)return null;busy=true;try{const r=await UI.api(path,body);setView(r.bots);apply(r);return r;}catch(e){const er=e&&e.code||'';toast(er==='not_enough_points'?T('bots.hire_poor'):er==='busy'||er==='collect_first'?T('bots.busy'):er==='need_life1'?T('bots.hire_locked'):T('bots.err'));try{setView((await UI.api('/api/bots',{})).bots);}catch{}return null;}finally{busy=false;render();}}
+ q('[data-hire]',b=>hire(b.dataset.hire));q('[data-mine]',()=>mineUp());q('[data-boost]',b=>boost(b.dataset.boost));}
+async function call(path,body){if(busy)return null;busy=true;try{const r=await UI.api(path,body);setView(r.bots);apply(r);return r;}catch(e){const er=e&&e.code||'';toast(er==='not_enough_points'?T('bots.hire_poor'):er==='busy'||er==='collect_first'?T('bots.busy'):er==='need_life1'?T('bots.hire_locked'):er==='max'?T('bots.mine_max'):T('bots.err'));try{setView((await UI.api('/api/bots',{})).bots);}catch{}return null;}finally{busy=false;render();}}
 async function load(){if(!UI.online){render();return;}try{const r=await UI.api('/api/bots',{});setView(r.bots);}catch{}if(dlg().open)render();}
 async function collect(){const r=await call('/api/bots/collect',{});if(!r)return;const c=r.collected;if(!c||!c.shifts){toast(T('bots.nothing'));return;}buzz('success');
  const list=[];if(c.crystals)list.push('+'+c.crystals+' 💎');if(c.metal)list.push('+'+c.metal+' ⚙️');if(c.points)list.push('+'+c.points+' 🌙');if(c.energy)list.push('+'+c.energy+' ⚡');if(c.build)list.push('+'+c.build+' 🧱');
  toast(T('bots.got',{list:list.join(' · ')}));if(c.built&&c.built.length)setTimeout(()=>toast(T('bots.built',{b:c.built.map(b=>T('bots.b_'+b)).join(', ')})),1600);else if(c.levelUps)setTimeout(()=>toast(T('bots.levelup')),1600);}
 async function start(ids,prof){pick=null;const r=await call('/api/bots/start',prof?{ids,prof}:{ids});if(r)buzz('success');}
+async function mineUp(){const r=await call('/api/bots/mine',{});if(r&&r.mine){buzz('success');toast(T('bots.mine_done',{n:r.mine.level}));}}
 async function hire(prof){const r=await call('/api/bots/hire',{prof});if(r&&r.hired){buzz('success');toast(T('bots.hired',{p:T('bots.p_'+prof)}));}}
 async function boost(prof){if(busy)return;const tg=window.Telegram?.WebApp;if(!tg||!tg.openInvoice)return;busy=true;try{const r=await UI.api('/api/stars/invoice',{item:'bot_boost_'+prof});
   tg.openInvoice(r.link,st=>{if(st==='paid'){toast(T('bots.paid'));buzz('success');let n=0;const poll=async()=>{await load();if(++n<6&&!(view&&view.bots.some(b=>b.source==='stars'&&b.expiresInSec>0&&(Date.now()-at)<5000&&b.startedAt&&view.now-b.startedAt<90000)))setTimeout(poll,2000);};setTimeout(poll,1200);}});}

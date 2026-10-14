@@ -1584,5 +1584,11 @@
  "net.boot_offline":"Nessuna connessione a internet. Controllala e riprova: i tuoi progressi sono al sicuro.",
  "net.reload":"Riprova",
  "html.quality_auto":"Auto · adatta al telefono",
- "game.auto_low":"Il gioco si è adattato al tuo telefono: la modalità fluida è attiva (puoi cambiarla nel menu)."
+ "game.auto_low":"Il gioco si è adattato al tuo telefono: la modalità fluida è attiva (puoi cambiarla nel menu).",
+ "bots.mine_title":"Miniera di cristalli",
+ "bots.mine_lvl":"Livello {n}/{m}",
+ "bots.mine_sub":"I minatori scavano nella miniera. Bonus attuale: +{c} 💎 per turno di minatore.",
+ "bots.mine_up":"Migliora al livello {n} · {p} Moon Points (+{c} 💎 a turno)",
+ "bots.mine_max":"La miniera è al livello massimo",
+ "bots.mine_done":"Miniera migliorata al livello {n}!"
 });

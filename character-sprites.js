@@ -1,5 +1,5 @@
 (function(root){'use strict';
-const RIDE={"image":"assets/moonkatty-ride-v63.webp?v=20261014-73b","imageWidth":865,"imageHeight":1099,"directions":{"up":{"x":0,"y":0,"w":385,"h":568,"anchorX":192.3,"anchorY":403.6,"bodyHeight":540.5,"hands":[[-0.791,0.448],[0.799,0.448]]},"left":{"x":391,"y":0,"w":461,"h":519,"anchorX":193.2,"anchorY":355.5,"bodyHeight":540.5,"hands":[[-0.722,0.504]]},"down":{"x":0,"y":574,"w":392,"h":514,"anchorX":196.2,"anchorY":356.1,"bodyHeight":540.5,"hands":[[-0.672,0.494],[0.695,0.494]]},"right":{"x":398,"y":574,"w":461,"h":519,"anchorX":267.8,"anchorY":355.5,"bodyHeight":540.5,"hands":[[0.722,0.504]]}}};
+const RIDE={"image":"assets/moonkatty-ride-v63.webp?v=20261014-74a","imageWidth":865,"imageHeight":1099,"directions":{"up":{"x":0,"y":0,"w":385,"h":568,"anchorX":192.3,"anchorY":403.6,"bodyHeight":540.5,"hands":[[-0.791,0.448],[0.799,0.448]]},"left":{"x":391,"y":0,"w":461,"h":519,"anchorX":193.2,"anchorY":355.5,"bodyHeight":540.5,"hands":[[-0.722,0.504]]},"down":{"x":0,"y":574,"w":392,"h":514,"anchorX":196.2,"anchorY":356.1,"bodyHeight":540.5,"hands":[[-0.672,0.494],[0.695,0.494]]},"right":{"x":398,"y":574,"w":461,"h":519,"anchorX":267.8,"anchorY":355.5,"bodyHeight":540.5,"hands":[[0.722,0.504]]}}};
 const atlas=root.MoonCharacterAtlas,R=root.MoonRenderer.prototype,originalCat=R.cat,originalScene=R.scene;
 R.scene=function(...args){this.crewSprites=[];return originalScene.apply(this,args);};
 const VERT=`attribute vec3 position;attribute vec2 texcoord;uniform mat4 vp;varying vec2 uv;varying vec3 W;void main(){uv=texcoord;W=position;gl_Position=vp*vec4(position,1.);}`;
@@ -30,7 +30,7 @@ R.initCharacterSprites=function(){
  return s;
 };
 // v69: the 3D cat parts (sculpted-cat.js, ~0.8 MB) are only the fallback while the sprite sheets load, so they are fetched on demand
-let sculptCatAsked=false;function loadSculptCat(r){if(sculptCatAsked||root.MoonSculptedCatReady||typeof document==='undefined')return;sculptCatAsked=true;setTimeout(()=>{let sp=null;try{sp=r.initCharacterSprites();}catch(e){}if(root.MoonSculptedCatReady||(sp&&sp.ready&&sp.idleReady)){sculptCatAsked=false;return;}const s=document.createElement('script');s.src='sculpted-cat.js?v=20261014-73b';s.async=true;document.head.appendChild(s);},8000);}
+let sculptCatAsked=false;function loadSculptCat(r){if(sculptCatAsked||root.MoonSculptedCatReady||typeof document==='undefined')return;sculptCatAsked=true;setTimeout(()=>{let sp=null;try{sp=r.initCharacterSprites();}catch(e){}if(root.MoonSculptedCatReady||(sp&&sp.ready&&sp.idleReady)){sculptCatAsked=false;return;}const s=document.createElement('script');s.src='sculpted-cat.js?v=20261014-74a';s.async=true;document.head.appendChild(s);},8000);}
 R.cat=function(x,z,yaw,t,moving,alt,ch,accent,hero,equipment){
  const sprite=this.initCharacterSprites();if(!sprite.ready||(!hero&&!sprite.idleReady)){loadSculptCat(this);return originalCat.call(this,x,z,yaw,t,moving,alt,ch,accent,hero,equipment);}
  if(!hero){const q=this._npcActor;(this.crewSprites||(this.crewSprites=[])).push({x,z,yaw,alt:(alt||0)+(q?q.hop:0),speed:q&&q.moving?1:0,lean:q?q.lean:0,t});return;}
@@ -66,18 +66,18 @@ R.drawBotSprites=function(vp,state,t){const s=this.characterSprite,gl=this.gl,HP
  if(!s.bots){s.bots={texture:gl.createTexture(),ready:false};if(typeof Image==='undefined')return;const im=new Image();im.onload=()=>{try{s.upload(s.bots.texture,im);s.bots.ready=true;}catch(e){s.bots.failed=true;}};im.src=BOT_ATLAS.image;}
  if(!s.bots.ready)return;const H=HP.H,ch=state.chapter||1;let poses;try{poses=this.v59Poses(t);}catch(e){return;}
  const eye=this.eye;if(Math.hypot(eye[0]-H.x,eye[2]-H.z)>95)return;
- for(let i=0;i<poses.length;i++){const q=poses[i],b=q.b,col=BOT_ATLAS.cols[b.prof];if(col==null)continue;const x=H.x+q.x,z=H.z+q.z;
+ for(let i=0;i<poses.length;i++){const q=poses[i],b=q.b,col=BOT_ATLAS.cols[b.prof];if(col==null||q.hide)continue;const x=H.x+q.x,z=H.z+q.z;
   const camera=Math.atan2(eye[0]-x,eye[2]-z),dir=directionFor(q.yaw,camera),m=BOT_ATLAS.meta[b.prof][BOT_ATLAS.rows[dir]],side=dir==='left'||dir==='right';
   const ph=i*1.37,mv=!!q.moving,step=t*(mv?7.5:0)+ph,fall=Math.abs(Math.sin(step));
   let bob=mv?fall*.07:0,roll=mv?Math.sin(step)*.07:0,squash=mv?1-(1-fall)*.05:1,lean=0,shear=side&&mv?Math.sin(step*2)*.05:0;
   if(q.work){const w=q.swing||0;lean=w*.10;bob+=Math.max(0,-w)*.03;squash*=1-Math.max(0,-w)*.04;roll=Math.sin(t*2+ph)*.03;}
   if(q.hop)bob+=q.hop;if(q.sit){squash*=.9;}
   if(!mv&&!q.work){bob+=Math.sin(t*2.2+ph)*.012;roll=Math.sin(t*1.3+ph)*.025;}
-  const sc=b.source==='stars'?1.06:1,hgt=BOT_H*sc*squash,wid=BOT_H*sc*m[4]*(2-squash),right=[Math.cos(camera),-Math.sin(camera)],base=this.terrain(x,z,ch)+.02+bob;
+  const sc=b.source==='stars'?1.06:1,hgt=BOT_H*sc*squash,wid=BOT_H*sc*m[4]*(2-squash),right=[Math.cos(camera),-Math.sin(camera)],base=this.terrain(x,z,ch)+.02+(q.dy||0)+bob;
   const u0=m[0],v0=m[1],u1=m[0]+m[2],v1=m[1]+m[3],cr=Math.cos(roll),sr=Math.sin(roll),fw=side?(dir==='left'?-1:1):0;
   const pt=(px,py,u,v)=>{const sx=px+py*(lean*fw+shear),rx=sx*cr-py*sr,ry=sx*sr+py*cr;return[x+right[0]*rx,base+ry,z+right[1]*rx,u,v];};
   const A=pt(-wid/2,hgt,u0,v0),Bq=pt(-wid/2,0,u0,v1),C=pt(wid/2,0,u1,v1),D=pt(wid/2,hgt,u1,v0),V=[...A,...Bq,...C,...A,...C,...D];
-  try{this.drawCharacterShadow(vp,{x,z,alt:bob,yaw:q.yaw},state,camera);}catch(e){}
+  try{this.drawCharacterShadow(vp,{x,z,alt:bob+(q.dy||0),yaw:q.yaw},state,camera);}catch(e){}
   gl.useProgram(s.program);gl.uniformMatrix4fv(s.vp,false,vp);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,s.bots.texture);gl.uniform1i(s.map,0);gl.uniform4f(s.frameUV,u0,v0,u1-u0,v1-v0);gl.uniform3fv(s.right,[right[0],0,right[1]]);gl.uniform3fv(s.eye,eye);gl.bindBuffer(gl.ARRAY_BUFFER,s.buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(V),gl.DYNAMIC_DRAW);
   gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.enableVertexAttribArray(s.position);gl.vertexAttribPointer(s.position,3,gl.FLOAT,false,20,0);gl.enableVertexAttribArray(s.uv);gl.vertexAttribPointer(s.uv,2,gl.FLOAT,false,20,12);gl.drawArrays(gl.TRIANGLES,0,6);gl.disableVertexAttribArray(s.position);gl.disableVertexAttribArray(s.uv);gl.disable(gl.BLEND);}
  this.v66Bots=poses.length;};

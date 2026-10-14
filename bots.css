@@ -36,3 +36,4 @@
 .bots-boost{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
 .bots-boost button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 3px;border-radius:12px;background:linear-gradient(160deg,#4a3a10,#1d1a10);border:1px solid #ffd98c88;color:#ffe9b8;font-size:12px}
 .bots-boost button b{color:#ffd98c}
+.bots-mine{background:linear-gradient(160deg,#3a2a12cc,#1e1508cc);border:1px solid #a8803a;border-radius:14px;padding:10px 12px;margin:8px 0}.bots-mine .ret-main{margin-top:6px}

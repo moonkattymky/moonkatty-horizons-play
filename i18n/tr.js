@@ -1584,5 +1584,11 @@
  "net.boot_offline":"İnternet bağlantısı yok. Kontrol edip tekrar dene — ilerlemen güvende.",
  "net.reload":"Tekrar dene",
  "html.quality_auto":"Otomatik · telefonuna göre",
- "game.auto_low":"Oyun telefonuna uyum sağladı: akıcı mod açık (menüden değiştirebilirsin)."
+ "game.auto_low":"Oyun telefonuna uyum sağladı: akıcı mod açık (menüden değiştirebilirsin).",
+ "bots.mine_title":"Kristal madeni",
+ "bots.mine_lvl":"Seviye {n}/{m}",
+ "bots.mine_sub":"Madenciler madenin içinde çalışır. Şu anki bonus: madenci vardiyası başına +{c} 💎.",
+ "bots.mine_up":"Seviye {n}'e yükselt · {p} Moon Points (vardiya başına +{c} 💎)",
+ "bots.mine_max":"Maden en üst seviyede",
+ "bots.mine_done":"Maden seviye {n}'e yükseltildi!"
 });

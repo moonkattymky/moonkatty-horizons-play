@@ -1584,5 +1584,11 @@
  "net.boot_offline":"Pas de connexion Internet. Vérifie-la et réessaie — ta progression est en sécurité.",
  "net.reload":"Réessayer",
  "html.quality_auto":"Auto · adapté à ton téléphone",
- "game.auto_low":"Le jeu s’est adapté à ton téléphone : le mode fluide est activé (modifiable dans le menu)."
+ "game.auto_low":"Le jeu s’est adapté à ton téléphone : le mode fluide est activé (modifiable dans le menu).",
+ "bots.mine_title":"Mine de cristaux",
+ "bots.mine_lvl":"Niveau {n}/{m}",
+ "bots.mine_sub":"Les mineurs creusent dans la mine. Bonus actuel : +{c} 💎 par service de mineur.",
+ "bots.mine_up":"Améliorer au niveau {n} · {p} Moon Points (+{c} 💎 par service)",
+ "bots.mine_max":"La mine est au niveau maximum",
+ "bots.mine_done":"Mine améliorée au niveau {n} !"
 });

@@ -1584,5 +1584,11 @@
  "net.boot_offline":"No hay conexión a internet. Compruébala e inténtalo de nuevo: tu progreso está a salvo.",
  "net.reload":"Reintentar",
  "html.quality_auto":"Auto · según tu teléfono",
- "game.auto_low":"El juego se adaptó a tu teléfono: el modo fluido está activado (puedes cambiarlo en el menú)."
+ "game.auto_low":"El juego se adaptó a tu teléfono: el modo fluido está activado (puedes cambiarlo en el menú).",
+ "bots.mine_title":"Mina de cristales",
+ "bots.mine_lvl":"Nivel {n}/{m}",
+ "bots.mine_sub":"Los mineros cavan dentro de la mina. Bono actual: +{c} 💎 por turno de minero.",
+ "bots.mine_up":"Mejorar a nivel {n} · {p} Moon Points (+{c} 💎 por turno)",
+ "bots.mine_max":"La mina está al nivel máximo",
+ "bots.mine_done":"¡Mina mejorada a nivel {n}!"
 });

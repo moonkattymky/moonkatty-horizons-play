@@ -1584,5 +1584,11 @@
  "net.boot_offline":"인터넷 연결이 없어요. 확인한 뒤 다시 시도해 주세요 — 진행 상황은 안전해요.",
  "net.reload":"다시 시도",
  "html.quality_auto":"자동 · 휴대폰에 맞춤",
- "game.auto_low":"게임이 휴대폰에 맞춰졌어요: 부드러운 모드가 켜졌어요 (메뉴에서 바꿀 수 있어요)."
+ "game.auto_low":"게임이 휴대폰에 맞춰졌어요: 부드러운 모드가 켜졌어요 (메뉴에서 바꿀 수 있어요).",
+ "bots.mine_title":"수정 광산",
+ "bots.mine_lvl":"레벨 {n}/{m}",
+ "bots.mine_sub":"광부들이 광산 안에서 일해요. 현재 보너스: 광부 근무당 +{c} 💎.",
+ "bots.mine_up":"레벨 {n}(으)로 업그레이드 · {p} Moon Points (근무당 +{c} 💎)",
+ "bots.mine_max":"광산이 최고 레벨이에요",
+ "bots.mine_done":"광산이 레벨 {n}(으)로 업그레이드되었어요!"
 });

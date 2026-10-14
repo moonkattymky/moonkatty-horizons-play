@@ -18,3 +18,5 @@ html[data-tg-fullscreen=true]{--st:var(--tg-safe-top,0px);--sb:max(var(--tg-safe
 }
 /* the jetpack meter shows only while it is used or refilling */
 #app-viewport>.fuel{opacity:0;transition:opacity .25s;pointer-events:none}#app-viewport>.fuel.on{opacity:1}
+/* v74 landscape: the energy pill sits under the round Menu button instead of on top of it */
+@media (orientation:landscape){html #app-viewport .dm-energy{top:calc(var(--app-height,100dvh) * .36 + 70px)!important}}
