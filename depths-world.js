@@ -36,10 +36,10 @@ function prism(lo,hi,core,x,y,z,r,h,yaw,pitch,roll,rnd,withCore){const k=6,rad=[
  const b0=ring(-.12,1.02),mid=ring(bev*.55,1.0),top=ring(bev,.9),apex=T([0,h,0]);
  for(let i=0;i<k;i++){const n=(i+1)%k,d=i%2?hi:lo;push(d,b0[i],mid[n],mid[i]);push(d,b0[i],b0[n],mid[n]);push(i%2?lo:hi,mid[i],top[n],top[i]);push(i%2?lo:hi,mid[i],mid[n],top[n]);push(d,top[i],top[n],apex);}
  if(withCore){const cr=rad.map(v=>v*.42),cring=yy=>cr.map((rr,i)=>{const t=i/k*TAU;return T([Math.cos(t)*rr,yy,Math.sin(t)*rr]);}),c0=cring(.02),c1=cring(bev*.82),ca=T([0,bev+tip*.55,0]);for(let i=0;i<k;i++){const n=(i+1)%k;push(core,c0[i],c1[n],c1[i]);push(core,c0[i],c0[n],c1[n]);push(core,c1[i],c1[n],ca);}}}
-function cluster(map,x,y,z,scale,seed,c,small,down){const rnd=rng(seed),[a,b,k]=CRY[c],lo=grp(map,a),hi=grp(map,b),co=grp(map,k),fl=down?Math.PI:0;
- prism(lo,hi,co,x,y,z,.26*scale,(1.9+rnd()*.5)*scale,rnd()*TAU,fl+(rnd()-.5)*.14,(rnd()-.5)*.14,rnd,true);
- for(let i=0;i<4;i++){const t=i/4*TAU+rnd()*.6,d=(.24+rnd()*.12)*scale,tilt=.3+rnd()*.25;prism(lo,hi,co,x+Math.cos(t)*d,y,z+Math.sin(t)*d,(.14+rnd()*.05)*scale,(.9+rnd()*.6)*scale,rnd()*TAU,fl+Math.sin(t)*tilt,-Math.cos(t)*tilt,rnd,true);}
- if(small)for(let i=0;i<5;i++){const t=i/5*TAU+rnd()*.5,d=(.5+rnd()*.25)*scale,tilt=.5+rnd()*.4;prism(lo,hi,co,x+Math.cos(t)*d,y,z+Math.sin(t)*d,(.06+rnd()*.05)*scale,(.3+rnd()*.4)*scale,rnd()*TAU,fl+Math.sin(t)*tilt,-Math.cos(t)*tilt,rnd,false);}}
+function cluster(map,x,y,z,scale0,seed,c,small,down){/* v80: knee-to-waist clusters of thin shards */const scale=Math.min(scale0,.56),TH=.55;const rnd=rng(seed),[a,b,k]=CRY[c],lo=grp(map,a),hi=grp(map,b),co=grp(map,k),fl=down?Math.PI:0;
+ prism(lo,hi,co,x,y,z,.26*scale*TH,(1.9+rnd()*.5)*scale,rnd()*TAU,fl+(rnd()-.5)*.14,(rnd()-.5)*.14,rnd,true);
+ for(let i=0;i<4;i++){const t=i/4*TAU+rnd()*.6,d=(.24+rnd()*.12)*scale,tilt=.3+rnd()*.25;prism(lo,hi,co,x+Math.cos(t)*d,y,z+Math.sin(t)*d,(.14+rnd()*.05)*scale*TH,(.9+rnd()*.6)*scale,rnd()*TAU,fl+Math.sin(t)*tilt,-Math.cos(t)*tilt,rnd,true);}
+ if(small)for(let i=0;i<5;i++){const t=i/5*TAU+rnd()*.5,d=(.5+rnd()*.25)*scale,tilt=.5+rnd()*.4;prism(lo,hi,co,x+Math.cos(t)*d,y,z+Math.sin(t)*d,(.06+rnd()*.05)*scale*TH,(.3+rnd()*.4)*scale,rnd()*TAU,fl+Math.sin(t)*tilt,-Math.cos(t)*tilt,rnd,false);}}
 const G=(r,x,z)=>r.terrain(x,z,CH);
 function mushroom(map,r,x,z,s,c,seed){const rnd=rng(seed),b=new B();for(let i=0;i<4;i++){const a=i/4*TAU+rnd(),d=i?(.55+rnd()*.35)*s:0,h=(i?.6+rnd()*.5:1.25)*s,cr=(i?.32+rnd()*.12:.62)*s,px=Math.cos(a)*d,pz=Math.sin(a)*d;
   b.tube('stem',[px,0,pz],[px,h,pz],.07*s+cr*.12,8,.05*s+cr*.08);b.tube(c==='P'?'capP':'capT',[px,h-.06*s,pz],[px,h+cr*.55,pz],cr,14,.04);b.tube('stem',[px,h-.08*s,pz],[px,h-.02*s,pz],cr*.9,14);}

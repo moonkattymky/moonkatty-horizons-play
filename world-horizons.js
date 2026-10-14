@@ -68,10 +68,10 @@ function shardPrism(dst,core,x,y,z,r,h,yaw,pitch,roll,rnd,withCore){const k=7,ra
  const b=ring(-.12,1.02),mid=ring(bev*.55,1.0),top=ring(bev,.9),apex=T([ax,h,az]);
  for(let i=0;i<k;i++){const n=(i+1)%k;triPush(dst,b[i],mid[n],mid[i]);triPush(dst,b[i],b[n],mid[n]);triPush(dst,mid[i],top[n],top[i]);triPush(dst,mid[i],mid[n],top[n]);triPush(dst,top[i],top[n],apex);}
  if(withCore){const cr=rad.map(v=>v*.42),cring=(yy)=>cr.map((rr,i)=>{const t=i/k*TAU;return T([Math.cos(t)*rr,yy,Math.sin(t)*rr]);}),c0=cring(.02),c1=cring(bev*.82),ca=T([ax*.6,bev+tip*.55,az*.6]);for(let i=0;i<k;i++){const n=(i+1)%k;triPush(core,c0[i],c1[n],c1[i]);triPush(core,c0[i],c0[n],c1[n]);triPush(core,c1[i],c1[n],ca);}}}
-function clusterData(seed,scale=1){const rnd=rng(seed),a=[],core=[];
- shardPrism(a,core,0,0,0,.24*scale,(1.75+rnd()*.45)*scale,rnd()*TAU,(rnd()-.5)*.12,(rnd()-.5)*.12,rnd,true);
- const n2=5;for(let i=0;i<n2;i++){const t=i/n2*TAU+rnd()*.6,d=(.20+rnd()*.12)*scale,tilt=.28+rnd()*.26;shardPrism(a,core,Math.cos(t)*d,0,Math.sin(t)*d,(.13+rnd()*.05)*scale,(.85+rnd()*.6)*scale,rnd()*TAU,Math.sin(t)*tilt,-Math.cos(t)*tilt,rnd,true);}
- const n3=8;for(let i=0;i<n3;i++){const t=i/n3*TAU+rnd()*.5,d=(.42+rnd()*.25)*scale,tilt=.45+rnd()*.4;shardPrism(a,core,Math.cos(t)*d,0,Math.sin(t)*d,(.06+rnd()*.05)*scale,(.30+rnd()*.42)*scale,rnd()*TAU,Math.sin(t)*tilt,-Math.cos(t)*tilt,rnd,false);}
+function clusterData(seed,scale0=1){/* v80: knee-to-waist clusters of thin shards */const scale=Math.min(scale0,.56),TH=.55;const rnd=rng(seed),a=[],core=[];
+ shardPrism(a,core,0,0,0,.24*scale*TH,(1.75+rnd()*.45)*scale,rnd()*TAU,(rnd()-.5)*.12,(rnd()-.5)*.12,rnd,true);
+ const n2=5;for(let i=0;i<n2;i++){const t=i/n2*TAU+rnd()*.6,d=(.20+rnd()*.12)*scale,tilt=.28+rnd()*.26;shardPrism(a,core,Math.cos(t)*d,0,Math.sin(t)*d,(.13+rnd()*.05)*scale*TH,(.85+rnd()*.6)*scale,rnd()*TAU,Math.sin(t)*tilt,-Math.cos(t)*tilt,rnd,true);}
+ const n3=8;for(let i=0;i<n3;i++){const t=i/n3*TAU+rnd()*.5,d=(.42+rnd()*.25)*scale,tilt=.45+rnd()*.4;shardPrism(a,core,Math.cos(t)*d,0,Math.sin(t)*d,(.06+rnd()*.05)*scale*TH,(.30+rnd()*.42)*scale,rnd()*TAU,Math.sin(t)*tilt,-Math.cos(t)*tilt,rnd,false);}
  return{a,core};}
 R.crystalDeposit=function(res,ch,t){this.ensureWorldModels();const id=Number(String(res.id).replace(/\D/g,''))||0,v=id%4,key='v40_cluster_'+v;if(!this.meshes[key]){const d=clusterData(900+v*37,.95+v*.05);this.addMesh(key,d.a);this.addMesh(key+'_core',d.core);}
  const x=res.x,z=res.z,y=this.terrain(x,z,ch),yaw=id*.71,pulse=Math.sin(t*1.7+x);

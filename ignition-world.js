@@ -27,10 +27,10 @@ function prism(lo,hi,core,x,y,z,r,h,yaw,pitch,roll,rnd,withCore){const k=6,rad=[
  const b0=ring(-.12,1.02),mid=ring(bev*.55,1.0),top=ring(bev,.9),apex=T([0,h,0]);
  for(let i=0;i<k;i++){const n=(i+1)%k,d=i%2?hi:lo;push(d,b0[i],mid[n],mid[i]);push(d,b0[i],b0[n],mid[n]);push(i%2?lo:hi,mid[i],top[n],top[i]);push(i%2?lo:hi,mid[i],mid[n],top[n]);push(d,top[i],top[n],apex);}
  if(withCore){const cr=rad.map(v=>v*.42),cring=yy=>cr.map((rr,i)=>{const t=i/k*TAU;return T([Math.cos(t)*rr,yy,Math.sin(t)*rr]);}),c0=cring(.02),c1=cring(bev*.82),ca=T([0,bev+tip*.55,0]);for(let i=0;i<k;i++){const n=(i+1)%k;push(core,c0[i],c1[n],c1[i]);push(core,c0[i],c0[n],c1[n]);push(core,c1[i],c1[n],ca);}}}
-function cluster(map,x,y,z,scale,seed,amber,small){const rnd=rng(seed),lo=grp(map,amber?'aCrystal':'vCrystal'),hi=grp(map,amber?'aHi':'vHi'),c=grp(map,amber?'aCore':'vCore');
- prism(lo,hi,c,x,y,z,.26*scale,(1.9+rnd()*.5)*scale,rnd()*TAU,(rnd()-.5)*.14,(rnd()-.5)*.14,rnd,true);
- for(let i=0;i<4;i++){const t=i/4*TAU+rnd()*.6,d=(.24+rnd()*.12)*scale,tilt=.3+rnd()*.25;prism(lo,hi,c,x+Math.cos(t)*d,y,z+Math.sin(t)*d,(.14+rnd()*.05)*scale,(.9+rnd()*.6)*scale,rnd()*TAU,Math.sin(t)*tilt,-Math.cos(t)*tilt,rnd,true);}
- if(small)for(let i=0;i<5;i++){const t=i/5*TAU+rnd()*.5,d=(.5+rnd()*.25)*scale,tilt=.5+rnd()*.4;prism(lo,hi,c,x+Math.cos(t)*d,y,z+Math.sin(t)*d,(.06+rnd()*.05)*scale,(.3+rnd()*.4)*scale,rnd()*TAU,Math.sin(t)*tilt,-Math.cos(t)*tilt,rnd,false);}}
+function cluster(map,x,y,z,scale0,seed,amber,small){/* v80: knee-to-waist clusters of thin shards */const scale=Math.min(scale0,.56),TH=.55;const rnd=rng(seed),lo=grp(map,amber?'aCrystal':'vCrystal'),hi=grp(map,amber?'aHi':'vHi'),c=grp(map,amber?'aCore':'vCore');
+ prism(lo,hi,c,x,y,z,.26*scale*TH,(1.9+rnd()*.5)*scale,rnd()*TAU,(rnd()-.5)*.14,(rnd()-.5)*.14,rnd,true);
+ for(let i=0;i<4;i++){const t=i/4*TAU+rnd()*.6,d=(.24+rnd()*.12)*scale,tilt=.3+rnd()*.25;prism(lo,hi,c,x+Math.cos(t)*d,y,z+Math.sin(t)*d,(.14+rnd()*.05)*scale*TH,(.9+rnd()*.6)*scale,rnd()*TAU,Math.sin(t)*tilt,-Math.cos(t)*tilt,rnd,true);}
+ if(small)for(let i=0;i<5;i++){const t=i/5*TAU+rnd()*.5,d=(.5+rnd()*.25)*scale,tilt=.5+rnd()*.4;prism(lo,hi,c,x+Math.cos(t)*d,y,z+Math.sin(t)*d,(.06+rnd()*.05)*scale*TH,(.3+rnd()*.4)*scale,rnd()*TAU,Math.sin(t)*tilt,-Math.cos(t)*tilt,rnd,false);}}
 function spire(map,r,x,z,s){const y=r.terrain(x,z,CH)-.1,b=new B();
  b.tube('stone',[0,0,0],[0,.5,0],1.55*s,12,1.45*s);b.tube('gold',[0,.5,0],[0,.68,0],1.42*s,16);
  b.tube('ivory',[0,.68,0],[0,4.6*s,0],.95*s,14,.82*s);for(const h of[1.9,3.3,4.6])b.tube('gold',[0,h*s-.1,0],[0,h*s+.06,0],(1.02-h*.04)*s,16);
@@ -100,7 +100,7 @@ function inside5(x,z,state){
  if(Math.hypot(x-BOWL[0],z-BOWL[1])<1.25)return true;
  for(const s of SPARKS)if(Math.hypot(x-s.x,z-s.z)<.8)return true;
  for(const[sx,sz,s]of SPIRES)if(Math.hypot(x-sx,z-sz)<1.6*s+.3)return true;
- for(const[cx,cz,s]of CRYST)if(Math.hypot(x-cx,z-cz)<.55*s+.3)return true;
+ for(const[cx,cz,s]of CRYST)if(Math.hypot(x-cx,z-cz)<.55*Math.min(s,.46)+.18)return true;
  for(const[lx,lz]of LAMPS)if(Math.hypot(x-lx,z-lz)<.3)return true;
  return false;}
 R.blocked=function(x,z,state,alt=0){if(on(state)&&alt<2.4&&Math.hypot(x-F.x,z-F.z)<30&&inside5(x,z,state))return true;return old.blocked.call(this,x,z,state,alt);};

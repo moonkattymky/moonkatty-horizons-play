@@ -41,7 +41,7 @@ function grp(map,mat){let g=map.get(mat);if(!g)map.set(mat,g=[]);return g;}
 function merge(map,b){for(const[mat,data]of b.groups){const g=grp(map,mat);for(let i=0;i<data.length;i++)g.push(data[i]);}}
 function dome(b,mat,r,h,y0=0){const prof=[];for(let i=0;i<=8;i++){const a=i/8*Math.PI/2;prof.push([Math.cos(a),y0/h+Math.sin(a)]);}b.shell(mat,prof,r,h);}
 function ball(b,mat,x,y,z,r){const prof=[];for(let i=0;i<=8;i++){const a=-Math.PI/2+i/8*Math.PI;prof.push([Math.max(.001,Math.cos(a)),(Math.sin(a)+1)/2]);}const k=new B();k.shell(mat,prof,r,r*2);for(const[m,d]of k.groups){const g=b.groups.get(m)||[];for(let i=0;i<d.length;i+=6)g.push(d[i]+x,d[i+1]+y-r,d[i+2]+z,d[i+3],d[i+4],d[i+5]);b.groups.set(m,g);}}
-function crystal(b,mat,x,y,z,r,h,lean=0,dir=0){const dx=Math.sin(dir)*lean,dz=Math.cos(dir)*lean;b.tube(mat,[x,y,z],[x+dx*h*.7,y+h*.7,z+dz*h*.7],r,6,r*.95);b.tube(mat,[x+dx*h*.7,y+h*.7,z+dz*h*.7],[x+dx*h,y+h,z+dz*h],r*.95,6,.01);}
+function crystal(b,mat,x,y,z,r,h,lean=0,dir=0){r*=.6;/* v80 thinner shards */const dx=Math.sin(dir)*lean,dz=Math.cos(dir)*lean;b.tube(mat,[x,y,z],[x+dx*h*.7,y+h*.7,z+dz*h*.7],r,6,r*.95);b.tube(mat,[x+dx*h*.7,y+h*.7,z+dz*h*.7],[x+dx*h,y+h,z+dz*h],r*.95,6,.01);}
 // ---------- buildings (local to their own origin) ----------
 function bHouse(b,roof){b.tube('stone',[0,-.1,0],[0,.22,0],2.0,24,1.95);b.shell('ivory',[[1,0],[1,.28]],1.7,2.2);dome(b,roof,1.72,1.5,.6);b.tube('gold',[0,.6,0],[0,.68,0],1.76,24);
  b.box('ivory',0,.8,-1.66,1.0,1.5,.36);b.box('wood',0,.68,-1.86,.66,1.2,.06);b.box('gold',0,1.42,-1.86,.74,.08,.08);

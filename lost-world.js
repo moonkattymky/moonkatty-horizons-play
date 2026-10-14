@@ -19,7 +19,7 @@ function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return
 // kinds: 17 bright/ivory, 4 stone, 12 emissive, 13 glass, 16 gold metal, 21 glossy, 0 matte
 const MATS={snow:[18,[2.3,2.45,2.75]],iceRock:[4,[.60,.70,.86]],drift:[17,[.94,.97,1]],ice:[30,[.24,.62,1]],iceHi:[12,[.06,.32,1]],iceCore:[12,[.22,.58,1]],
  tent:[21,[1,.50,.16]],tentB:[21,[1,.80,.36]],cream:[21,[1,.95,.86]],dark:[0,[.08,.09,.12]],steel:[17,[.80,.84,.90]],gold:[16,[1,.78,.34]],
- hull:[21,[.92,.93,.96]],foil:[16,[1,.70,.25]],frost:[30,[.24,.62,1]],lampG:[12,[1,.82,.38]],drive:[12,[.45,1,.92]],driveHi:[12,[1,.9,.5]],screen:[12,[1,.72,.32]],flag:[21,[.30,.62,.96]],crate:[21,[.62,.42,.26]]};
+ hull:[21,[.92,.93,.96]],foil:[16,[1,.70,.25]],frost:[13,[.76,.92,1]],lampG:[12,[1,.82,.38]],drive:[12,[.45,1,.92]],driveHi:[12,[1,.9,.5]],screen:[12,[1,.72,.32]],flag:[21,[.30,.62,.96]],crate:[21,[.62,.42,.26]]};
 const C=[L0.x,L0.z];
 const TENTS=[[-3.4,59.8,1.65,'tent'],[11.2,64.0,1.5,'tent'],[9.6,55.6,1.25,'tentB']];
 const LANDER=[6.6,70.2],MAST=[4,56.6],HANGAR=[-5.4,69.8,2.5],DRIVE=[-4.65,67.75];
@@ -38,10 +38,10 @@ function prism(lo,hi,core,x,y,z,r,h,yaw,pitch,roll,rnd,withCore){const k=6,rad=[
  const b0=ring(-.12,1.02),mid=ring(bev*.55,1.0),top=ring(bev,.9),apex=T([0,h,0]);
  for(let i=0;i<k;i++){const n=(i+1)%k,d=i%2?hi:lo;push(d,b0[i],mid[n],mid[i]);push(d,b0[i],b0[n],mid[n]);push(i%2?lo:hi,mid[i],top[n],top[i]);push(i%2?lo:hi,mid[i],mid[n],top[n]);push(d,top[i],top[n],apex);}
  if(withCore){const cr=rad.map(v=>v*.42),cring=yy=>cr.map((rr,i)=>{const t=i/k*TAU;return T([Math.cos(t)*rr,yy,Math.sin(t)*rr]);}),c0=cring(.02),c1=cring(bev*.82),ca=T([0,bev+tip*.55,0]);for(let i=0;i<k;i++){const n=(i+1)%k;push(core,c0[i],c1[n],c1[i]);push(core,c0[i],c0[n],c1[n]);push(core,c1[i],c1[n],ca);}}}
-function spire(map,x,y,z,scale,seed,small){const rnd=rng(seed),lo=grp(map,'ice'),hi=grp(map,'iceHi'),co=grp(map,'iceCore');
- prism(lo,hi,co,x,y,z,.42*scale,(4.2+rnd()*1.6)*scale,rnd()*TAU,(rnd()-.5)*.12,(rnd()-.5)*.12,rnd,true);
- for(let i=0;i<5;i++){const t=i/5*TAU+rnd()*.6,d=(.4+rnd()*.2)*scale,tilt=.22+rnd()*.25;prism(lo,hi,co,x+Math.cos(t)*d,y,z+Math.sin(t)*d,(.2+rnd()*.08)*scale,(1.6+rnd()*1.4)*scale,rnd()*TAU,Math.sin(t)*tilt,-Math.cos(t)*tilt,rnd,true);}
- if(small)for(let i=0;i<5;i++){const t=i/5*TAU+rnd()*.5,d=(.9+rnd()*.4)*scale,tilt=.45+rnd()*.4;prism(lo,hi,co,x+Math.cos(t)*d,y,z+Math.sin(t)*d,(.09+rnd()*.06)*scale,(.5+rnd()*.6)*scale,rnd()*TAU,Math.sin(t)*tilt,-Math.cos(t)*tilt,rnd,false);}}
+function spire(map,x,y,z,scale0,seed,small){/* v80: small ice-crystal clusters (knee-to-waist) */const scale=Math.min(scale0,.26),TH=.6;const rnd=rng(seed),lo=grp(map,'ice'),hi=grp(map,'iceHi'),co=grp(map,'iceCore');
+ prism(lo,hi,co,x,y,z,.42*scale*TH,(4.2+rnd()*1.6)*scale,rnd()*TAU,(rnd()-.5)*.12,(rnd()-.5)*.12,rnd,true);
+ for(let i=0;i<5;i++){const t=i/5*TAU+rnd()*.6,d=(.4+rnd()*.2)*scale,tilt=.22+rnd()*.25;prism(lo,hi,co,x+Math.cos(t)*d,y,z+Math.sin(t)*d,(.2+rnd()*.08)*scale*TH,(1.6+rnd()*1.4)*scale,rnd()*TAU,Math.sin(t)*tilt,-Math.cos(t)*tilt,rnd,true);}
+ if(small)for(let i=0;i<5;i++){const t=i/5*TAU+rnd()*.5,d=(.9+rnd()*.4)*scale,tilt=.45+rnd()*.4;prism(lo,hi,co,x+Math.cos(t)*d,y,z+Math.sin(t)*d,(.09+rnd()*.06)*scale*TH,(.5+rnd()*.6)*scale,rnd()*TAU,Math.sin(t)*tilt,-Math.cos(t)*tilt,rnd,false);}}
 const G=(r,x,z)=>r.terrain(x,z,CH);
 // snow edge: irregular radius around the camp + the pass corridor
 const snowR=a=>21.6+1.5*Math.sin(a*3+.4)+.9*Math.sin(a*7+2.1)+.5*Math.sin(a*13);

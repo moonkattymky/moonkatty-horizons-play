@@ -32,10 +32,10 @@ function prism(dst,core,x,y,z,r,h,yaw,pitch,roll,rnd,withCore){const k=6,rad=[];
  const b0=ring(-.12,1.02),mid=ring(bev*.55,1.0),top=ring(bev,.9),apex=T([0,h,0]);
  for(let i=0;i<k;i++){const n=(i+1)%k;push(b0[i],mid[n],mid[i]);push(b0[i],b0[n],mid[n]);push(mid[i],top[n],top[i]);push(mid[i],mid[n],top[n]);push(top[i],top[n],apex);}
  if(withCore){const cr=rad.map(v=>v*.42),cring=yy=>cr.map((rr,i)=>{const t=i/k*TAU;return T([Math.cos(t)*rr,yy,Math.sin(t)*rr]);}),c0=cring(.02),c1=cring(bev*.82),ca=T([0,bev+tip*.55,0]),pc=(a,b,c)=>{const n=norm(cross(sub(b,a),sub(c,a)));core.push(...a,...n,...b,...n,...c,...n);};for(let i=0;i<k;i++){const n=(i+1)%k;pc(c0[i],c1[n],c1[i]);pc(c0[i],c0[n],c1[n]);pc(c1[i],c1[n],ca);}}}
-function cluster(dst,core,x,y,z,scale,seed,yaw=0,lean=0){const rnd=rng(seed);
- prism(dst,core,x,y,z,.24*scale,(1.7+rnd()*.5)*scale,yaw+rnd()*TAU,lean*.8+(rnd()-.5)*.12,(rnd()-.5)*.12,rnd,true);
- for(let i=0;i<5;i++){const t=i/5*TAU+rnd()*.6,d=(.22+rnd()*.12)*scale,tilt=.28+rnd()*.26;prism(dst,core,x+Math.cos(t)*d,y,z+Math.sin(t)*d,(.13+rnd()*.05)*scale,(.85+rnd()*.6)*scale,rnd()*TAU,Math.sin(t)*tilt+lean,-Math.cos(t)*tilt,rnd,true);}
- for(let i=0;i<6;i++){const t=i/6*TAU+rnd()*.5,d=(.45+rnd()*.25)*scale,tilt=.45+rnd()*.4;prism(dst,core,x+Math.cos(t)*d,y,z+Math.sin(t)*d,(.06+rnd()*.05)*scale,(.30+rnd()*.42)*scale,rnd()*TAU,Math.sin(t)*tilt+lean,-Math.cos(t)*tilt,rnd,false);}}
+function cluster(dst,core,x,y,z,scale0,seed,yaw=0,lean=0){/* v80: knee-to-waist clusters of thin shards */const scale=Math.min(scale0,.56),TH=.55;const rnd=rng(seed);
+ prism(dst,core,x,y,z,.24*scale*TH,(1.7+rnd()*.5)*scale,yaw+rnd()*TAU,lean*.8+(rnd()-.5)*.12,(rnd()-.5)*.12,rnd,true);
+ for(let i=0;i<5;i++){const t=i/5*TAU+rnd()*.6,d=(.22+rnd()*.12)*scale,tilt=.28+rnd()*.26;prism(dst,core,x+Math.cos(t)*d,y,z+Math.sin(t)*d,(.13+rnd()*.05)*scale*TH,(.85+rnd()*.6)*scale,rnd()*TAU,Math.sin(t)*tilt+lean,-Math.cos(t)*tilt,rnd,true);}
+ for(let i=0;i<6;i++){const t=i/6*TAU+rnd()*.5,d=(.45+rnd()*.25)*scale,tilt=.45+rnd()*.4;prism(dst,core,x+Math.cos(t)*d,y,z+Math.sin(t)*d,(.06+rnd()*.05)*scale*TH,(.30+rnd()*.42)*scale,rnd()*TAU,Math.sin(t)*tilt+lean,-Math.cos(t)*tilt,rnd,false);}}
 // horizontal annulus (two-sided) in world space
 function annulus(map,mat,x,y,z,r0,r1,n=48){for(let i=0;i<n;i++){const a=i/n*TAU,b=(i+1)/n*TAU,p=(t,r)=>[x+Math.cos(t)*r,y,z+Math.sin(t)*r];quad(map,mat,p(a,r0),p(a,r1),p(b,r1),p(b,r0),[0,1,0]);quad(map,mat,p(b,r0),p(b,r1),p(a,r1),p(a,r0),[0,1,0]);}}
 // vertical band ring (two-sided): hologram outline of a missing rocket section
