@@ -1658,6 +1658,7 @@
  "html.opt_music":"Музыка",
  "html.opt_sfx":"Звуки",
  "html.privacy_link":"Политика конфиденциальности",
+ "site.official":"Официальный сайт MOONKATTY",
  "a11y.title":"Доступность",
  "a11y.text":"Крупный текст",
  "a11y.contrast":"Высокий контраст",

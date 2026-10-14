@@ -1658,6 +1658,7 @@
  "html.opt_music":"음악",
  "html.opt_sfx":"효과음",
  "html.privacy_link":"개인정보 처리방침",
+ "site.official":"MOONKATTY 공식 웹사이트",
  "a11y.title":"접근성",
  "a11y.text":"큰 글씨",
  "a11y.contrast":"고대비",

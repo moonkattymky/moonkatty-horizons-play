@@ -1658,6 +1658,7 @@
  "html.opt_music":"Müzik",
  "html.opt_sfx":"Sesler",
  "html.privacy_link":"Gizlilik politikası",
+ "site.official":"Resmî MOONKATTY web sitesi",
  "a11y.title":"Erişilebilirlik",
  "a11y.text":"Büyük yazı",
  "a11y.contrast":"Yüksek kontrast",

@@ -1658,6 +1658,7 @@
  "html.opt_music":"音乐",
  "html.opt_sfx":"音效",
  "html.privacy_link":"隐私政策",
+ "site.official":"MOONKATTY 官方网站",
  "a11y.title":"无障碍",
  "a11y.text":"大字体",
  "a11y.contrast":"高对比度",

@@ -1658,6 +1658,7 @@
  "html.opt_music":"מוזיקה",
  "html.opt_sfx":"צלילים",
  "html.privacy_link":"מדיניות פרטיות",
+ "site.official":"האתר הרשמי של MOONKATTY",
  "a11y.title":"נגישות",
  "a11y.text":"טקסט גדול",
  "a11y.contrast":"ניגודיות גבוהה",

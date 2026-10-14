@@ -258,7 +258,7 @@ function renderTasks(){const d=tasksDialog,s=S(),m=M(),ch=String(cfg.CHANNEL_USE
    row(ICON.gift,_t('growth.vahta_baze'),_t(st.claimed?'growth.7_nagrada':'growth.7_nagrada2',{n:st.day}),st.claimed?'':chips({points:online?st.points:0,...st.reward},'small'),`<button class="tr-btn ${st.claimed?'':'gold'}" data-go="streak">${st.claimed?_t('growth.otkryt'):_t('growth.zabrat')}</button>`,st.claimed?'claimed':'ready')+
    row(ICON.crew,_t('growth.priglasi_druga'),online?_t('growth.nagrada_kazhdogo',{n:m.referral,d:m.referralDays}):_t('growth.nagrady_druzey'),chips({points:m.referral},'small'),'<button class="tr-btn" data-go="crew">'+_t('growth.pozvat')+'</button>')+
    row(ICON.share,_t('growth.podelis_igroy'),shareDone?_t('growth.segodnya_uzhe'):_t('growth.raz_den'),shareDone?'':chips(G.SHARE_REWARD,'small'),`<button class="tr-btn" data-go="share">${shareDone?_t('growth.esche_raz'):_t('growth.podelitsya2')}</button>`,shareDone?'claimed':'')+
-  `</div>`+socialHtml();
+  `</div>`+socialHtml()+`<button type="button" id="tasks-site-link" class="site-link">${_t('site.official')}</button>`;
  wireClose(d);
  d.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>({streak:openStreak,crew:openCrew,share:()=>openShare('invite'),season:OPEN.season})[b.dataset.go]());
  d.querySelectorAll('[data-soc-open]').forEach(b=>b.onclick=()=>openUrl(socialUrl(b.dataset.socOpen)));
@@ -288,6 +288,8 @@ async function refreshSocial(){if(!online)return;try{const before=followsDone(so
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&tasksDialog.open)refreshSocial();});
 async function checkChannel(){if(channelBusy||!online)return;channelBusy=true;renderTasks();try{const r=await api('/api/channel/check',{});if(r.member){channelInfo.rewarded=true;S().growth.channel=true;if(r.reward)applyServerRewards([r.reward]);else commit();channelMsg='';haptic();}else{channelMsg=r.error==='channel_not_configured'?_t('growth.proverka_kanala'):_t('growth.poka_vidim');haptic('warning');
   const ch=String(cfg.CHANNEL_USERNAME||'').replace(/^@/,'');if(!r.error&&/^\w{4,}$/.test(ch))setTimeout(()=>openUrl('https://t.me/'+ch),700);/* v45: not subscribed → open the channel */}}catch(e){channelMsg=e&&e.code==='rate_limited'?_t('soc.e_rate'):(window.MoonReliability&&MoonReliability.netText?MoonReliability.netText():_t('growth.net_svyazi'));}channelBusy=false;renderTasks();}
+// v87d: modest «Official MOONKATTY website» button (settings + bottom of Tasks); openUrl = Telegram openLink, browser fallback
+const SITE_URL='https://moonkatty.com';document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('.site-link');if(b){e.preventDefault();openUrl(SITE_URL);}});
 function openTasks(){renderTasks();open('tasks');refreshSocial();}
 
 // ---------- entry points ----------
@@ -327,3 +329,4 @@ maybeShowStreak(1100);
 {const b=$('#cover-share');if(b)b.onclick=()=>openShare('invite');}
 window.MoonGrowthUI={openStreak,openCrew,openTasks,openShare,maybeStreak:maybeShowStreak,api,moonCard,updateMoon,openUrl,rules:M,kit:{ICON,chips,dialog,open,head,wireClose,haptic,commit,esc,plural,toast,tg},setStage3,get stage3(){return stage3;},get crew(){return crew;},get user(){return serverUser;},get online(){return online;},get storyDone(){return storyDone;},syncStory,get channel(){return channelInfo;},renderAll};
 })();
+
