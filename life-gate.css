@@ -19,7 +19,7 @@ dialog.life-wait button.close-icon{position:absolute;top:8px;inset-inline-end:8p
 .lg-banner{display:flex;align-items:center;justify-content:center;gap:6px;margin:6px 0 8px;padding:8px 14px;border-radius:999px;border:1px solid #e9c67a77;background:#05121dcc;color:#ffe3a3;font-size:.92rem;min-height:40px}
 .lg-banner[hidden]{display:none}
 .lg-banner b{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
-#lg-hud{position:fixed;top:calc(env(safe-area-inset-top,0px) + 62px);left:50%;transform:translateX(-50%);z-index:30;margin:0;font-size:.85rem;display:none;max-width:calc(100vw - 24px)}
+#lg-hud{position:fixed;top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 150px);white-space:nowrap;left:50%;transform:translateX(-50%);z-index:30;margin:0;font-size:.85rem;display:none;max-width:calc(100vw - 24px)}
 #lg-hud.on:not([hidden]){display:flex}
 .cover:not([hidden])~#lg-hud,html.mk-booting #lg-hud{display:none!important}
 .chapter-card.lg-locked{opacity:.92;border-color:#e9c67a66}
