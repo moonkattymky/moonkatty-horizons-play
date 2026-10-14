@@ -1590,5 +1590,6 @@
  "bots.mine_sub":"Los mineros cavan dentro de la mina. Bono actual: +{c} 💎 por turno de minero.",
  "bots.mine_up":"Mejorar a nivel {n} · {p} Moon Points (+{c} 💎 por turno)",
  "bots.mine_max":"La mina está al nivel máximo",
- "bots.mine_done":"¡Mina mejorada a nivel {n}!"
+ "bots.mine_done":"¡Mina mejorada a nivel {n}!",
+ "game.map_legend":"La pata dorada eres tú. Los lugares dorados ya están explorados; los de la niebla, aún no: la niebla se despeja al visitarlos. La línea de puntos lleva a tu objetivo. Toca un lugar para fijar la brújula."
 });

@@ -20,3 +20,4 @@ html[data-tg-fullscreen=true]{--st:var(--tg-safe-top,0px);--sb:max(var(--tg-safe
 #app-viewport>.fuel{opacity:0;transition:opacity .25s;pointer-events:none}#app-viewport>.fuel.on{opacity:1}
 /* v74 landscape: the energy pill sits under the round Menu button instead of on top of it */
 @media (orientation:landscape){html #app-viewport .dm-energy{top:calc(var(--app-height,100dvh) * .36 + 70px)!important}}
+#world-map-content svg.mk-map{max-height:min(64vh,560px);background:#0b0818;border:1px solid #8a6f3a;border-radius:16px;box-shadow:0 0 24px #ffb02a22,inset 0 0 30px #000a}.mk-place{cursor:pointer}

@@ -1590,5 +1590,6 @@
  "bots.mine_sub":"Os mineiros cavam dentro da mina. Bônus atual: +{c} 💎 por turno de mineiro.",
  "bots.mine_up":"Melhorar para o nível {n} · {p} Moon Points (+{c} 💎 por turno)",
  "bots.mine_max":"A mina está no nível máximo",
- "bots.mine_done":"Mina melhorada para o nível {n}!"
+ "bots.mine_done":"Mina melhorada para o nível {n}!",
+ "game.map_legend":"A pata dourada é você. Lugares dourados já foram explorados; os na névoa, ainda não: a névoa some quando você visita. A linha pontilhada leva ao objetivo. Toque num lugar para ligar a bússola."
 });

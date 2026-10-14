@@ -1590,5 +1590,6 @@
  "bots.mine_sub":"Bergleute arbeiten in der Mine. Bonus jetzt: +{c} 💎 pro Bergmann-Schicht.",
  "bots.mine_up":"Auf Stufe {n} ausbauen · {p} Moon Points (+{c} 💎 pro Schicht)",
  "bots.mine_max":"Die Mine ist auf höchster Stufe",
- "bots.mine_done":"Mine auf Stufe {n} ausgebaut!"
+ "bots.mine_done":"Mine auf Stufe {n} ausgebaut!",
+ "game.map_legend":"Die goldene Pfote bist du. Goldene Orte sind erkundet, neblige noch nicht – der Nebel verschwindet bei deinem Besuch. Die gepunktete Linie führt zum Ziel. Tippe auf einen Ort für den Kompass."
 });

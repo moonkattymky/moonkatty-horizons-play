@@ -1590,5 +1590,6 @@
  "bots.mine_sub":"矿工在矿洞里挖掘。当前加成：每个矿工班次 +{c} 💎。",
  "bots.mine_up":"升级到 {n} 级 · {p} Moon Points（每班 +{c} 💎）",
  "bots.mine_max":"矿洞已达最高等级",
- "bots.mine_done":"矿洞已升级到 {n} 级！"
+ "bots.mine_done":"矿洞已升级到 {n} 级！",
+ "game.map_legend":"金色爪印就是你。金色地点已探索，雾中的地点尚未探索——到访后雾会散开。虚线通向目标。点按地点即可开启指南针。"
 });

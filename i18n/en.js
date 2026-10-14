@@ -1590,5 +1590,6 @@
  "bots.mine_sub":"Miners dig inside the mine. Bonus now: +{c} 💎 per miner shift.",
  "bots.mine_up":"Upgrade to level {n} · {p} Moon Points (+{c} 💎 a shift)",
  "bots.mine_max":"The mine is at the top level",
- "bots.mine_done":"Mine upgraded to level {n}!"
+ "bots.mine_done":"Mine upgraded to level {n}!",
+ "game.map_legend":"The golden paw is you. Gold places are explored, foggy ones not yet — the fog clears when you visit. The dotted path leads to your goal. Tap a place to set the compass."
 });

@@ -1590,5 +1590,6 @@
  "bots.mine_sub":"Les mineurs creusent dans la mine. Bonus actuel : +{c} 💎 par service de mineur.",
  "bots.mine_up":"Améliorer au niveau {n} · {p} Moon Points (+{c} 💎 par service)",
  "bots.mine_max":"La mine est au niveau maximum",
- "bots.mine_done":"Mine améliorée au niveau {n} !"
+ "bots.mine_done":"Mine améliorée au niveau {n} !",
+ "game.map_legend":"La patte dorée, c'est toi. Les lieux dorés sont explorés, ceux dans la brume pas encore : la brume se dissipe quand tu y passes. Les pointillés mènent à ton objectif. Touche un lieu pour régler la boussole."
 });

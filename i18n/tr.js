@@ -1590,5 +1590,6 @@
  "bots.mine_sub":"Madenciler madenin içinde çalışır. Şu anki bonus: madenci vardiyası başına +{c} 💎.",
  "bots.mine_up":"Seviye {n}'e yükselt · {p} Moon Points (vardiya başına +{c} 💎)",
  "bots.mine_max":"Maden en üst seviyede",
- "bots.mine_done":"Maden seviye {n}'e yükseltildi!"
+ "bots.mine_done":"Maden seviye {n}'e yükseltildi!",
+ "game.map_legend":"Altın pati sensin. Altın yerler keşfedildi, sisli olanlar henüz değil: ziyaret edince sis dağılır. Noktalı yol hedefe götürür. Pusulayı ayarlamak için bir yere dokun."
 });

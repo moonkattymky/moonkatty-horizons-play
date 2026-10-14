@@ -1590,5 +1590,6 @@
  "bots.mine_sub":"I minatori scavano nella miniera. Bonus attuale: +{c} 💎 per turno di minatore.",
  "bots.mine_up":"Migliora al livello {n} · {p} Moon Points (+{c} 💎 a turno)",
  "bots.mine_max":"La miniera è al livello massimo",
- "bots.mine_done":"Miniera migliorata al livello {n}!"
+ "bots.mine_done":"Miniera migliorata al livello {n}!",
+ "game.map_legend":"La zampa dorata sei tu. I luoghi dorati sono esplorati, quelli nella nebbia non ancora: la nebbia si dirada quando li visiti. La linea tratteggiata porta all'obiettivo. Tocca un luogo per impostare la bussola."
 });
