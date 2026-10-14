@@ -21,3 +21,7 @@ html[data-tg-fullscreen=true]{--st:var(--tg-safe-top,0px);--sb:max(var(--tg-safe
 /* v74 landscape: the energy pill sits under the round Menu button instead of on top of it */
 @media (orientation:landscape){html #app-viewport .dm-energy{top:calc(var(--app-height,100dvh) * .36 + 70px)!important}}
 #world-map-content svg.mk-map{max-height:min(64vh,560px);background:#0b0818;border:1px solid #8a6f3a;border-radius:16px;box-shadow:0 0 24px #ffb02a22,inset 0 0 30px #000a}.mk-place{cursor:pointer}
+
+/* v81 cat house door button (the interior css is lazy: cat-house.css) */
+.house-enter{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--sb,0px) + 150px);z-index:40;border:0;border-radius:999px;padding:11px 26px;font:700 16px system-ui;color:#3a2412;background:linear-gradient(#ffe08a,#ffb43a);box-shadow:0 3px 0 #b2701a,0 0 18px rgba(255,190,70,.7)}
+.house-enter[hidden]{display:none}

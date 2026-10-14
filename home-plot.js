@@ -16,7 +16,8 @@ const TAU=Math.PI*2,DRAW_R=95,H=Core.HOME,STEPS=Core.HOME_STEPS;
 const MATS={ivory:[17,[1,.95,.86]],white:[17,[.97,.97,1]],steel:[17,[.70,.76,.84]],dark:[0,[.08,.09,.12]],gold:[16,[1,.76,.32]],stone:[4,[.80,.76,.90]],
  teal:[12,[.20,.95,.86]],tealHi:[12,[.70,1,.96]],amber:[12,[1,.66,.24]],pink:[17,[1,.62,.80]],pinkG:[12,[1,.52,.80]],roofP:[17,[.96,.46,.66]],roofB:[17,[.36,.70,.96]],
  glass:[12,[.30,.80,.66]],overall:[17,[.24,.42,.86]],mPocket:[17,[.18,.30,.66]],mHelmet:[17,[1,.56,.14]],vest:[17,[1,.62,.10]],reflect:[12,[1,1,.80]],bag:[17,[.62,.38,.20]],leaf:[17,[.36,.86,.52]],panel:[16,[.24,.40,.86]],wood:[17,[.86,.62,.38]],crystA:[30,[1,.62,.26]],crystV:[30,[.70,.40,1]],
- eye:[12,[.40,1,.96]],aMiner:[17,[1,.62,.22]],aMech:[17,[.24,.84,.92]],aBuild:[17,[1,.84,.24]],aCour:[17,[1,.50,.72]],hat:[17,[1,.82,.22]],box:[17,[.90,.66,.40]],lamp:[12,[1,.86,.50]],rock:[4,[.58,.54,.64]],rockD:[4,[.42,.39,.50]],rockL:[4,[.72,.68,.78]],weld:[12,[.75,.95,1]],flame:[12,[1,.62,.24]],rail:[16,[.62,.66,.74]]};
+ eye:[12,[.40,1,.96]],aMiner:[17,[1,.62,.22]],aMech:[17,[.24,.84,.92]],aBuild:[17,[1,.84,.24]],aCour:[17,[1,.50,.72]],hat:[17,[1,.82,.22]],box:[17,[.90,.66,.40]],lamp:[12,[1,.86,.50]],rock:[4,[.58,.54,.64]],rockD:[4,[.42,.39,.50]],rockL:[4,[.72,.68,.78]],weld:[12,[.75,.95,1]],flame:[12,[1,.62,.24]],rail:[16,[.62,.66,.74]],
+ roofW:[17,[1,.60,.46]],winW:[12,[1,.80,.46]],glassD:[13,[.62,.80,.95]],pool:[12,[.25,.85,1]],flower:[17,[1,.56,.76]],cushion:[17,[.98,.74,.58]]};
 const ACC={miner:'aMiner',mechanic:'aMech',builder:'aBuild',courier:'aCour'};
 // ---------- layout (local, +z = south, the gate faces the camp at -z) ----------
 // v74: the plot is wider (fence 11.6 m) and every place has its own spot on a ring around the cat's plaza in the centre;
@@ -82,6 +83,36 @@ function bRocket(b){for(let i=0;i<3;i++){const a=i/3*TAU;b.tube('steel',[Math.si
  b.tube('white',[0,.3,0],[0,1.7,0],.42,16,.44);b.tube('aCour',[0,1.15,0],[0,1.32,0],.45,16);b.tube('white',[0,1.7,0],[0,2.35,0],.44,16,.04);b.tube('gold',[0,.22,0],[0,.32,0],.3,12,.42);
  ball(b,'tealHi',0,1.5,.42,.13);b.ring('gold',0,1.5,.43,.18,.18,.3,.05,10);b.paw(0,.86,.44,.32,'gold');b.box('box',0,.86,-.46,.3,.26,.06);}
 // the base that is always there: plaza, gate, fence posts, crystal vein, parcel pad
+// ---------- v81 the cat's own house on the plaza (free cozy cottage, or the Lunar Villa / Golden Observatory looks) ----------
+// door faces the gate (-z); exterior only here, the interior is a lazy 2.5D room (cat-house.js)
+const HS=1.3,CH_R={'':1.75*HS,house_villa:2.05*HS,house_observatory:1.8*HS};
+function bCozy(b){b.tube('stone',[0,-.1,0],[0,.2,0],1.85,28,1.8);b.tube('stone',[0,.2,-1.75],[0,.26,-2.25],.55,16,.55);
+ b.shell('ivory',[[1,0],[1,.22],[.98,.85],[1,1]],1.55,1.6);b.tube('gold',[0,.24,0],[0,.32,0],1.58,28);b.tube('gold',[0,1.56,0],[0,1.66,0],1.6,28);
+ dome(b,'roofW',1.78,1.25,1.62);b.tube('gold',[0,2.82,0],[0,2.9,0],.42,16);b.tube('roofW',[0,2.85,0],[0,3.25,0],.3,12,.06);ball(b,'gold',0,3.32,0,.1);
+ b.tube('stone',[.95,2.2,.45],[.95,3.0,.45],.16,10,.14);b.tube('gold',[.95,2.98,.45],[.95,3.04,.45],.19,10);
+ // arched door, warm lanterns, paw sign
+ b.box('wood',0,.78,-1.56,.78,1.16,.08);b.ring('gold',0,1.36,-1.6,.42,.42,.5,.07,10);b.box('gold',0,.78,-1.61,.86,.07,.05);ball(b,'gold',.24,.8,-1.64,.04);
+ for(const sx of[-1,1]){b.tube('gold',[sx*.62,1.2,-1.62],[sx*.62,1.42,-1.62],.07,8,.05);ball(b,'winW',sx*.62,1.32,-1.68,.09);}
+ b.paw(0,1.9,-1.66,.34,'gold');
+ // four glowing windows with gold frames and flower boxes
+ for(const a of[-1.15,1.15,2.2,-2.2]){const x=Math.sin(a)*1.56,z=-Math.cos(a)*1.56,yaw=-a;b.box('winW',x,1.0,z,.46,.52,.08,yaw);b.box('gold',x*.985,1.0,z*.985,.6,.66,.06,yaw);b.box('gold',x*1.01,1.0,z*1.01,.05,.52,.09,yaw);b.box('gold',x*1.01,1.0,z*1.01,.46,.05,.09,yaw);
+  const fx=Math.sin(a)*1.68,fz=-Math.cos(a)*1.68;b.box('wood',fx,.62,fz,.56,.14,.14,yaw);for(const k of[-.18,0,.18]){ball(b,'flower',fx+Math.cos(a)*k,.74,fz+Math.sin(a)*k,.06);ball(b,'leaf',fx+Math.cos(a)*k*.8,.7,fz+Math.sin(a)*k*.8,.07);}}
+ // porch lamp posts + a bench
+ for(const sx of[-1,1]){b.tube('gold',[sx*1.05,0,-2.25],[sx*1.05,1.0,-2.25],.035,8);ball(b,'winW',sx*1.05,1.08,-2.25,.1);}
+ b.box('wood',1.55,.36,-1.2,.9,.08,.32,.9);b.box('cushion',1.55,.43,-1.2,.82,.06,.26,.9);}
+function bVilla(b){b.tube('stone',[0,-.1,0],[0,.24,0],2.15,32,2.1);b.tube('gold',[0,.24,0],[0,.3,0],2.1,32);
+ b.shell('ivory',[[1,0],[1,.6],[.96,1]],1.95,.5);dome(b,'glassD',1.95,1.9,.5);for(let i=0;i<6;i++){const a=i/6*TAU;const pts=[];b.tube('gold',[Math.sin(a)*1.94,.5,Math.cos(a)*1.94],[Math.sin(a)*1.35,1.85,Math.cos(a)*1.35],.035,6);}
+ b.tube('gold',[0,2.36,0],[0,2.44,0],.3,14);ball(b,'gold',0,2.52,0,.12);
+ b.box('ivory',0,.85,-1.95,.9,1.2,.3);b.box('wood',0,.75,-2.11,.62,1.0,.05);b.ring('gold',0,1.25,-2.13,.36,.36,.5,.06,10);b.paw(0,1.7,-2.12,.3,'gold');
+ // glowing pool in front of the dome
+ b.tube('gold',[1.5,0,-2.3],[1.5,.12,-2.3],.72,24);b.tube('pool',[1.5,.12,-2.3],[1.5,.13,-2.3],.64,24);
+ for(const a of[-.6,.6,2.5,-2.5]){b.box('winW',Math.sin(a)*1.96,.42,-Math.cos(a)*1.96,.42,.12,.05,-a);}
+ for(const sx of[-1,1]){b.tube('ivory',[sx*.75,0,-2.4],[sx*.75,1.3,-2.4],.07,10);ball(b,'winW',sx*.75,1.38,-2.4,.11);}}
+function bObsBase(b){b.tube('stone',[0,-.1,0],[0,.22,0],1.9,28,1.85);b.shell('ivory',[[1,0],[1,1]],1.6,2.0);b.tube('gold',[0,.24,0],[0,.32,0],1.63,28);b.tube('gold',[0,1.98,0],[0,2.08,0],1.66,28);
+ b.box('wood',0,.8,-1.6,.78,1.2,.08);b.ring('gold',0,1.4,-1.64,.42,.42,.5,.07,10);b.paw(0,2.35,-1.62,.3,'gold');
+ for(const a of[-1.2,1.2,2.3,-2.3]){const x=Math.sin(a)*1.6,z=-Math.cos(a)*1.6;b.box('winW',x,1.2,z,.4,.7,.08,-a);b.box('gold',x*.985,1.2,z*.985,.54,.84,.06,-a);}
+ for(const sx of[-1,1]){b.tube('gold',[sx*.62,1.25,-1.66],[sx*.62,1.45,-1.66],.07,8,.05);ball(b,'winW',sx*.62,1.36,-1.72,.09);}}
+function bObsRoof(b){dome(b,'gold',1.7,1.35,0);b.box('dark',0,.75,-.9,.34,1.0,.9);b.tube('steel',[0,.7,-.2],[0,1.55,-1.55],.17,14,.13);b.tube('gold',[0,1.5,-1.47],[0,1.62,-1.65],.19,14);ball(b,'winW',0,1.36,0,.08);b.tube('gold',[0,1.3,0],[0,1.65,0],.05,6);ball(b,'gold',0,1.72,0,.1);}
 function bBase(b){b.tube('stone',[0,-.12,0],[0,.08,0],PLAZA,32,PLAZA-.1);b.tube('teal',[0,.08,0],[0,.1,0],1.9,32);b.tube('stone',[0,.09,0],[0,.13,0],1.7,32);b.paw(0,.14,0,1.3,'gold');
  // the cat's corner on the plaza: a round cushion bed and a little food bowl
  b.tube('pink',[-1.25,.1,1.15],[-1.25,.32,1.15],.55,18,.5);b.tube('ivory',[-1.25,.3,1.15],[-1.25,.34,1.15],.42,18);b.tube('steel',[-.45,.12,1.55],[-.45,.24,1.55],.2,12,.24);ball(b,'amber',-.45,.25,1.55,.06);
@@ -118,7 +149,7 @@ function bTool(b,prof){if(prof==='miner'){b.tube('wood',[0,0,0],[0,0,.55],.025,6
 function build(r){const L={},add=(n,b)=>{const map=new Map();merge(map,b);L[n]=[];for(const[mat,data]of map){if(!data.length)continue;const key='v59_'+n+'_'+mat;r.addMesh(key,data);L[n].push([key,mat]);}};
  const mk=f=>{const b=new B();f(b);return b;};
  add('base',mk(bBase));add('road',mk(bRoad));add('lamps',mk(bLamps));add('house',mk(b=>bHouse(b,'roofB')));add('house2',mk(b=>bHouse(b,'roofP')));add('workshop',mk(bWorkshop));add('garden',mk(bGarden));add('solar',mk(bSolar));add('tower',mk(bTower));
- add('scaffold',mk(b=>bScaffold(b,1.5)));add('mine',mk(bMine));add('cart',mk(bCart));add('cartLoad',mk(bCartLoad));add('rocket',mk(bRocket));for(const l of[2,3,4,5])add('mineL'+l,mk(b=>bMineLevel(b,l)));for(const l of[2,3,4])add('lvl'+l,mk(b=>bLevel(b,l)));
+ add('catCozy',mk(bCozy));add('catVilla',mk(bVilla));add('catObs',mk(bObsBase));add('catObsRoof',mk(bObsRoof));add('scaffold',mk(b=>bScaffold(b,1.5)));add('mine',mk(bMine));add('cart',mk(bCart));add('cartLoad',mk(bCartLoad));add('rocket',mk(bRocket));for(const l of[2,3,4,5])add('mineL'+l,mk(b=>bMineLevel(b,l)));for(const l of[2,3,4])add('lvl'+l,mk(b=>bLevel(b,l)));
  for(const p of Core.BOT_PROFS){add('bot_'+p,mk(b=>bBot(b,p)));if(p!=='courier')add('tool_'+p,mk(b=>bTool(b,p)));}
  return{L};}
 R.v59Build=function(){if(this.v59)return this.v59;return this.v59=build(this);};
@@ -133,7 +164,7 @@ function walk(pts,t,speed){let len=0;const seg=[];for(let i=0;i<pts.length-1;i++
  let d=(t*speed)%(len*2),back=false;if(d>len){d=len*2-d;back=true;}
  for(let i=0;i<seg.length;i++){if(d<=seg[i]||i===seg.length-1){const a=pts[i],b=pts[i+1],f=seg[i]?Math.min(1,d/seg[i]):0,x=a[0]+(b[0]-a[0])*f,z=a[1]+(b[1]-a[1])*f;let yaw=Math.atan2(b[0]-a[0],b[1]-a[1]);if(back)yaw+=Math.PI;return{x,z,yaw,moving:true};}d-=seg[i];}return{x:pts[0][0],z:pts[0][1],yaw:0,moving:false};}
 // every bot gets a spot and an animation from its profession, state and index (v74: work places)
-const home=(i,n)=>{const a=i/Math.max(1,n)*TAU+.4;return[Math.cos(a)*1.15,Math.sin(a)*1.15];};
+const home=(i,n)=>{const a=i/Math.max(1,n)*TAU+.4;return[Math.cos(a)*3.3,Math.sin(a)*3.3];};   // v81: around the cat house
 const lerp=(a,b,f)=>[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f];
 function go(a,b,f,extra){const p=lerp(a,b,Math.max(0,Math.min(1,f)));return{x:p[0],z:p[1],yaw:Math.atan2(b[0]-a[0],b[1]-a[1]),moving:true,work:0,hop:0,...extra};}
 const COUR_LOOP=40;
@@ -171,7 +202,7 @@ const on=s=>!!s;
 R.scene=function(state,p,t,...args){const out=old.scene.call(this,state,p,t,...args);if(!on(state))return out;const eye=this.eye||[0,0,0];if(Math.hypot(eye[0]-H.x,eye[2]-H.z)>DRAW_R)return out;
  const v=this.v59Build(),ch=state.chapter||1,low=this.quality==='low',st=stageOf(state),pl=plotOf(state),lvl=pl?pl.level|0:1,G=(lx,lz)=>this.terrain(H.x+lx,H.z+lz,ch);
  const draw=(name,lx,lz,yaw=0,dy=0,sc=1,pitch=0,roll=0)=>{const y=G(lx,lz)+dy;for(const[key,mat]of v.L[name]||[]){const[kind,col]=MATS[mat];const g=kind===30?.35:kind===12?(mat==='glass'?.12:mat==='teal'?.55+.1*Math.sin(t*1.6):.8):mat==='gold'?.1:0;this.put(key,H.x+lx,y,H.z+lz,sc,sc,sc,col,yaw,kind,g,pitch,roll);}};
- draw('base',0,0,0,-.04);if(st>=1)draw('road',0,0,0,-.04);if(st>=2)draw('lamps',0,0,0,-.04);
+ draw('base',0,0,0,-.04);{const hs=houseStyle(state);if(hs==='house_villa')draw('catVilla',0,0,0,-.04,HS);else if(hs==='house_observatory'){draw('catObs',0,0,0,-.04,HS);draw('catObsRoof',0,0,t*.25,1.98*HS,HS);}else draw('catCozy',0,0,0,-.04,HS);}if(st>=1)draw('road',0,0,0,-.04);if(st>=2)draw('lamps',0,0,0,-.04);
  for(const k of['house','workshop','garden','house2','solar','tower']){const idx=STEPS.indexOf(k);if(st>idx)draw(k,POS[k][0],POS[k][1],BYAW[k]||0,-.05);else if(st===idx)draw('scaffold',POS[k][0],POS[k][1],Math.atan2(-POS[k][0],-POS[k][1])+Math.PI/2,-.05);}
  if(st>=STEPS.length)draw('scaffold',SPARE[0],SPARE[1],Math.atan2(-SPARE[0],-SPARE[1])+Math.PI/2,-.05);
  // v74 mine (+ crystals per level), cart (full when a miner is back), courier rocket
@@ -185,14 +216,26 @@ R.scene=function(state,p,t,...args){const out=old.scene.call(this,state,p,t,...a
   if(b.prof!=='courier'&&v.L['tool_'+b.prof]){const c=Math.cos(q.yaw),s=Math.sin(q.yaw),hx=q.x+(c*.36+s*.18)*sc,hz=q.z+(-s*.36+c*.18)*sc;const sw=q.work?q.swing:0;draw('tool_'+b.prof,hx,hz,q.yaw,(.62+(q.work?.08:0))*sc+yb,sc,q.work?-.6+sw*.75:-1.3,0);}}
  return out;};
 // ---------- collisions (finished buildings, gate posts, vein, tower) ----------
-function insideHome(x,z,state){const lx=x-H.x,lz=z-H.z;if(Math.hypot(lx,lz)>FENCE_R+1)return false;const st=stageOf(state);
+function houseStyle(state){const c=state&&state.growth&&state.growth.cos;const h=c&&c.house;return h==='house_villa'||h==='house_observatory'?h:'';}
+const houseDoor=state=>[0,-(CH_R[houseStyle(state)]+.75)];
+function insideHome(x,z,state){const lx=x-H.x,lz=z-H.z;if(Math.hypot(lx,lz)>FENCE_R+1)return false;if(Math.hypot(lx,lz)<CH_R[houseStyle(state)])return true;const st=stageOf(state);
  for(const k of['house','workshop','garden','house2','solar','tower']){const idx=STEPS.indexOf(k);if(st>=idx&&Math.hypot(lx-POS[k][0],lz-POS[k][1])<RAD[k]*(st===idx?.9:1))return true;}
  for(const s of[-1,1])if(Math.hypot(lx-s*1.8,lz-GATE[1])<.3)return true;if(Math.hypot(lx-MINE[0],lz-MINE[1])<2.3*MS)return true;if(Math.hypot(lx-PAD[0],lz-PAD[1])<.75)return true;return false;}
 R.blocked=function(x,z,state,alt=0){if(state&&alt<2.4&&insideHome(x,z,state))return true;return old.blocked.call(this,x,z,state,alt);};
 if(old.camera)R.cameraBlocked=function(x,z,state,alt=0){if(state&&alt<1.4&&insideHome(x,z,state))return true;return old.camera.call(this,x,z,state,alt);};
 (root.MoonRockZones=root.MoonRockZones||[]).push({ch:1,out:r=>Math.hypot(r.x-H.x,r.z-H.z)<=H.r+3+r.s*.6||(Math.abs(r.x-H.x)<3.5+r.s*.6&&r.z<H.z&&r.z>H.z-24)});
 // ---------- fx: halos, hologram of the next building, sparks, ready markers ----------
-R.render=function(state,p,t,dt,yaw,pitch,scan){old.render.call(this,state,p,t,dt,yaw,pitch,scan);if(!on(state)||!this.v59||!this.vp||!this.gl||!this.v50Prog||this._v59Off)return;
+// v81 house door: a «Войти» button near the door; the interior (cat-house.js/.css) loads on first use
+const VER=(()=>{try{const sc=root.document&&root.document.querySelector('script[src*="home-plot.js"]');const m=sc&&sc.src.match(/v=([^&]+)/);return m?m[1]:'1';}catch(e){return'1';}})();
+let doorBtn=null,houseLoading=null;
+function loadHouse(){if(root.MoonCatHouseRoom)return Promise.resolve();if(houseLoading)return houseLoading;const d=root.document;
+ houseLoading=new Promise((ok,bad)=>{const l=d.createElement('link');l.rel='stylesheet';l.href='cat-house.css?v='+VER;d.head.appendChild(l);const s=d.createElement('script');s.src='cat-house.js?v='+VER;s.onload=()=>ok();s.onerror=e=>{houseLoading=null;bad(e);};d.head.appendChild(s);});return houseLoading;}
+function doorUpdate(state,p){const d=root.document;if(!d||!d.body||!d.createElement)return;
+ const near=!!(p&&on(state)&&(p.alt||0)<.6&&(()=>{const dr=houseDoor(state);return Math.hypot(p.x-H.x-dr[0],p.z-H.z-dr[1])<1.5;})())&&!d.body.classList.contains('in-house');
+ if(!doorBtn&&near){doorBtn=d.createElement('button');doorBtn.className='house-enter';doorBtn.id='house-enter';doorBtn.addEventListener('click',()=>{loadHouse().then(()=>root.MoonCatHouseRoom.open()).catch(()=>{});});d.body.appendChild(doorBtn);}
+ if(doorBtn){if(near)doorBtn.textContent='🏠 '+(root._t?root._t('house.enter'):'Enter');doorBtn.hidden=!near;}}
+root.MoonCatHouse={load:loadHouse,open:()=>loadHouse().then(()=>root.MoonCatHouseRoom.open())};
+R.render=function(state,p,t,dt,yaw,pitch,scan){old.render.call(this,state,p,t,dt,yaw,pitch,scan);try{doorUpdate(state,p);}catch(e){}if(!on(state)||!this.v59||!this.vp||!this.gl||!this.v50Prog||this._v59Off)return;
  try{const P5=this.v50Prog();if(!P5)return;const gl=this.gl,low=this.quality==='low',eye=this.eye||[0,0,0],Q=[],V=this.vp,rl=Math.hypot(V[0],V[8])||1,rx=V[0]/rl,rz=V[8]/rl;
   if(Math.hypot(eye[0]-H.x,eye[2]-H.z)>DRAW_R)return;const ch=state.chapter||1,T=(lx,lz)=>this.terrain(H.x+lx,H.z+lz,ch),st=stageOf(state);
   const bill=(lx,y,lz,sx,sy,k,c,w)=>{const x=H.x+lx,z=H.z+lz;for(const[u,q]of[[-1,-1],[1,-1],[1,1],[-1,-1],[1,1],[-1,1]])Q.push(x+rx*u*sx,y+q*sy,z+rz*u*sx,u,q,k,0,c[0],c[1],c[2],w);};
@@ -223,5 +266,5 @@ R.render=function(state,p,t,dt,yaw,pitch,scan){old.render.call(this,state,p,t,dt
   gl.enableVertexAttribArray(P5.pos);gl.vertexAttribPointer(P5.pos,3,gl.FLOAT,false,44,0);gl.enableVertexAttribArray(P5.info);gl.vertexAttribPointer(P5.info,4,gl.FLOAT,false,44,12);gl.enableVertexAttribArray(P5.tone);gl.vertexAttribPointer(P5.tone,4,gl.FLOAT,false,44,28);
   gl.drawArrays(gl.TRIANGLES,0,data.length/11);gl.disableVertexAttribArray(P5.pos);gl.disableVertexAttribArray(P5.info);gl.disableVertexAttribArray(P5.tone);
   gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(true);gl.disable(gl.BLEND);this.v59Stats={fxQuads:data.length/66|0};}catch(e){this._v59Off=true;if(typeof console!=='undefined')console.warn('v59 fx off',e);}};
-root.MoonHomePlot={H,POS,RAD,VEIN,MINE,PAD,PARCEL,GATE,LAMPS,FENCE_R,SPOKES,MINE_DOOR,WS_DOOR,rocketAt,inside:insideHome,walk,botPose,commute};
+root.MoonHomePlot={houseStyle,houseDoor,CH_R,H,POS,RAD,VEIN,MINE,PAD,PARCEL,GATE,LAMPS,FENCE_R,SPOKES,MINE_DOOR,WS_DOOR,rocketAt,inside:insideHome,walk,botPose,commute};
 })(typeof window!=='undefined'?window:globalThis);

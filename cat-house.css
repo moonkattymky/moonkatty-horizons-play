@@ -1,0 +1,44 @@
+/* v81 cat house interior (lazy) */
+#cat-house{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:rgba(10,8,24,.72);backdrop-filter:blur(3px)}
+#cat-house[hidden]{display:none}
+.chh-room{position:relative;width:min(96vw,760px);max-height:calc(100% - var(--st,0px) - var(--sb,0px) - 24px);overflow:auto;border-radius:22px;padding:12px 14px 14px;color:#3a2618;
+ background:linear-gradient(#fff3e2 0 58%,#c98e5a 58% 59%,#d9a06a 59%,#b97b48 100%);box-shadow:0 0 0 3px #f2c25e,0 18px 50px rgba(0,0,0,.5),inset 0 0 60px rgba(255,190,120,.35);font:13px/1.25 system-ui,sans-serif}
+.chh-villa .chh-room{background:linear-gradient(#e9f5ff 0 58%,#8fd8f5 58% 59%,#dff4ff 59%,#bde6f6 100%);box-shadow:0 0 0 3px #ffd77a,0 18px 50px rgba(0,0,0,.5),inset 0 0 80px rgba(80,200,255,.35)}
+.chh-observatory .chh-room{background:linear-gradient(#2a2142 0 58%,#c7963f 58% 59%,#3a2c52 59%,#2b2140 100%);color:#ffe9bf;box-shadow:0 0 0 3px #ffcf5e,0 18px 50px rgba(0,0,0,.6),inset 0 0 80px rgba(255,200,90,.25)}
+.chh-room header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.chh-room header b{font-size:16px;letter-spacing:.2px}
+.chh-exit{border:0;border-radius:999px;padding:7px 14px;font-weight:700;color:#fff;background:linear-gradient(#ffb44a,#e2861c);box-shadow:0 2px 0 #a85b0c}
+.chh h4{margin:6px 0 4px;font-size:12.5px;text-transform:uppercase;letter-spacing:.6px;opacity:.85}
+.chh .row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.chh-wall{display:grid;grid-template-columns:132px 1fr;gap:12px;align-items:start}
+.chh-window{position:relative;height:132px;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 50% 120%,#3b2a6e,#0b0a22 70%);box-shadow:0 0 0 6px #f2c25e,0 0 0 9px #fff6e0,0 0 26px rgba(255,200,110,.7)}
+.chh-window .earth{position:absolute;width:62px;height:62px;left:38px;top:30px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#bfe9ff,#3c8be0 45%,#1d4e9a 70%,#0d2450);box-shadow:0 0 18px rgba(120,190,255,.8)}
+.chh-window .earth::after{content:'';position:absolute;inset:14px 10px 20px 18px;border-radius:40% 60% 50% 40%;background:rgba(110,200,120,.75)}
+.chh-window .stars{position:absolute;inset:0;background-image:radial-gradient(1.5px 1.5px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 75% 20%,#fff,transparent),radial-gradient(1.2px 1.2px at 85% 70%,#fff,transparent),radial-gradient(1px 1px at 30% 80%,#fff,transparent)}
+.chh-shelf .row{background:linear-gradient(transparent 76%,#a86d3c 76% 84%,#7a4a24 84%);padding:6px 6px 14px;border-radius:10px}
+.chh-observatory .chh-shelf .row{background:linear-gradient(transparent 76%,#c7963f 76% 84%,#7b5a1d 84%)}
+.chh-tro{flex:0 0 62px;text-align:center}
+.chh-tro .ic{display:grid;place-items:center;width:46px;height:46px;margin:0 auto 3px;border-radius:12px;font-size:26px;background:rgba(0,0,0,.08);filter:grayscale(1);opacity:.45}
+.chh-tro.on .ic{filter:none;opacity:1;background:radial-gradient(circle,#fff6d0,#ffd36b 70%);box-shadow:0 0 14px rgba(255,200,80,.8)}
+.chh-tro small,.chh-bot small,.chh-paint small,.chh-cover figcaption{display:block;font-size:10.5px;line-height:1.15}
+.chh-cover{flex:0 0 92px;margin:0}
+.chh-cover img{width:92px;height:58px;object-fit:cover;border-radius:8px;border:3px solid #f2c25e;box-shadow:0 3px 8px rgba(0,0,0,.25)}
+.chh-floor{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chh-paint{flex:0 0 64px;text-align:center}
+.chh-paint i{display:block;width:52px;height:30px;margin:0 auto 3px;border-radius:16px 16px 8px 8px;background:var(--p);box-shadow:inset 0 -6px 0 rgba(0,0,0,.18)}
+.chh-paint.cur i{outline:3px solid #fff;outline-offset:1px}
+.chh-paint.comet i{background:linear-gradient(90deg,#17171c 60%,#ffb43a);box-shadow:0 0 16px #ffb43a,0 0 30px rgba(255,120,30,.6);animation:chhGlow 1.6s ease-in-out infinite alternate}
+@keyframes chhGlow{to{box-shadow:0 0 26px #ffd06a,0 0 44px rgba(255,140,40,.8)}}
+.chh-bot{flex:0 0 64px;text-align:center}
+.chh-bot i{display:block;width:54px;height:62px;margin:0 auto;background:url(assets/bot-cats-v66.webp?v=66) 0 0/400% 400% no-repeat}
+.chh-empty{opacity:.7;font-size:12px;margin:4px 0}
+.chh-look{flex:1 0 140px;border:0;border-radius:14px;padding:8px;text-align:center;color:inherit;background:rgba(255,255,255,.55);box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.chh-observatory .chh-look{background:rgba(255,255,255,.1)}
+.chh-look.cur{box-shadow:0 0 0 3px #ffbf4a,0 0 14px rgba(255,190,70,.7)}
+.chh-look b{display:block;margin-top:4px}.chh-look small{opacity:.8}
+.chh-look .lk{display:block;height:46px;border-radius:10px}
+.lk-free{background:radial-gradient(ellipse at 50% 100%,#ffe2b8 30%,transparent 31%),linear-gradient(#ff9a76,#f07c5c)}
+.lk-house_villa{background:radial-gradient(ellipse at 50% 100%,rgba(190,235,255,.95) 45%,transparent 46%),linear-gradient(#1b2a5a,#41a7e8)}
+.lk-house_observatory{background:radial-gradient(ellipse at 50% 100%,#ffd36b 40%,transparent 41%),linear-gradient(#20183a,#4a3270)}
+.chh-note{font-size:11px;opacity:.75;margin:4px 0 0}
+@media (max-width:520px){.chh-wall{grid-template-columns:96px 1fr}.chh-window{height:96px}.chh-window .earth{width:44px;height:44px;left:26px;top:24px}.chh-floor{grid-template-columns:1fr}}
