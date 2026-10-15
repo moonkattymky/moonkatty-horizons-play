@@ -86,12 +86,12 @@ dialog.cinema.flash-mode::backdrop{background:radial-gradient(circle at 50% 40%,
 .flash-mode .cin-sub{text-align:center;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 54px)}
 .flash-mode .cin-text{font-size:16px;min-height:0;max-width:340px;margin:0 auto}
 /* main menu block */
-.cinema-menu{display:grid;gap:10px;margin:14px 0 4px;padding:14px;border-radius:16px;border:1px solid #f1d49a40;background:linear-gradient(135deg,#1c3b52cc,#0b1f31e6)}
-.cin-watch{display:flex!important;align-items:center;gap:12px;text-align:left;margin:0!important;padding:10px 12px!important;border-radius:13px!important;background:linear-gradient(120deg,#25475f,#13293c)!important;border:1px solid #f5d58f66!important}
+.cinema-menu{display:grid;grid-template-columns:minmax(0,1fr);min-width:0;max-width:100%;box-sizing:border-box;gap:10px;margin:14px 0 4px;padding:14px;border-radius:16px;border:1px solid #f1d49a40;background:linear-gradient(135deg,#1c3b52cc,#0b1f31e6)}
+.cin-watch{min-width:0;max-width:100%;box-sizing:border-box;display:flex!important;align-items:center;gap:12px;text-align:left;margin:0!important;padding:10px 12px!important;border-radius:13px!important;background:linear-gradient(120deg,#25475f,#13293c)!important;border:1px solid #f5d58f66!important}
 .cin-watch .cin-play{flex:0 0 38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#f8e2a8,#d9a346);color:#2b1c05;font-size:14px;padding-left:3px;box-shadow:0 0 18px #f0b45a55}
-.cin-watch b{display:block;font-size:15px;color:#fff3d6}.cin-watch small{display:block;font-size:11.5px;color:#a9c3d2;font-weight:500;margin-top:2px}
-.cin-chips{display:flex;gap:7px}
-.cin-chips button{flex:1;margin:0!important;padding:8px 4px!important;min-height:0!important;font-size:12px!important;border-radius:10px!important;background:#0d2436!important;border:1px solid #86cdd944!important;color:#d9eef6!important;white-space:nowrap}
+.cin-watch>span:last-child{min-width:0;flex:1 1 auto;overflow-wrap:anywhere}.cin-watch b{display:block;font-size:15px;color:#fff3d6}.cin-watch small{display:block;font-size:11.5px;color:#a9c3d2;font-weight:500;margin-top:2px}
+.cin-chips{display:flex;flex-wrap:wrap;gap:7px;min-width:0;max-width:100%}
+.cin-chips button{flex:1 1 76px;min-width:0;margin:0!important;padding:8px 4px!important;min-height:0!important;font-size:12px!important;border-radius:10px!important;background:#0d2436!important;border:1px solid #86cdd944!important;color:#d9eef6!important;white-space:nowrap}
 .cin-chips button:disabled{opacity:.45}
 .cin-switch{display:flex!important;justify-content:space-between;align-items:center;margin:0!important;padding:6px 2px!important;min-height:0!important;background:none!important;border:0!important;color:#cfe3ee!important;font-size:13px!important}
 .cin-switch i{width:42px;height:24px;border-radius:12px;background:#33495a;position:relative;transition:background .25s}

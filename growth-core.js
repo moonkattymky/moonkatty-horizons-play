@@ -86,6 +86,8 @@ function claimStreak(s,now=Date.now()){const st=streakStatus(s,now);if(st.claime
 function shouldShowStreak(s,now=Date.now()){ensure(s);const st=streakStatus(s,now);return!st.claimed&&s.growth.seen!==st.today;}
 function markStreakSeen(s,now=Date.now()){ensure(s).growth.seen=utcDay(now);}
 
+// v90: partner (blogger) links ref_<name> — only names the server knows; never stored in the save
+const PARTNER_IDS=['gamesappsfree'];function parseStartSource(v){const m=/^ref_([a-z][a-z0-9]{2,31})$/.exec(String(v||'').trim());return m&&PARTNER_IDS.includes(m[1])?m[1]:'';}
 function parseStartParam(v){const m=/^ref_(\d{3,15})$/.exec(String(v||'').trim());return m?m[1]:'';}
 function inviteLink(cfg,userId){const bot=String(cfg?.BOT_USERNAME||'MoonkattyHorizonsBot').replace(/^@/,''),short=String(cfg?.MINIAPP_SHORTNAME||'').trim(),id=/^\d{3,15}$/.test(String(userId||''))?String(userId):'';
  if(!id)return'https://t.me/'+bot+(short?'/'+short:'');
@@ -139,4 +141,4 @@ function progressScore(s){if(!s||typeof s!=='object')return 0;let p=(Number(s.ch
 function pickSave(local,remote){if(!remote)return'local';if(!local)return'remote';const lr=local.growth?.resetAt||0,rr=remote.growth?.resetAt||0;if(lr!==rr)return lr>rr?'local':'remote';
  const a=progressScore(local),b=progressScore(remote);if(a!==b)return a>b?'local':'remote';return(local.updatedAt||0)>=(remote.updatedAt||0)?'local':'remote';}
 
-return{DAY_MS,STREAK_REWARDS,REFERRAL_REWARDS,CHANNEL_REWARD,SHARE_REWARD,MOON,STORY_CHECKPOINTS,storyCheckpoints,checkpointsToSend,SHIELD_DAYS,SOCIAL_PLATFORMS,SOCIAL_NAMES,nickProof,BADGE_NAMES,streakPoints,utcDay,localDay,dayIndex,streakStatus,applyReward,rewardText,gotText,claimStreak,shouldShowStreak,markStreakSeen,parseStartParam,inviteLink,shareUrl,linkPlan,bridgeEvent,claimShare,applyServerReward,setMoon,moonView,formatPoints,progressScore,pickSave};});
+return{DAY_MS,STREAK_REWARDS,REFERRAL_REWARDS,CHANNEL_REWARD,SHARE_REWARD,MOON,STORY_CHECKPOINTS,storyCheckpoints,checkpointsToSend,SHIELD_DAYS,SOCIAL_PLATFORMS,SOCIAL_NAMES,nickProof,BADGE_NAMES,streakPoints,utcDay,localDay,dayIndex,streakStatus,applyReward,rewardText,gotText,claimStreak,shouldShowStreak,markStreakSeen,parseStartParam,parseStartSource,inviteLink,shareUrl,linkPlan,bridgeEvent,claimShare,applyServerReward,setMoon,moonView,formatPoints,progressScore,pickSave};});

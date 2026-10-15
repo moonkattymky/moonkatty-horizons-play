@@ -42,6 +42,7 @@ function commit(){Game.save();Game.refresh();updateBadges();if(online)cloudSave(
 function tgUser(){const u=tg()?.initDataUnsafe?.user;return u&&Number.isFinite(Number(u.id))?u:null;}
 function myId(){return serverUser?.id||(tgUser()?String(tgUser().id):'');}
 function invite(){if(!online&&!String(cfg.MINIAPP_SHORTNAME||'').trim()&&cfg.DEMO_URL)return cfg.DEMO_URL;return G.inviteLink(cfg,myId());}
+function startSource(){let v=tg()?.initDataUnsafe?.start_param||'';if(!v){try{const q=new URLSearchParams(location.search);v=q.get('tgWebAppStartParam')||q.get('startapp')||q.get('start')||'';}catch{}}return G.parseStartSource(v);}
 function startParam(){let v=tg()?.initDataUnsafe?.start_param||'';if(!v){try{const q=new URLSearchParams(location.search);v=q.get('tgWebAppStartParam')||q.get('startapp')||q.get('start')||'';}catch{}}return G.parseStartParam(v);}
 // v44d: task links. A Telegram Mini App WebView does not open window.open/_blank tabs, so every link goes through the
 // Telegram client (G.linkPlan decides): SDK when ready, otherwise the client bridge directly; a new tab only in a browser.
@@ -88,7 +89,7 @@ async function claimPending(list){if(!list?.length)return;try{const r=await api(
 async function boot(){if(booted)return;booted=true;const ref=startParam(),s=S();
  if(ref&&ref!==myId()&&!s.growth.refBy){s.growth.refBy=ref;Game.save();setTimeout(()=>toast(online?_t('growth.ty_ekipazhe'):_t('growth.ty_ekipazhe2')),2200);}
  if(!API||!initData()){renderAll();return;}
- try{const r=await api('/api/session',{startParam:ref?'ref_'+ref:'',tzOffset:tzOffset(),local:{updatedAt:s.updatedAt,progress:G.progressScore(s)}});online=true;serverUser=r.user||null;session=r.session||null;social=r.social||null;rules=r.rules||null;setCrew(r.crew);channelInfo=r.channel||channelInfo;
+ try{const r=await api('/api/session',{startParam:ref?'ref_'+ref:(startSource()?'ref_'+startSource():''),tzOffset:tzOffset(),local:{updatedAt:s.updatedAt,progress:G.progressScore(s)}});online=true;serverUser=r.user||null;session=r.session||null;social=r.social||null;rules=r.rules||null;setCrew(r.crew);channelInfo=r.channel||channelInfo;partners=r.partners||partners;
   if(r.resetEpoch&&String(r.resetEpoch)!==epochGet()){let wiped=false;try{if(G.progressScore(S())>0&&window.MoonCore&&MoonCore.initial)wiped=Game.replace(MoonCore.initial());}catch{}try{localStorage.setItem(EPK,String(r.resetEpoch));}catch{}if(wiped)storyDone=[];}
   if(r.privacy)S().growth.lbHidden=!!r.privacy.hidden;
   if(r.season||r.goal||r.shop)setStage3(r);
@@ -217,7 +218,7 @@ function updateMoon(){document.querySelectorAll('.moon-card').forEach(el=>{const
 document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('.mc-rules'))window.MoonRulesUI?.open();});
 
 // «Связь с Землёй»: channel (bot check) · signal code (server) · daily list · social review tasks · community chat (link only)
-const tasksDialog=dialog('tasks','tasks-dialog');let channelBusy=false,channelMsg='',socOpen='',socKind={},socDraft={},socMsg={},socBusy=false;
+const tasksDialog=dialog('tasks','tasks-dialog');let partners={},ptBusy={},ptMsg={},ptOpened={},channelBusy=false,channelMsg='',socOpen='',socKind={},socDraft={},socMsg={},socBusy=false;
 function socialUrl(id){if(id==='chat'){const c=String(cfg.CHAT_USERNAME||'').trim().replace(/^@/,'');return /^[A-Za-z0-9_]{4,}$/.test(c)?'https://t.me/'+c:'';}return String(cfg.SOCIAL?.[id]||'');}
 function socialPlatforms(){return G.SOCIAL_PLATFORMS.filter(id=>/^https:\/\//.test(socialUrl(id)));}
 const SOC_TITLE={x:'gcore.chitay_moonkatty',tiktok:'gcore.podpishis_tiktok',youtube:'gcore.podpishis_youtube'};   // v45: no Instagram reward task
@@ -246,6 +247,11 @@ function socialHtml(){const ids=socialPlatforms(),chat=socialUrl('chat'),m=M();i
     `<p class="soc-msg ${msg?.ok?'ok':''}" role="status">${esc(msg?.text||'')}</p></form>`:'');}).join('');
  const chatRow=chat?`<div class="task-row chat-row"><span class="tr-icon">${ICON.telegram}</span><span class="tr-text"><b>${_t('gcore.vstupi_chat')}</b><small>${_t('soc.chat_sub')}</small></span><span class="tr-side"><button type="button" class="tr-btn" data-soc-open="chat">${_t('growth.otkryt')}</button></span></div>`:'';
  return`<h3 class="g-sub">${_t('growth.my_sotssetyah')}</h3>${code}<p class="soc-steps">${_t('soc.steps',{n:m.social.follow})}</p><div class="task-list">${rows}${chatRow}</div><p class="g-note">${online?_t('growth.zadaniya_sotssetey'):_t('soc.offline')}</p>`;}
+// v90 partner channel task (GamesAppsFree): subscription is verified by the server when the bot can see the channel (p.check), otherwise the
+// button only opens the channel and the small supplies gift is claimed once without an automatic check.
+function partnerHtml(){return Object.entries(partners||{}).map(([id,p])=>{if(!p||!/^\w{4,}$/.test(String(p.channel||'')))return'';const done=!!p.rewarded,busy=!!ptBusy[id],can=online&&(p.check||ptOpened[id]);
+ return`<div class="task-row partner-row ${done?'claimed':''}"><span class="tr-icon">${ICON.telegram}</span><span class="tr-text"><b>${_t('partner.title')}</b><small>${esc(ptMsg[id]||_t(p.check?'partner.sub':'partner.sub_open'))}</small></span><span class="tr-side">${done?`<span class="gchip ok">${ICON.check}</span>`:chips(p.reward,'small')+`<button type="button" class="tr-btn" data-pt-open="${id}">${_t('growth.otkryt')}</button><button type="button" class="tr-btn gold" data-pt-check="${id}" ${can&&!busy?'':'disabled'}>${busy?_t('growth.proveryaem'):_t(p.check?'growth.proverit':'partner.claim')}</button>`}</span></div>`;}).join('');}
+async function partnerCheck(id){const p=partners[id];if(!p||ptBusy[id]||!online)return;ptBusy[id]=true;renderTasks();try{const r=await api('/api/partner/check',{id});if(r.member){p.rewarded=true;ptMsg[id]='';if(r.reward)applyServerRewards([r.reward]);else commit();haptic();}else{ptMsg[id]=r.error?(window.MoonReliability&&MoonReliability.netText?MoonReliability.netText():_t('growth.net_svyazi')):_t('partner.not_yet');haptic('warning');}}catch(e){ptMsg[id]=e&&e.code==='rate_limited'?_t('soc.e_rate'):(window.MoonReliability&&MoonReliability.netText?MoonReliability.netText():_t('growth.net_svyazi'));}ptBusy[id]=false;renderTasks();}
 function renderTasks(){const d=tasksDialog,s=S(),m=M(),ch=String(cfg.CHANNEL_USERNAME||'').replace(/^@/,''),st=G.streakStatus(s),shareDone=s.growth.shareDay===G.utcDay();
  const channelDone=s.growth.channel||channelInfo.rewarded,focus=document.activeElement&&d.contains(document.activeElement)&&document.activeElement.name==='proof';
  const channel=ch?`<div class="task-hero ${channelDone?'done':''}"><div class="th-top">${ICON.telegram}<div><b>${_t('growth.podpishis_kanal')}</b>${ptBadge(channelDone?'done':channelBusy?'pending':'new')}<small>${_t('growth.novosti_ekspeditsi')}</small></div></div>
@@ -253,7 +259,7 @@ function renderTasks(){const d=tasksDialog,s=S(),m=M(),ch=String(cfg.CHANNEL_USE
    ${channelDone?`<div class="th-state ok">${ICON.check}${_t('growth.podpiska_podtverzh')}</div>`:`<div class="th-actions"><button type="button" class="primary" id="channel-open">${_t('growth.podpisatsya')}</button><button id="channel-check" ${online?'':'disabled'}>${channelBusy?_t('growth.proveryaem'):_t('growth.proverit')}</button></div><div class="th-state ${online?'':'pending'}">${esc(channelMsg)||(online?_t('growth.podpishis_zatem'):_t('growth.proverka_podpiski'))}</div>`}</div>`:'';
  const row=(icon,title,sub,reward,btn,cls='')=>`<div class="task-row ${cls}"><span class="tr-icon">${icon}</span><span class="tr-text"><b>${title}</b><small>${sub}</small></span><span class="tr-side">${reward}${btn}</span></div>`;
  d.innerHTML=head(_t('growth.zadaniya_bonusy'),_t('growth.svyaz_zemley'),'tasks')+
-  `<p class="g-lead">${_t('growth.pomogi_ekspeditsii')}</p>`+moonCard()+ptHow()+channel+(window.MoonTeamUI?window.MoonTeamUI.codeCard():'')+
+  `<p class="g-lead">${_t('growth.pomogi_ekspeditsii')}</p>`+moonCard()+ptHow()+channel+partnerHtml()+(window.MoonTeamUI?window.MoonTeamUI.codeCard():'')+
   `<div class="task-list">`+(window.MoonSeasonUI?.taskRow?window.MoonSeasonUI.taskRow():'')+
    row(ICON.gift,_t('growth.vahta_baze'),_t(st.claimed?'growth.7_nagrada':'growth.7_nagrada2',{n:st.day}),st.claimed?'':chips({points:online?st.points:0,...st.reward},'small'),`<button class="tr-btn ${st.claimed?'':'gold'}" data-go="streak">${st.claimed?_t('growth.otkryt'):_t('growth.zabrat')}</button>`,st.claimed?'claimed':'ready')+
    row(ICON.crew,_t('growth.priglasi_druga'),online?_t('growth.nagrada_kazhdogo',{n:m.referral,d:m.referralDays}):_t('growth.nagrady_druzey'),chips({points:m.referral},'small'),'<button class="tr-btn" data-go="crew">'+_t('growth.pozvat')+'</button>')+
@@ -272,6 +278,8 @@ function renderTasks(){const d=tasksDialog,s=S(),m=M(),ch=String(cfg.CHANNEL_USE
  if(focus)d.querySelector('.soc-form input')?.focus({preventScroll:true});
  const cp=$('#soc-copy');if(cp)cp.onclick=async()=>{const ok=await copy(social?.code||'');if(ok){haptic();toast(_t('soc.code_copied'));}};
  if($('#channel-open'))$('#channel-open').onclick=()=>{openUrl('https://t.me/'+ch);channelMsg=online?_t('growth.podpisalsya_nazhmi'):_t('growth.spasibo_proverka');renderTasks();};
+ d.querySelectorAll('[data-pt-open]').forEach(b=>b.onclick=()=>{const id=b.dataset.ptOpen,p=partners[id];if(!p)return;openUrl('https://t.me/'+p.channel);ptOpened[id]=true;if(!p.check)renderTasks();});
+ d.querySelectorAll('[data-pt-check]').forEach(b=>b.onclick=()=>partnerCheck(b.dataset.ptCheck));
  if($('#channel-check'))$('#channel-check').onclick=checkChannel;window.MoonTeamUI?.wireCode?.(d);}
 async function submitSocial(id,kind,proof){if(socBusy||!online)return;if(!String(proof||'').trim()){socMsg[id]={ok:false,text:socError({code:'bad_proof'},id,kind)};renderTasks();return;}socBusy=true;socMsg[id]=null;renderTasks();
  try{const r=await api('/api/social/submit',{platform:id,kind,proof:String(proof||'').trim()});social=r.social||social;socMsg[id]={ok:true,text:_t(kind==='follow'?'soc.wait_follow':'soc.sent')};socDraft[id]='';haptic();}
