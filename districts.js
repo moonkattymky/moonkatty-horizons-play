@@ -154,7 +154,7 @@ if(typeof document!=='undefined')(function(){const KEY='moonkatty-districts-v55'
  function tick(){const g=G();if(!g||!g.player||!g.state)return;mount();sync();const p=g.player,s=g.state,now=Date.now();let best=null;
   for(const id in D){const d=D[id],dd=Math.hypot(p.x-d.x,p.z-d.z),open=isOpen(d,s);
    if(open&&dd<d.r&&!mem.seen.includes(id)){mem.seen.push(id);keep();toast(T('dist.discovered',{name:name(id)})+' · '+T('dist.'+id+'_sub'));}
-   if(!open&&dd<d.lock+3&&dd>d.lock-1&&!(warn[id]>now)){warn[id]=now+20000;toast(T('dist.locked',{name:name(id),n:d.need}));}
+   if(!open&&dd<d.lock+3&&dd>d.lock-1&&!(warn[id]>now)){warn[id]=now+6000;toast(T('dist.locked',{name:name(id),n:d.need}));}
    if(id==='anomaly'&&open&&dd<5.8&&dd>.01){p.x=d.x+(p.x-d.x)/dd*6;p.z=d.z+(p.z-d.z)/dd*6;if(!(warn.push>now)){warn.push=now+8000;toast(T('dist.danger'));}}
    if(!open||dd>d.r+2)continue;
    for(const r of d.relics)if(!view.relics.includes(r.id)&&Math.hypot(p.x-r.x,p.z-r.z)<1.7){view.relics.push(r.id);mem.relics=view.relics;keep();toast(T('dist.relic',{n:d.relics.filter(q=>view.relics.includes(q.id)).length,t:d.relics.length})+' · '+name(id));try{root.Telegram?.WebApp?.HapticFeedback?.impactOccurred('light');}catch{}}
