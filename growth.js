@@ -132,7 +132,9 @@ function flushCloud(){if(!online)return;try{fetch(API+'/api/save',{method:'POST'
 addEventListener('pagehide',flushCloud);document.addEventListener('visibilitychange',()=>{if(document.hidden)flushCloud();});
 
 // ---------- dialogs ----------
-function dialog(id,cls){let d=document.getElementById(id);if(d)return d;d=document.createElement('dialog');d.id=id;d.className='growth-dialog '+cls;root.append(d);d.addEventListener('click',e=>{if(e.target===d)d.close();});return d;}
+function bottomClose(d){let busy=false;const sync=()=>{if(busy)return;busy=true;try{if(!d.querySelector('.g-head'))return;let b=d.querySelector(':scope>.mk-close-bottom');if(!b){b=document.createElement('button');b.type='button';b.className='g-secondary mk-close-bottom';b.textContent=_t('growth.zakryt');b.hidden=true;b.onclick=()=>d.close();d.append(b);}else if(b!==d.lastElementChild)d.append(b);if(d.open)requestAnimationFrame(()=>{b.hidden=d.scrollHeight<=d.clientHeight+8;});}finally{busy=false;}};
+ try{new MutationObserver(()=>{if(busy)return;sync();}).observe(d,{childList:true});new MutationObserver(sync).observe(d,{attributes:true,attributeFilter:['open']});}catch(e){}sync();}
+function dialog(id,cls){let d=document.getElementById(id);if(d)return d;d=document.createElement('dialog');d.id=id;d.className='growth-dialog '+cls;root.append(d);d.addEventListener('click',e=>{if(e.target===d)d.close();});bottomClose(d);return d;}
 function open(id){const d=document.getElementById(id);document.querySelectorAll('dialog[open]').forEach(x=>{if(x!==d)x.close();});if(!d.open)Game.openDialog(id);}
 const head=(eyebrow,title,id)=>`<div class="g-head"><div><span class="eyebrow">${eyebrow}</span><h2>${title}</h2></div><button class="close-icon" data-gclose="${id}" aria-label="${_t('growth.zakryt')}">×</button></div>`;
 function wireClose(d){d.querySelectorAll('[data-gclose]').forEach(b=>b.onclick=()=>d.close());}

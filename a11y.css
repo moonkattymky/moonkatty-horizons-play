@@ -25,3 +25,17 @@ html.mk-cb .progress i,html.mk-cb #fuel-fill{background-image:repeating-linear-g
 .pt-badge.pending{background:#2f6fd6;color:#fff}
 .pt-badge.done{background:#e8f3ff;color:#06305f}
 .pt-badge.fail{background:#3a2a00;color:#ffd23f;outline:1px dashed #ffd23f}
+/* v92 close-button safe area: dialogs sit below Telegram's native header (Close / chevron / ⋯), close buttons are >=44px, long dialogs get a bottom «Close». */
+html{--mk-top:max(56px,var(--tg-safe-top,0px),calc(var(--tg-content-safe-area-inset-top,0px) + var(--tg-safe-area-inset-top,0px)),env(safe-area-inset-top,0px))}
+#app-viewport dialog:not(.cinema){top:calc(var(--mk-top) + (var(--app-height,100dvh) - var(--mk-top)) / 2);max-height:calc(var(--app-height,100dvh) - var(--mk-top) - 12px)}
+.growth-dialog .g-head{align-items:flex-start;gap:14px}
+.growth-dialog .g-head>div{min-width:0}
+.growth-dialog .close-icon,dialog .close-icon{position:relative;width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;max-width:none!important;margin:0 4px 0 0!important;flex:none}
+html[dir=rtl] .growth-dialog .close-icon,html[dir=rtl] dialog .close-icon{margin:0 0 0 4px!important}
+.growth-dialog .close-icon::after,dialog .close-icon::after,.lp-x::after,.hm-x::after{content:"";position:absolute;inset:-6px}
+dialog.life-wait button.close-icon{top:12px;inset-inline-end:12px;width:44px!important;height:44px!important;min-height:44px!important;max-width:none!important}
+.lp-x{position:relative;min-width:44px;min-height:44px}
+html.v64-hud #growth-dock .hm-x{position:relative;width:44px;height:44px;min-height:44px}
+.mk-close-bottom{position:sticky;bottom:0;display:block;width:100%;margin:14px 0 0!important;min-height:48px!important;border-radius:14px!important;font-size:15px!important;font-weight:700;z-index:2;box-shadow:0 -10px 14px -6px #0b2133}
+.mk-close-bottom[hidden]{display:none!important}
+.mk-close-bottom.g-secondary{background:#12334c!important}
