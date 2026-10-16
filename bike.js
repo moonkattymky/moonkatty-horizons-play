@@ -10,7 +10,7 @@ const R=root.MoonRenderer&&root.MoonRenderer.prototype,B=root.MoonOutpostBuilder
 const KEY='moonkatty-bike-v60';
 const PAINT={gold:[1,.74,.28],mint:[.45,.92,.74],berry:[.96,.40,.64],sky:[.44,.72,1],cocoa:[.66,.45,.32],galaxy:[.50,.36,.92],comet:[.07,.07,.09],frost:[.74,.90,1],ember:[1,.40,.16],ghost:[.66,.94,1],nebula:[.62,.30,.86],ruby:[.86,.10,.24]};   // v85 nebula/ruby: Stars paints (looks only)   // v82 frost/ember: crafted from rare mine materials; ghost: the unique star-mine find (translucent glow)   // v64 'comet' = the Stars skin: black body, gold trim, fiery trail (looks only)
 const ORDER=['gold','mint','berry','sky','cocoa','galaxy'];
-const Bike=root.MoonBike={view:null,at:0,riding:false,PAINT,ORDER,flying:false,flyHold:false,spin:0,tilt:0,SKY_MAX:10.5,
+const Bike=root.MoonBike={view:null,at:0,riding:false,PAINT,ORDER,flying:false,flyHold:false,spin:0,tilt:0,SKY_MAX:10.5,skyMax(){return this.color==='comet'?this.SKY_MAX*2:this.SKY_MAX;},
  // v65 BIKE FLIGHT: free for everyone after LIFE #7 (the Sky Drive); the server says so too (/api/bike → fly), so it is retroactive
  canFly(s){s=s||(root.MoonGame&&root.MoonGame.state);return!!(this.view&&this.view.fly)||!!(s&&Number(s.chapter)>=7&&s.chapter7Complete===true);},
  get unlocked(){if(this.view)return!!this.view.unlocked;const s=root.MoonGame&&root.MoonGame.state;return!!(s&&(s.chapter>1||s.complete));},
@@ -143,7 +143,7 @@ function flyBtn(){let f=$('#bike-fly');const can=Bike.riding&&Bike.unlocked&&Bik
   const hold=on=>{Bike.flyHold=on;f.classList.toggle('hold',on);};
   f.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();try{f.setPointerCapture(e.pointerId);}catch{}hold(true);try{root.Telegram?.WebApp?.HapticFeedback?.selectionChanged();}catch{}});
   for(const ev of['pointerup','pointercancel','lostpointercapture'])f.addEventListener(ev,()=>hold(false));f.addEventListener('contextmenu',e=>e.preventDefault());host.append(f);}
- f.hidden=!can;if(!can){Bike.flyHold=false;return;}const alt=Math.max(0,(Game.player&&Game.player.alt)||0),k=Math.min(1,alt/Bike.SKY_MAX);
+ f.hidden=!can;if(!can){Bike.flyHold=false;return;}const alt=Math.max(0,(Game.player&&Game.player.alt)||0),k=Math.min(1,alt/Bike.skyMax());
  const html=`<span class="bf-ico" aria-hidden="true">⤒</span><span class="bf-lbl">${esc(T(Bike.flying?'bike.fly_up':'bike.fly'))}</span><i class="bf-alt" style="--k:${k.toFixed(3)}"></i><small class="bf-m">${Bike.flying?Math.round(alt)+' '+esc(T('bike.m')):''}</small>`;if(f._h!==html){f.innerHTML=html;f._h=html;}
  document.documentElement.classList.toggle('bike-sky',can);}
 Bike.flyBtn=flyBtn;setInterval(()=>{try{flyBtn();}catch{}},180);
