@@ -161,7 +161,7 @@
  "exp.vtoraya_tochka":"Il secondo checkpoint si raggiunge in volo.",
  "exp.dvigaysya_sleduyus":"Avanti il prossimo!",
  "exp.sleduy_tochkam":"Segui i checkpoint in ordine. Il secondo è in aria.",
- "exp.vklyuchi_skaner":"Accendi lo scanner e guardati intorno. Tutto ciò che trovi resta sulla bussola.",
+ "exp.vklyuchi_skaner":"Apri il Menu e tocca ◎ Scanner. Tutto ciò che trovi resta sulla bussola.",
  "exp.snachala_issleduy":"Prima scansiona quest’area.",
  "exp.etot_obekt":"Già esplorato.",
  "exp.proba_sohranena":"Campione salvato",

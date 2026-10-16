@@ -161,7 +161,7 @@
  "exp.vtoraya_tochka":"النقطة الثانية لا تُبلغ إلا بالطيران.",
  "exp.dvigaysya_sleduyus":"إلى التالية!",
  "exp.sleduy_tochkam":"اتبع النقاط بالترتيب. الثانية في الهواء.",
- "exp.vklyuchi_skaner":"شغّل الماسح وانظر حولك. كل ما تجده يبقى على بوصلتك.",
+ "exp.vklyuchi_skaner":"افتح القائمة واضغط ◎ الماسح. كل ما تجده يبقى على بوصلتك.",
  "exp.snachala_issleduy":"امسح هذه المنطقة أولًا.",
  "exp.etot_obekt":"استُكشف بالفعل.",
  "exp.proba_sohranena":"حُفظت العيّنة",

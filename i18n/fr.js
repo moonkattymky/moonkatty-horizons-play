@@ -161,7 +161,7 @@
  "exp.vtoraya_tochka":"Le deuxième point se rejoint en volant.",
  "exp.dvigaysya_sleduyus":"En route vers le suivant !",
  "exp.sleduy_tochkam":"Suis les points dans l’ordre. Le deuxième est en l’air.",
- "exp.vklyuchi_skaner":"Allume le scanner et regarde autour de toi. Tout ce que tu trouves reste sur ta boussole.",
+ "exp.vklyuchi_skaner":"Ouvre le Menu et touche ◎ Scanner. Tout ce que tu trouves reste sur ta boussole.",
  "exp.snachala_issleduy":"Scanne d’abord cette zone.",
  "exp.etot_obekt":"Déjà exploré.",
  "exp.proba_sohranena":"Échantillon enregistré",

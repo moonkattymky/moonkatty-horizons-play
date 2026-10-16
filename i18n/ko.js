@@ -161,7 +161,7 @@
  "exp.vtoraya_tochka":"두 번째 지점은 날아서만 갈 수 있어요.",
  "exp.dvigaysya_sleduyus":"다음 지점으로!",
  "exp.sleduy_tochkam":"지점을 순서대로 따라가세요. 두 번째는 공중에 있어요.",
- "exp.vklyuchi_skaner":"스캐너를 켜고 주위를 둘러보세요. 발견한 건 모두 나침반에 남아요.",
+ "exp.vklyuchi_skaner":"메뉴를 열고 ◎ 스캐너를 누르세요. 발견한 건 모두 나침반에 남아요.",
  "exp.snachala_issleduy":"먼저 이 구역을 스캔하세요.",
  "exp.etot_obekt":"이미 조사했어요.",
  "exp.proba_sohranena":"시료 저장 완료",

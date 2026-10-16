@@ -161,7 +161,7 @@
  "exp.vtoraya_tochka":"O segundo ponto exige voo.",
  "exp.dvigaysya_sleduyus":"Rumo ao próximo!",
  "exp.sleduy_tochkam":"Siga os pontos em ordem. O segundo fica no ar.",
- "exp.vklyuchi_skaner":"Ligue o scanner e olhe ao redor. Tudo o que encontrar fica na sua bússola.",
+ "exp.vklyuchi_skaner":"Abra o Menu e toque em ◎ Scanner. Tudo o que encontrar fica na sua bússola.",
  "exp.snachala_issleduy":"Primeiro escaneie esta área.",
  "exp.etot_obekt":"Já explorado.",
  "exp.proba_sohranena":"Amostra salva",

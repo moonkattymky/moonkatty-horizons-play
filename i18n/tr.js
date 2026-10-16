@@ -161,7 +161,7 @@
  "exp.vtoraya_tochka":"İkinci noktaya uçarak ulaşılır.",
  "exp.dvigaysya_sleduyus":"Sıradakine devam!",
  "exp.sleduy_tochkam":"Noktaları sırayla takip et. İkincisi havada.",
- "exp.vklyuchi_skaner":"Tarayıcıyı aç ve etrafına bak. Bulduğun her şey pusulanda kalır.",
+ "exp.vklyuchi_skaner":"Menüyü aç ve ◎ Tarayıcı'ya dokun. Bulduğun her şey pusulanda kalır.",
  "exp.snachala_issleduy":"Önce bu alanı tara.",
  "exp.etot_obekt":"Zaten keşfedildi.",
  "exp.proba_sohranena":"Numune kaydedildi",

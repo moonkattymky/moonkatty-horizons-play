@@ -161,7 +161,7 @@
  "exp.vtoraya_tochka":"The second checkpoint needs flight.",
  "exp.dvigaysya_sleduyus":"On to the next one.",
  "exp.sleduy_tochkam":"Follow the checkpoints in order. The second one is in the air.",
- "exp.vklyuchi_skaner":"Switch on the scanner and look around. Anything you find stays on your compass.",
+ "exp.vklyuchi_skaner":"Open the Menu and tap ◎ Scanner. Anything you find stays on your compass.",
  "exp.snachala_issleduy":"Scan this area first.",
  "exp.etot_obekt":"Already explored.",
  "exp.proba_sohranena":"Sample saved",

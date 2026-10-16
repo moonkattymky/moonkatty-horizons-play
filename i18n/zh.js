@@ -161,7 +161,7 @@
  "exp.vtoraya_tochka":"第二个检查点只能飞过去。",
  "exp.dvigaysya_sleduyus":"前往下一个！",
  "exp.sleduy_tochkam":"按顺序前往各检查点。第二个在空中。",
- "exp.vklyuchi_skaner":"打开扫描仪，环顾四周。发现的一切都会留在罗盘上。",
+ "exp.vklyuchi_skaner":"打开菜单并点按 ◎ 扫描仪。发现的一切都会留在罗盘上。",
  "exp.snachala_issleduy":"先扫描这片区域。",
  "exp.etot_obekt":"已经探索过了。",
  "exp.proba_sohranena":"样本已保存",

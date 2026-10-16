@@ -161,7 +161,7 @@
  "exp.vtoraya_tochka":"Al segundo punto hay que llegar volando.",
  "exp.dvigaysya_sleduyus":"¡A por el siguiente!",
  "exp.sleduy_tochkam":"Sigue los puntos en orden. El segundo está en el aire.",
- "exp.vklyuchi_skaner":"Enciende el escáner y mira a tu alrededor. Todo lo que encuentres quedará en tu brújula.",
+ "exp.vklyuchi_skaner":"Abre el Menú y toca ◎ Escáner. Todo lo que encuentres quedará en tu brújula.",
  "exp.snachala_issleduy":"Primero escanea esta zona.",
  "exp.etot_obekt":"Ya explorado.",
  "exp.proba_sohranena":"Muestra guardada",

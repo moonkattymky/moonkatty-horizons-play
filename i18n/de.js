@@ -161,7 +161,7 @@
  "exp.vtoraya_tochka":"Zum zweiten Checkpoint musst du fliegen.",
  "exp.dvigaysya_sleduyus":"Weiter zum nächsten!",
  "exp.sleduy_tochkam":"Folge den Checkpoints der Reihe nach. Der zweite ist in der Luft.",
- "exp.vklyuchi_skaner":"Schalt den Scanner ein und sieh dich um. Alles Gefundene bleibt auf deinem Kompass.",
+ "exp.vklyuchi_skaner":"Öffne das Menü und tippe auf ◎ Scanner. Alles Gefundene bleibt auf deinem Kompass.",
  "exp.snachala_issleduy":"Scanne zuerst diesen Bereich.",
  "exp.etot_obekt":"Schon erkundet.",
  "exp.proba_sohranena":"Probe gespeichert",

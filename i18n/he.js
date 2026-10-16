@@ -161,7 +161,7 @@
  "exp.vtoraya_tochka":"לנקודה השנייה מגיעים בטיסה.",
  "exp.dvigaysya_sleduyus":"קדימה, לנקודה הבאה!",
  "exp.sleduy_tochkam":"עברו בנקודות לפי הסדר. השנייה באוויר.",
- "exp.vklyuchi_skaner":"הפעילו את הסורק והביטו סביב. כל ממצא יישאר במצפן.",
+ "exp.vklyuchi_skaner":"פתחו את התפריט ולחצו ◎ סורק. כל ממצא יישאר במצפן.",
  "exp.snachala_issleduy":"קודם סרקו את האזור.",
  "exp.etot_obekt":"כבר נחקר.",
  "exp.proba_sohranena":"הדגימה נשמרה",
