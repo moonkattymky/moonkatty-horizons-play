@@ -911,6 +911,7 @@
  "bot.pay_owned":"Você já tem este item.",
  "bot.pay_invalid":"Este pedido não é mais válido. Abra a loja de novo.",
  "lb.snapshot":"A tabela é atualizada a cada 5 minutos.",
+ "exp.vsego_igrokov":"Total de jogadores: {n}",
  "rules.s_vest_t":"Moon Points pendentes",
  "rules.s_vest":"Os Moon Points da história e de amigos entram como pendentes e liberam 1/{v} a cada dia em que você joga (um dia UTC em que você abre o jogo). Os Moon Points do seu primeiro dia liberam no próximo dia em que você jogar. Os pontos pendentes aparecem abaixo do seu saldo.",
  "ch4.q_ready":"Comece a Vida #4",

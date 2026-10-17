@@ -911,6 +911,7 @@
  "bot.pay_owned":"이미 가지고 있는 아이템이에요.",
  "bot.pay_invalid":"이 주문은 더 이상 유효하지 않아요. 상점을 다시 열어 주세요.",
  "lb.snapshot":"순위표는 5분마다 업데이트돼요.",
+ "exp.vsego_igrokov":"전체 플레이어: {n}",
  "rules.s_vest_t":"대기 중인 Moon Points",
  "rules.s_vest":"스토리와 친구로 얻은 Moon Points는 대기 상태로 적립되고, 플레이하는 날(게임을 연 UTC 하루)마다 1/{v}씩 해제돼요. 맨 첫날의 Moon Points는 다음 플레이하는 날 해제돼요. 대기 중인 포인트는 잔액 아래에 표시돼요.",
  "ch4.q_ready":"목숨 #4 시작하기",

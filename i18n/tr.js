@@ -911,6 +911,7 @@
  "bot.pay_owned":"Bu öğe zaten sende var.",
  "bot.pay_invalid":"Bu sipariş artık geçerli değil. Lütfen mağazayı yeniden aç.",
  "lb.snapshot":"Tablo her 5 dakikada bir güncellenir.",
+ "exp.vsego_igrokov":"Toplam oyuncu: {n}",
  "rules.s_vest_t":"Bekleyen Moon Points",
  "rules.s_vest":"Hikâye ve arkadaş Moon Points’i beklemede olarak eklenir ve oynadığın her gün (oyunu açtığın bir UTC günü) 1/{v} oranında açılır. İlk gününün Moon Points’i bir sonraki oyun gününde açılır. Bekleyen puanlar bakiyenin altında gösterilir.",
  "ch4.q_ready":"Can #4’ü başlat",

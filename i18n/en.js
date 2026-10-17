@@ -911,6 +911,7 @@
  "bot.pay_owned":"You already own this item.",
  "bot.pay_invalid":"This order is no longer valid. Please open the shop again.",
  "lb.snapshot":"The table updates every 5 minutes.",
+ "exp.vsego_igrokov":"Total players: {n}",
  "rules.s_vest_t":"Pending Moon Points",
  "rules.s_vest":"Story and friend Moon Points are credited as pending and unlock 1/{v} on each day you play (a UTC day when you open the game). Moon Points from your very first day unlock on the next day you play. Pending points are shown under your balance.",
  "ch4.q_ready":"Start Life #4",

@@ -911,6 +911,7 @@
  "bot.pay_owned":"Diesen Gegenstand hast du schon.",
  "bot.pay_invalid":"Diese Bestellung ist nicht mehr gültig. Öffne den Laden bitte noch einmal.",
  "lb.snapshot":"Die Tabelle wird alle 5 Minuten aktualisiert.",
+ "exp.vsego_igrokov":"Spieler insgesamt: {n}",
  "rules.s_vest_t":"Ausstehende Moon Points",
  "rules.s_vest":"Moon Points für die Story und für Freunde werden als ausstehend gutgeschrieben und an jedem Tag, an dem du spielst (ein UTC-Tag, an dem du das Spiel öffnest), zu 1/{v} frei. Moon Points von deinem allerersten Tag werden am nächsten Spieltag frei. Ausstehende Punkte siehst du unter deinem Guthaben.",
  "ch4.q_ready":"Starte Leben #4",

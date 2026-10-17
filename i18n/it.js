@@ -911,6 +911,7 @@
  "bot.pay_owned":"Hai già questo oggetto.",
  "bot.pay_invalid":"Questo ordine non è più valido. Apri di nuovo il negozio.",
  "lb.snapshot":"La classifica si aggiorna ogni 5 minuti.",
+ "exp.vsego_igrokov":"Giocatori totali: {n}",
  "rules.s_vest_t":"Moon Points in attesa",
  "rules.s_vest":"I Moon Points della storia e degli amici vengono accreditati in attesa e si sbloccano di 1/{v} in ogni giorno in cui giochi (un giorno UTC in cui apri il gioco). I Moon Points del tuo primissimo giorno si sbloccano il giorno di gioco successivo. I punti in attesa sono indicati sotto il saldo.",
  "ch4.q_ready":"Inizia la Vita #4",

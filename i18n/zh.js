@@ -911,6 +911,7 @@
  "bot.pay_owned":"你已经拥有这个物品。",
  "bot.pay_invalid":"这个订单已失效，请重新打开商店。",
  "lb.snapshot":"排行榜每 5 分钟更新一次。",
+ "exp.vsego_igrokov":"玩家总数：{n}",
  "rules.s_vest_t":"待解锁的 Moon Points",
  "rules.s_vest":"剧情和好友获得的 Moon Points 先记为待解锁，在你每个游戏日（你打开游戏的 UTC 日）解锁 1/{v}。你第一天获得的 Moon Points 会在下一个游戏日解锁。待解锁积分显示在余额下方。",
  "ch4.q_ready":"开始第4条命",
