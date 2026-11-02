@@ -674,7 +674,7 @@
  "html.ispolzuy_skaner":"Utilise le scanner, récolte des ressources avec le sac et vole 5 secondes. Disponible après avoir débloqué trois cartes.",
  "html.novoe_zadanie":"Nouvelle mission à minuit (heure de l’appareil).",
  "html.kollektsii":"Vers la collection",
- "html.otkrytyy_mir":"MONDE OUVERT · 164 × 160 m",
+ "html.otkrytyy_mir":"MONDE OUVERT · 800 × 800 m",
  "html.karta_ekspeditsii":"Carte de l’expédition",
  "html.vybrat_polevuyu":"Choisir une expédition de terrain",
  "html.ekspeditsiya_sohra":"EXPÉDITION · JOURNAUX ENREGISTRÉS",

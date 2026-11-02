@@ -674,7 +674,7 @@
  "html.ispolzuy_skaner":"Tarayıcıyı kullan, çantayla kaynak topla ve 5 saniye uç. Üç kart açıldıktan sonra kullanılabilir.",
  "html.novoe_zadanie":"Yeni görev gece yarısı, cihaz saatiyle.",
  "html.kollektsii":"Koleksiyona",
- "html.otkrytyy_mir":"AÇIK DÜNYA · 164 × 160 m",
+ "html.otkrytyy_mir":"AÇIK DÜNYA · 800 × 800 m",
  "html.karta_ekspeditsii":"Keşif haritası",
  "html.vybrat_polevuyu":"Bir saha keşfi seç",
  "html.ekspeditsiya_sohra":"KEŞİF · KAYITLI GÜNLÜKLER",

@@ -674,7 +674,7 @@
  "html.ispolzuy_skaner":"Use o scanner, colete recursos com a mochila e voe por 5 segundos. Disponível depois de liberar três cartas.",
  "html.novoe_zadanie":"Nova tarefa à meia-noite, no horário do dispositivo.",
  "html.kollektsii":"Para a coleção",
- "html.otkrytyy_mir":"MUNDO ABERTO · 164 × 160 m",
+ "html.otkrytyy_mir":"MUNDO ABERTO · 800 × 800 m",
  "html.karta_ekspeditsii":"Mapa da expedição",
  "html.vybrat_polevuyu":"Escolher expedição de campo",
  "html.ekspeditsiya_sohra":"EXPEDIÇÃO · REGISTROS SALVOS",

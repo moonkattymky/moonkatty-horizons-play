@@ -674,7 +674,7 @@
  "html.ispolzuy_skaner":"使用扫描仪，用背包采集资源，再飞行 5 秒。解锁三张卡牌后开放。",
  "html.novoe_zadanie":"新任务于设备时间午夜刷新。",
  "html.kollektsii":"前往收藏",
- "html.otkrytyy_mir":"开放世界 · 164 × 160 米",
+ "html.otkrytyy_mir":"开放世界 · 800 × 800 米",
  "html.karta_ekspeditsii":"探险地图",
  "html.vybrat_polevuyu":"选择野外探险",
  "html.ekspeditsiya_sohra":"探险 · 已存记录",

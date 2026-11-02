@@ -674,7 +674,7 @@
  "html.ispolzuy_skaner":"스캐너를 쓰고, 배낭으로 자원을 모으고, 5초 동안 날아 보세요. 카드 세 장을 열면 할 수 있어요.",
  "html.novoe_zadanie":"새 미션은 기기 시간 자정에 나와요.",
  "html.kollektsii":"컬렉션으로",
- "html.otkrytyy_mir":"오픈 월드 · 164 × 160m",
+ "html.otkrytyy_mir":"오픈 월드 · 800 × 800m",
  "html.karta_ekspeditsii":"탐사 지도",
  "html.vybrat_polevuyu":"현장 탐사 고르기",
  "html.ekspeditsiya_sohra":"탐사 · 저장된 기록",

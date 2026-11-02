@@ -674,7 +674,7 @@
  "html.ispolzuy_skaner":"Use the scanner, gather resources with the backpack and fly for 5 seconds. Available after unlocking three cards.",
  "html.novoe_zadanie":"New task at midnight, device time.",
  "html.kollektsii":"To collection",
- "html.otkrytyy_mir":"OPEN WORLD · 164 × 160 m",
+ "html.otkrytyy_mir":"OPEN WORLD · 800 × 800 m",
  "html.karta_ekspeditsii":"Expedition map",
  "html.vybrat_polevuyu":"Choose a field expedition",
  "html.ekspeditsiya_sohra":"EXPEDITION · SAVED LOGS",

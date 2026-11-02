@@ -674,7 +674,7 @@
  "html.ispolzuy_skaner":"Benutze den Scanner, sammle Ressourcen mit dem Rucksack und flieg 5 Sekunden. Verfügbar, sobald drei Karten freigeschaltet sind.",
  "html.novoe_zadanie":"Neue Aufgabe um Mitternacht (Gerätezeit).",
  "html.kollektsii":"Zur Sammlung",
- "html.otkrytyy_mir":"OFFENE WELT · 164 × 160 m",
+ "html.otkrytyy_mir":"OFFENE WELT · 800 × 800 m",
  "html.karta_ekspeditsii":"Expeditionskarte",
  "html.vybrat_polevuyu":"Feldexpedition wählen",
  "html.ekspeditsiya_sohra":"EXPEDITION · GESPEICHERTE LOGS",

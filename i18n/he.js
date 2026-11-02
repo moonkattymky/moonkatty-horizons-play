@@ -674,7 +674,7 @@
  "html.ispolzuy_skaner":"השתמשו בסורק, אספו משאבים בתרמיל וטוסו 5 שניות. זמין אחרי פתיחת שלושה קלפים.",
  "html.novoe_zadanie":"משימה חדשה בחצות, לפי שעון המכשיר.",
  "html.kollektsii":"לאוסף",
- "html.otkrytyy_mir":"עולם פתוח · 164 × 160 מ׳",
+ "html.otkrytyy_mir":"עולם פתוח · 800 × 800 מ׳",
  "html.karta_ekspeditsii":"מפת המשלחת",
  "html.vybrat_polevuyu":"בחרו משלחת שטח",
  "html.ekspeditsiya_sohra":"משלחת · רשומות שמורות",

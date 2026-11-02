@@ -22,7 +22,7 @@ R.ensureWorldModels=function(){if(this.meshes.round)return;for(const[k,data]of O
  for(const[x,z,s,h]of authored){if(!Object.values(root.MoonCore.POINTS).some(p=>Math.hypot(x-p[0],z-p[1])<s*.7+2.0))this.rocks.push({x,z,s,h,r:x*.57});}
  const fragments=[[-8,13,2.6,2.1],[-8,9,2.3,2.0],[-5.5,12,1.4,1.3],[8,13,2.4,2.3],[8.5,8,1.5,1.4],[-18,7,2.6,1.8],[15,6,2.6,1.9],[20,-10,3.1,2.5],[-18,-23,2.1,1.8]];
  for(const[x,z,s,h]of fragments)if(!Object.values(root.MoonCore.POINTS).some(p=>Math.hypot(x-p[0],z-p[1])<s+2.0)&&!root.MoonCore.resources.some(p=>Math.hypot(x-p.x,z-p.z)<s+1.2))this.rocks.push({x,z,s,h,r:x*.73});
- this.pebbles=[];let seed=281;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};for(let i=0;i<1150;i++){const x=(rnd()-.5)*80,z=(rnd()-.5)*84-9;const path=Math.abs(x-Math.sin(z*.07)*5);this.pebbles.push({x,z,s:(.04+rnd()**3*.60)*(path<3?.38:1)});}
+ this.pebbles=[];let seed=281;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};for(let i=0;i<620;i++){const x=(rnd()-.5)*80,z=(rnd()-.5)*84-9;const path=Math.abs(x-Math.sin(z*.07)*5);this.pebbles.push({x,z,s:(.04+rnd()**3*.60)*(path<3?.38:1)});}
 };
 const originalScene=R.scene;R.scene=function(state,...args){this.ensureWorldModels();const out=originalScene.call(this,state,...args);if(state.chapter===1)this.habitat(4,-5,1);this.expeditionProps(state.chapter);return out;};
 R.cat=function(x,z,yaw,t,moving,alt,ch,accent=P.orange,hero=false,equipment={}){

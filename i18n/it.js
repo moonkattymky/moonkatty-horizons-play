@@ -674,7 +674,7 @@
  "html.ispolzuy_skaner":"Usa lo scanner, raccogli risorse con lo zaino e vola per 5 secondi. Disponibile dopo aver sbloccato tre carte.",
  "html.novoe_zadanie":"Nuova missione a mezzanotte (ora del dispositivo).",
  "html.kollektsii":"Alla collezione",
- "html.otkrytyy_mir":"MONDO APERTO · 164 × 160 m",
+ "html.otkrytyy_mir":"MONDO APERTO · 800 × 800 m",
  "html.karta_ekspeditsii":"Mappa della spedizione",
  "html.vybrat_polevuyu":"Scegli una spedizione sul campo",
  "html.ekspeditsiya_sohra":"SPEDIZIONE · REGISTRI SALVATI",

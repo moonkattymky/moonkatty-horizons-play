@@ -674,7 +674,7 @@
  "html.ispolzuy_skaner":"استخدم الماسح، واجمع الموارد بالحقيبة، وطِر 5 ثوانٍ. متاحة بعد فتح ثلاث بطاقات.",
  "html.novoe_zadanie":"مهمة جديدة عند منتصف الليل بتوقيت جهازك.",
  "html.kollektsii":"إلى المجموعة",
- "html.otkrytyy_mir":"عالم مفتوح · 164 × 160 م",
+ "html.otkrytyy_mir":"عالم مفتوح · 800 × 800 م",
  "html.karta_ekspeditsii":"خريطة البعثة",
  "html.vybrat_polevuyu":"اختر بعثة ميدانية",
  "html.ekspeditsiya_sohra":"البعثة · السجلات المحفوظة",
