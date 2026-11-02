@@ -18,7 +18,7 @@ R.ensureWorldModels=function(){
 };
 R.crystalDeposit=function(resource,ch,t){
  const x=resource.x,z=resource.z,y=this.terrain(x,z,ch),seed=Number(resource.id.slice(3)),yaw=seed*.71;
- this.put('geology1',x,y+.10,z,.66,.32,.54,[.37,.39,.405],yaw,4);
+ if(!resource.ruin)this.put('geology1',x,y+.10,z,.66,.32,.54,[.37,.39,.405],yaw,4);
  this.put('mineralGlow',x,y+.025,z,1.04,1,.88,[.12,.40,1.0],0,22,.23);
  const shards=[[0,0,.235,1.20,0,0],[.30,.12,.16,.82,.15,-.26],[-.31,.05,.19,.96,-.12,.27],[.10,-.28,.145,.75,-.23,-.13],[-.17,.31,.14,.64,.25,.08],[.43,-.16,.065,.34,.34,-.41],[-.43,-.21,.075,.40,-.21,.47],[.18,.45,.06,.28,.40,.18],[.26,.30,.05,.24,.5,-.2],[-.24,-.36,.05,.22,-.4,.3],[.52,.08,.045,.20,.2,-.6],[-.50,.14,.05,.26,-.3,.55]];
  for(let i=0;i<shards.length;i++){const [dx,dz,width,height,pitch,roll]=shards[i],c=Math.cos(yaw),s=Math.sin(yaw),xx=x+c*dx+s*dz,zz=z-s*dx+c*dz,yy=this.terrain(xx,zz,ch)+height*.48;

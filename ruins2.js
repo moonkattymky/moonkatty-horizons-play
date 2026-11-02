@@ -11,10 +11,10 @@ const Core=root.MoonCore;if(!Core)return;
 const TAU=Math.PI*2,norm=v=>{const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l];},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
 function rng(seed){let s=(seed>>>0)||1;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
 // materials: [kind, colour, glow]; kinds >=100 are ruin variants of the centre kinds (interior light in the normal length)
-const MAT={zivory:[117,[.97,.96,.93],0],zgold:[116,[.92,.63,.25],0],zrgold:[116,[1.0,.76,.32],.12],zsteel:[117,[.66,.68,.72],0],zframe:[100,[.23,.28,.31],0],
- zdark:[100,[.045,.065,.085],0],zglass:[105,[.10,.16,.22],0],zscorch:[100,[.075,.058,.048],0],zsoot:[100,[.05,.042,.036],0],zwall:[119,[.60,.61,.64],0],
- zcrate:[117,[.80,.77,.70],0],zdust:[100,[.50,.45,.40],0],zsolar:[115,[.2,.3,.4],0],zfin:[12,[.95,.60,.22],.42],zamber:[12,[1.0,.57,.14],.55],
- zport:[12,[1.0,.62,.20],.5],zcore:[12,[.35,.80,1.0],.8],zscreen:[12,[.25,.75,1.0],.35]};
+const MAT={zgoldm:[116,[.60,.46,.27],0],zivory:[117,[.97,.96,.93],0],zgold:[116,[.92,.63,.25],0],zrgold:[116,[1.0,.76,.32],.12],zsteel:[117,[.66,.68,.72],0],zframe:[100,[.23,.28,.31],0],
+ zdark:[100,[.045,.065,.085],0],zglass:[105,[.10,.16,.22],0],zscorch:[100,[.075,.058,.048],0],zsoot:[100,[.24,.22,.21],0],zwall:[119,[.60,.61,.64],0],
+ zcrate:[117,[.80,.77,.70],0],zdust:[100,[.46,.44,.41],0],zsolar:[115,[.2,.3,.4],0],zfin:[12,[.95,.60,.22],.42],zamber:[12,[1.0,.57,.14],.55],
+ zport:[12,[1.0,.62,.20],.5],zred:[12,[1.0,.16,.10],.7],zpool:[12,[.16,.035,.015],0],zapool:[12,[.16,.085,.02],0],zpoolo:[12,[.075,.02,.012],0],zapoolo:[12,[.075,.045,.014],0],zspace:[12,[.06,.10,.30],.32],zstar:[12,[.9,.95,1.0],.9],zgreen:[12,[.25,1.0,.45],.6],zblue:[12,[.25,.65,1.0],.6],zseat:[117,[.55,.22,.16],0],zfloor:[100,[.42,.36,.31],0],zbulk:[100,[.16,.17,.2],0],zivory2:[117,[.84,.83,.80],0],zhi:[100,[.74,.74,.76],0],zwood:[117,[.62,.45,.27],0],zwoodd:[100,[.30,.20,.12],0],zpaper:[117,[.93,.91,.84],0],ztool:[117,[.75,.18,.12],0],zcore:[12,[.35,.80,1.0],.8],zscreen:[12,[.25,.75,1.0],.35]};
 // ---------- local geometry ----------
 const grp=(G,m)=>G[m]||(G[m]=[]);
 function tri(G,m,a,b,c,n){n=n||norm(cross(sub(b,a),sub(c,a)));grp(G,m).push(...a,...n,...b,...n,...c,...n);}
@@ -82,6 +82,7 @@ function* buildRocket(G,F){const q=rng(4711),segs=40;
  // gold bands, seams, the paw emblem, portholes, engine, fins (cut by the tear like the hull)
  const band=(y0,y1,r,m)=>{for(let i=0;i<48;i++){const t0=i/48*TAU,t1=(i+1)/48*TAU;if(rocketHole((y0+y1)/2,(t0+t1)/2)<.05)continue;const a=P(r/RB,y0,t0),b=P(r/RB,y0,t1),c=P(r/RB,y1,t1),d=P(r/RB,y1,t0),n=[Math.sin((t0+t1)/2),0,Math.cos((t0+t1)/2)];quad(F,m,a,b,c,d,n);
   const lo=[Math.sin(t0)*(r-.05),y0,Math.cos(t0)*(r-.05)],lo2=[Math.sin(t1)*(r-.05),y0,Math.cos(t1)*(r-.05)];quad(F,m,lo,lo2,b,a,[0,-1,0]);const hi=[Math.sin(t0)*(r-.05),y1,Math.cos(t0)*(r-.05)],hi2=[Math.sin(t1)*(r-.05),y1,Math.cos(t1)*(r-.05)];quad(F,m,d,c,hi2,hi,[0,1,0]);}};
+ for(let i=0;i<24;i++){const t0=i/24*TAU,t1=(i+1)/24*TAU,r=RB*.95;tri(F,'zbulk',[0,1.6,0],[Math.sin(t0)*r,1.6,Math.cos(t0)*r],[Math.sin(t1)*r,1.6,Math.cos(t1)*r],[0,1,0]);}
  band(1.95,2.06,RB+.025,'zgold');band(2.36,2.42,RB+.02,'zgold');band(3.58,3.76,RB+.03,'zgold');band(4.9,4.98,RB+.02,'zrgold');band(7.2,7.28,RB+.02,'zrgold');band(8.24,8.4,RB+.03,'zgold');band(8.42,8.58,RB+.03,'zgold');band(9.25,9.33,RB*.99+.02,'zgold');
  for(let i=0;i<6;i++){const a=i/6*TAU+.2;for(let y=3.7;y<8.3;y+=.5){if(rocketHole(y+.25,a)<.1)continue;box(F,'zframe',Math.sin(a)*(RB+.012),y+.25,Math.cos(a)*(RB+.012),.03,.25,.03,a);}}
  paw(F,'zrgold',0,7.66,RB+.03,.95,0);for(let i=0;i<20;i++){const a=i/20*TAU,b=(i+1)/20*TAU,R1=.62,R2=.5,p=(t,r)=>[Math.sin(t)*r,7.75+Math.cos(t)*r,RB+.025];quad(F,'zrgold',p(a,R2),p(a,R1),p(b,R1),p(b,R2),[0,0,1]);}
@@ -101,15 +102,80 @@ function* buildRocket(G,F){const q=rng(4711),segs=40;
  // interior: ribs, deck, crates, console, ceiling lamps, cable; the find glows on the deck
  const zw=Math.sqrt(RR*RR-AX*AX);
  for(let X=-1;X<=11;X+=2.2){const pts=[];for(let k=0;k<=22;k++){const a=-.42+k/22*(Math.PI+.84);if(Math.abs(wrap(a-HC))<holeW(YC-X/S,a)+.05){pts.push(null);continue;}pts.push([X,rocketAxisY(X)+Math.sin(a)*RR*.93,Math.cos(a)*RR*.93]);}
-  for(let k=0;k<pts.length-1;k++)if(pts[k]&&pts[k+1])tube(G,'zframe',pts[k],pts[k+1],.07,5,.07,false);
+  for(let k=0;k<pts.length-1;k++)if(pts[k]&&pts[k+1]){tube(G,'zframe',pts[k],pts[k+1],.045,5,.045,false);const hh=q=>[q[0]-.03,rocketAxisY(q[0])+(q[1]-rocketAxisY(q[0]))*.975,q[2]*.975];tube(G,'zhi',hh(pts[k]),hh(pts[k+1]),.012,3,.012,false);}
 }
  for(let X=-1.2;X<10.6;X+=1.95){yield;for(let zz=-1.6;zz<=1.61;zz+=1.6){if(q()<.08)continue;box(G,'zsteel',X,.09,zz,.9,.07,.74,0,0,(q()-.5)*.03);box(G,'zgold',X,.165,zz-.7,.86,.012,.03);}}
  yield;box(G,'zframe',4.6,.05,0,6.4,.03,zw-.1);
- for(const[X,zz,s,yw,rl]of[[1.0,-1.9,.42,.2,0],[1.9,-1.95,.34,.6,0],[1.4,-1.85,.3,.1,0],[7.6,-1.8,.44,-.3,0],[8.7,1.2,.4,.9,.45],[3.0,1.6,.3,.4,0]]){const y=s+.12;box(G,'zcrate',X,y,zz,s,s*.85,s*.8,yw,0,rl);box(G,'zgold',X,y+s*.35,zz,s*1.02,.03,s*.82,yw,0,rl);box(G,'zgold',X,y-s*.35,zz,s*1.02,.03,s*.82,yw,0,rl);}
+ for(const[X,zz,s,yw,rl]of[[1.0,-1.9,.42,.2,0],[1.9,-1.95,.34,.6,0],[1.4,-1.85,.3,.1,0],[7.6,-1.8,.44,-.3,0],[3.0,1.6,.3,.4,0]]){const y=s*.85+.17,c=Math.cos(yw),sn=Math.sin(yw),T=(u,v)=>[X+c*u+sn*v,zz-sn*u+c*v];box(G,'zwood',X,y,zz,s,s*.85,s*.8,yw,0,rl);
+  for(let k=-1;k<=1;k+=2)box(G,'zwoodd',X,y+k*s*.28,zz,s*1.005,.012,s*.805,yw,0,rl);
+  for(const[u,v]of[[-1,-1],[1,-1],[-1,1],[1,1]]){const[a,b]=T(u*s*.94,v*s*.75);box(G,'zwoodd',a,y,b,.05,s*.86,.05,yw,0,rl);}
+  for(const v of[-1,1]){const[a,b]=T(0,v*s*.8);box(G,'zwoodd',a,y,b,s*.95,.04,.012,yw,0,rl);}}
  box(G,'zframe',9.6,1.1,-1.55,.7,.9,.35,.15);box(G,'zscreen',9.55,1.45,-1.18,.5,.28,.02,.15);box(G,'zamber',9.25,.7,-1.18,.06,.06,.02,.15);
  for(const X of[1.5,5.5,9.4]){const y=rocketAxisY(X)+RR*.86;box(G,'zframe',X,y+.08,0,.5,.05,.18);box(G,'zamber',X,y,0,.42,.03,.12);}
- for(let k=0;k<6;k++){const X=2.5+k*.7,y=rocketAxisY(X)+RR*.8-Math.sin(k/5*Math.PI)*.9;tube(G,'zdark',[X,y,-.6],[X+.7,rocketAxisY(X+.7)+RR*.8-Math.sin((k+1)/5*Math.PI)*.9,-.6],.035,4);}
+
  const[fx,fz]=[5.2,-.9];box(G,'zcore',fx,rocketAxisY(fx)+RR*.86,fz,.12,.04,.12);
+ yield;
+ // v101 cosy-spooky interior: hull panels with rivets and gold trims, seats, bunk, console, cables, portholes, emergency lights
+ const H=(X,a,r)=>[X,rocketAxisY(X)+Math.sin(a)*r,Math.cos(a)*r],ok=(X,a)=>Math.abs(wrap(a-HC))>holeW(YC-X/S,a)+.12;
+ for(let X=-.8;X<10.8;X+=1.1){for(let a=1.0;a<3.75;a+=.34){if(!ok(X,a)||!ok(X,a+.34))continue;const m=a+.17,c=H(X+.55,m,RR*.915),n=[0,Math.sin(m),Math.cos(m)];
+   const p0=H(X+.06,a+.02,RR*.912),p1=H(X+1.04,a+.02,RR*.912),p2=H(X+1.04,a+.32,RR*.912),p3=H(X+.06,a+.32,RR*.912);quad(G,['zivory','zivory2','zivory','zsteel','zivory2'][((X*7+a*3)|0)%5],p0,p3,p2,p1,n.map(v=>-v));
+   for(const[dx,da]of[[.14,.06],[.96,.28]]){const r=H(X+dx,a+da,RR*.906),e=.03,v=[0,Math.cos(a+da)*e,-Math.sin(a+da)*e];quad(G,'zgold',[r[0]-e,r[1]-v[1],r[2]-v[2]],[r[0]+e,r[1]-v[1],r[2]-v[2]],[r[0]+e,r[1]+v[1],r[2]+v[2]],[r[0]-e,r[1]+v[1],r[2]+v[2]],[0,-Math.sin(a+da),-Math.cos(a+da)]);}}
+  if(X>-.5)for(let k=0;k<10;k++){const a0=1.0+k*.28,a1=a0+.28;if(!ok(X,a0)||!ok(X,a1))continue;tube(G,'zgoldm',H(X,a0,RR*.905),H(X,a1,RR*.905),.015,4,.015,false);}
+  if(((X*10)|0)%3===0)yield;}
+ yield;
+ // floor plates: grip grooves + corner rivets
+ for(let X=-1.2;X<10.6;X+=1.95)for(let zz=-1.6;zz<=1.61;zz+=1.6){for(let g=-.6;g<=.61;g+=.3)quad(G,'zframe',[X+g-.025,.167,zz-.6],[X+g-.025,.167,zz+.6],[X+g+.025,.167,zz+.6],[X+g+.025,.167,zz-.6],[0,1,0]);for(const[dx,dz]of[[-.8,-.64],[.8,-.64],[-.8,.64],[.8,.64]])quad(G,'zgold',[X+dx-.035,.168,zz+dz-.035],[X+dx-.035,.168,zz+dz+.035],[X+dx+.035,.168,zz+dz+.035],[X+dx+.035,.168,zz+dz-.035],[0,1,0]);}
+ yield;
+ // broken seats (one torn off, one tilted) and a bunk with a blanket
+ const seat=(x,z,yw,tilt,broken)=>{box(G,'zframe',x,.4,z,.06,.24,.06,yw);box(G,'zseat',x,.68,z,.36,.07,.34,yw,0,tilt*.4);box(G,'zgold',x,.62,z,.38,.02,.36,yw,0,tilt*.4);
+  if(!broken){const bx=x-Math.sin(yw)*.3,bz=z-Math.cos(yw)*.3;box(G,'zseat',bx,1.12,bz,.34,.42,.07,yw,tilt,0);box(G,'zgold',bx,1.56,bz,.36,.04,.08,yw,tilt,0);}
+  else{box(G,'zseat',x+.6,.22,z+.5,.34,.07,.42,yw+1.1,0,.2);}};
+ seat(8.5,-1.3,Math.PI/2,.15,false);seat(8.5,1.2,Math.PI/2,-.35,true);seat(3.4,-1.5,.2,.3,false);
+ box(G,'zframe',6.4,.48,-1.95,1.18,.03,.4);for(const dz of[-.4,.4])tube(G,'zsteel',[5.2,.5,-1.95+dz],[7.6,.5,-1.95+dz],.03,6);box(G,'zivory2',6.4,.58,-1.95,1.08,.07,.34);for(const dz of[-.34,.34])tube(G,'zivory2',[5.32,.58,-1.95+dz],[7.48,.58,-1.95+dz],.07,8);box(G,'zseat',5.95,.67,-1.95,.62,.03,.4);for(const x of[5.45,5.75,6.05,6.35])tube(G,'zseat',[x,.7,-2.37],[x+.06,.7,-1.53],.045,6);tube(G,'zseat',[6.57,.66,-2.38],[6.57,.66,-1.52],.06,8);tube(G,'zivory',[7.3,.72,-2.2],[7.3,.72,-1.7],.09,8);for(const[x,z]of[[5.25,-2.3],[7.55,-2.3],[5.25,-1.6],[7.55,-1.6]])box(G,'zframe',x,.3,z,.03,.18,.03);
+ 
+ // console: panel, three glowing screens, button rows
+ box(G,'zframe',9.9,.75,0,.35,.6,1.4);box(G,'zsteel',9.75,1.3,0,.35,.05,1.4,0,0,-.5);
+ for(const[z,m]of[[-.85,'zscreen'],[0,'zblue'],[.85,'zgreen']])box(G,m,9.6,1.7,z,.02,.26,.36,0,0,0);for(const z of[-.85,0,.85]){box(G,'zframe',9.62,1.7,z,.03,.3,.4);for(let k=0;k<4;k++)box(G,'zdark',9.575,1.84-k*.09,z-.08+((k*5)%3)*.04,.006,.015,.2-((k*7)%3)*.05);box(G,'zstar',9.575,1.52,z+.25,.006,.03,.03);}
+ for(let i=0;i<8;i++)for(let j=0;j<2;j++)box(G,['zred','zamber','zgreen','zblue'][(i+j*3)%4],9.7-j*.12,1.36+j*.06,-1.1+i*.31,.04,.025,.06,0,0,-.5);
+ yield;
+ // hanging cables (sagging catenaries) with sparking ends
+ const sag=(a,b,d,m='zdark',r=.03)=>{let p=a;for(let k=1;k<=8;k++){const t=k/8,q=[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t-Math.sin(t*Math.PI)*d,a[2]+(b[2]-a[2])*t];tube(G,m,p,q,r,4,r,false);p=q;}};
+ sag(H(.6,2.75,RR*.89),H(3.4,2.75,RR*.89),.22,'zdark',.02);sag(H(4.4,2.9,RR*.89),H(7.6,2.9,RR*.89),.25,'zdark',.02);sag(H(1.2,1.75,RR*.9),H(4.0,1.75,RR*.9),.15,'zframe',.016);
+ for(const[x,a,l]of[[2.3,2.95,.5],[7.0,3.0,.45]]){const p=H(x,a,RR*.88);tube(G,'zdark',p,[p[0]+.08,p[1]-l,p[2]+.15],.018,4,.018,false);box(G,'zgold',p[0]+.08,p[1]-l,p[2]+.15,.025,.03,.025);}
+ // cracked portholes on the far wall: deep space with stars behind cracked glass
+ for(const[X,a]of[[1.6,2.6],[4.2,2.75],[9.0,2.55]]){const c=H(X,a,RR*.9),n=[0,-Math.sin(a),-Math.cos(a)],u=[1,0,0],v=[0,Math.cos(a),-Math.sin(a)],P=(du,dv,e=0)=>[c[0]+u[0]*du+v[0]*dv+n[0]*e,c[1]+u[1]*du+v[1]*dv+n[1]*e,c[2]+u[2]*du+v[2]*dv+n[2]*e];
+  for(let i=0;i<16;i++){const t0=i/16*TAU,t1=(i+1)/16*TAU;tri(G,'zspace',P(0,0,-.01),P(Math.cos(t0)*.34,Math.sin(t0)*.34,-.01),P(Math.cos(t1)*.34,Math.sin(t1)*.34,-.01),n);
+   tube(G,'zgold',P(Math.cos(t0)*.38,Math.sin(t0)*.38),P(Math.cos(t1)*.38,Math.sin(t1)*.38),.045,5,.045,false);}
+  const st=rng(X*100|0);for(let k=0;k<7;k++){const r=st()*.3,t=st()*TAU,pp=P(Math.cos(t)*r,Math.sin(t)*r,.0);box(G,'zstar',pp[0],pp[1],pp[2],.012,.012,.012);}
+  for(let k=0;k<4;k++){const t=k*1.7+.3,a0=P(Math.cos(t)*.04,Math.sin(t)*.04,.01),a1=P(Math.cos(t+.3)*.33,Math.sin(t+.3)*.33,.01);tube(G,'zivory',a0,a1,.006,3,.006,false);}}
+ // emergency lights: red caged lamps + soft pools on the floor
+ for(const[X,a,c]of[[2.8,2.0,'zred'],[9.2,1.2,'zred']]){const p=H(X,a,RR*.9);box(G,c,p[0],p[1],p[2],.1,.06,.06);box(G,'zframe',p[0],p[1]+.09,p[2],.13,.02,.09);
+  }
+ // debris: bent plates, bolts, a dropped helmet-ish dome
+ {const d=rng(77);for(let k=0;k<22;k++){const x=-.6+d()*10.6,z=(d()-.5)*3.6;if(Math.hypot(x-fx,z-fz)<.8)continue;box(G,d()<.5?'zivory':'zsteel',x,.2,z,.05+d()*.16,.012,.04+d()*.12,d()*6,0,d()*.4);}}
+ yield;
+ // engine bulkhead details (faces the cabin): panel lines, pipes, small indicators
+ {const BX=12.3,ay=rocketAxisY(BX),R2=RR*.86;for(const dz of[-1.2,-.4,.4,1.2])box(G,'zframe',BX,ay,dz,.012,R2*Math.sqrt(Math.max(0,1-(dz/R2)**2))*.92,.012);
+  for(const dy of[-1.0,0,1.0])box(G,'zframe',BX,ay+dy,0,.012,.012,R2*Math.sqrt(Math.max(0,1-(dy/R2)**2))*.92);
+  tube(G,'zsteel',[BX-.08,ay-1.6,-1.5],[BX-.08,ay+1.6,-1.5],.06,6);tube(G,'zgold',[BX-.08,ay-1.6,1.55],[BX-.08,ay+1.3,1.55],.05,6);tube(G,'zsteel',[BX-.1,ay+1.25,-1.5],[BX-.1,ay+1.25,1.55],.045,6);
+  for(const[dy,dz,m]of[[.5,-.8,'zgreen'],[.5,-.65,'zgreen'],[.5,-.5,'zamber'],[-.3,.8,'zred'],[-.3,.95,'zblue'],[.9,.3,'zgreen']])box(G,m,BX-.03,ay+dy,dz,.01,.035,.035);
+  box(G,'zframe',BX-.05,ay+.15,.85,.03,.25,.3);box(G,'zscreen',BX-.08,ay+.2,.85,.005,.15,.22);}
+ // small items: helmet, toolbox, papers, mug with a paw
+ {const hx=2.0,hz=.9;for(let j=0;j<4;j++)for(let i=0;i<10;i++){const t0=i/10*TAU,t1=(i+1)/10*TAU,a0=j/4*Math.PI/2,a1=(j+1)/4*Math.PI/2,r=.22,P=(t,a)=>[hx+Math.cos(t)*Math.cos(a)*r,.17+Math.sin(a)*r,hz+Math.sin(t)*Math.cos(a)*r];quad(G,'zivory',P(t0,a0),P(t1,a0),P(t1,a1),P(t0,a1),norm([Math.cos(t0),Math.sin(a0)+.2,Math.sin(t0)]));}
+  box(G,'zglass',hx+.17,.27,hz,.06,.08,.13,0,0,.3);tube(G,'zgold',[hx,.17,hz],[hx,.2,hz],.23,10);}
+ box(G,'ztool',4.0,.3,1.75,.32,.13,.17,.5);box(G,'zwoodd',4.0,.44,1.75,.33,.012,.18,.5);tube(G,'zframe',[4.0-.15,.46,1.75+.08],[4.0+.13,.46,1.75-.07],.02,4);
+ for(const[x,z,yw]of[[3.3,.2,.3],[3.55,.45,1.1],[6.0,-.4,2.0],[3.1,.6,-.4]])box(G,'zpaper',x,.172,z,.15,.003,.2,yw);
+ {const mx=9.6,my=1.43,mz=1.25;tube(G,'zivory',[mx,my,mz],[mx,my+.13,mz],.055,10);tube(G,'zivory',[mx,my+.03,mz+.065],[mx,my+.1,mz+.065],.02,4);paw(G,'zrgold',mx-.057,my+.065,mz,.06,-Math.PI/2);}
+ // spare helmet on the bunk, open tool roll near the console, more papers
+ {const hx=7.0,hy=.69,hz=-2.05;for(let j=0;j<3;j++)for(let i=0;i<9;i++){const t0=i/9*TAU,t1=(i+1)/9*TAU,a0=j/3*Math.PI/2,a1=(j+1)/3*Math.PI/2,r=.17,P=(t,a)=>[hx+Math.cos(t)*Math.cos(a)*r,hy+Math.sin(a)*r,hz+Math.sin(t)*Math.cos(a)*r];quad(G,'zivory',P(t0,a0),P(t1,a0),P(t1,a1),P(t0,a1),[0,1,0]);}tube(G,'zgoldm',[hx,hy,hz],[hx,hy+.025,hz],.18,9);box(G,'zglass',hx+.13,hy+.08,hz,.05,.06,.1,0,0,.3);}
+ box(G,'zseat',8.9,.175,.55,.32,.008,.16,.3);for(let k=0;k<4;k++){const x=8.72+k*.1;box(G,'zsteel',x,.19,.55-k*.03+.0,.012,.012,.12,.3);box(G,k%2?'ztool':'zframe',x,.19,.43-k*.03,.02,.02,.04,.3);}tube(G,'zsteel',[9.2,.19,.25],[9.45,.19,.05],.018,4);box(G,'zsteel',9.47,.19,.03,.04,.012,.05,.9);
+ for(const[x,z,yw]of[[8.2,.9,.8],[8.45,1.0,2.2],[1.2,.3,1.4]])box(G,'zpaper',x,.173,z,.12,.003,.16,yw);
+ // floor decals: soot and dust stains
+ {const d=rng(91);for(let k=0;k<9;k++){const cx=-.5+d()*10.5,cz=(d()-.5)*3.2,r=.14+d()*.22,m=d()<.5?'zsoot':'zdust',y=.168+k*.0004;for(let i=0;i<9;i++){const t0=i/9*TAU,t1=(i+1)/9*TAU,k0=.85+d()*.15;tri(G,m,[cx,y,cz],[cx+Math.cos(t1)*r*k0,y,cz+Math.sin(t1)*r*.7],[cx+Math.cos(t0)*r,y,cz+Math.sin(t0)*r*.7*k0],[0,1,0]);}}}
+ // broken lamp hanger (the lamp itself swings, drawn per frame)
+ {const p=H(6.8,1.5,RR*.9);tube(G,'zframe',p,[p[0],p[1]-.15,p[2]],.03,5);}
+ // find pedestal: steel drum, gold collar, glowing ring
+ tube(G,'zframe',[fx,.16,fz],[fx,.42,fz],.42,14,.36);tube(G,'zgold',[fx,.4,fz],[fx,.46,fz],.44,16);tube(G,'zcore',[fx,.46,fz],[fx,.48,fz],.3,16,.3);
  yield;
  // outside: hull petals, a broken fin, ribs, rubble, the furrow it ploughed, scorch on the ground
  for(let k=0;k<16;k++){const a=q()*TAU,d=7+q()*10,x=2+Math.cos(a)*d*1.2,z=Math.sin(a)*d+(Math.sin(a)>0?zw:-zw)*.6;if(Math.abs(z)<zw+.8&&x>-15&&x<16)continue;const w=.35+q()*.9,l=.3+q()*.7,yw=q()*TAU,pt=(q()-.5)*.7,rl=(q()-.5)*.9,y=.12+q()*.15;
@@ -120,7 +186,7 @@ function* buildRocket(G,F){const q=rng(4711),segs=40;
  yield;for(let k=0;k<14;k++){const x=17+q()*14,z=(q()-.5)*7,s=.5+q()*1.1;lump(G,'zdust',x,-.08,z,s*1.5,s*.4,s,k*17+3);}
  for(const[x,z,s]of[[16.5,0,4],[5,zw+1.4,2.4],[-2,zw+.9,1.6],[22,-1,3]])lump(G,'zsoot',x,-.02,z,s,.03,s*.7,(x*7)|0,9,1);
  for(let k=0;k<5;k++){const x=4+k*1.1+q(),y=.3+q()*.5,z=zw+1+q()*2;tube(G,'zframe',[x,y,z],[x+.8+q(),.1,z+.6],.05,5);}
- return{lights:[[2.2,1.6,zw-.2,'spark'],[6.8,3.2,zw-.6,'spark'],[5.5,rocketAxisY(5.5)+RR*.84,0,'flicker'],[fx,.6,fz,'find']]};}
+ return{lights:[...[[1.6,2.6,1.4,-.2],[4.2,2.75,4.6,-.3],[9.0,2.55,8.6,.2]].flatMap(([X,a,tx,tz])=>{const p=H(X,a,RR*.86);return[[p[0],p[1],p[2],'shaftA'],[tx,.2,tz,'shaftT']];}),[5.5,rocketAxisY(5.5)+RR*.84,0,'flicker'],[fx,.6,fz,'find'],[2.8,rocketAxisY(2.8)+Math.sin(2.0)*RR*.9-.1,Math.cos(2.0)*RR*.9,'alarm'],[9.2,rocketAxisY(9.2)+Math.sin(1.2)*RR*.9-.1,Math.cos(1.2)*RR*.9,'alarm'],[2.38,rocketAxisY(2.3)+Math.sin(2.95)*RR*.88-.5,Math.cos(2.95)*RR*.88+.15,'spark'],[7.08,rocketAxisY(7)+Math.sin(3.0)*RR*.88-.45,Math.cos(3.0)*RR*.88+.15,'spark'],...[0,1,2,3,4].map(k=>[1.5+k*2,1.0+(k*7%5)*.3,(k*3%7)/7*2.4-1.2,'mote']),(()=>{const p=H(6.8,1.5,RR*.9);return[p[0],p[1]-.15,p[2],'swing'];})(),(()=>{const p=H(2.8,2.0,RR*.9);return[p[0],p[1]-.2,p[2],'lampR'];})(),(()=>{const p=H(9.2,1.2,RR*.9);return[p[0],p[1]-.2,p[2],'lampR'];})(),(()=>{const p=H(4.2,2.75,RR*.8);return[p[0],p[1],p[2],'lampB'];})()]};}
 // walls made of ivory panels between steel posts, gold trims, windows, a doorway, optional collapse
 function wall(G,ax,az,bx,bz,H,o={}){const L=Math.hypot(bx-ax,bz-az),dx=(bx-ax)/L,dz=(bz-az)/L,yaw=Math.atan2(-dz,dx),n=Math.max(1,Math.round(L/1.6)),w=L/n,q=o.q||Math.random;
  for(let k=0;k<n;k++){const t=(k+.5)*w,cx=ax+dx*t,cz=az+dz*t,top=o.cut?Math.max(.4,H-o.cut(t,q)):H;
@@ -188,6 +254,7 @@ function* buildHangar(G){const q=rng(1213),r=6,zl=8,NA=14,NX=8,P=(x,y,z)=>[x,y,z
  for(let k=0;k<18;k++){const side=q()<.5?-1:1,x=side*(r+.3+q()*1.8),z=(q()-.5)*2*zl;lump(G,'zdust',x,0,z,.7+q()*1.2,.3+q()*.4,.6+q(),k*5+9);}
  for(let k=0;k<6;k++){const x=r+1.5+q()*3,z=2+q()*5;box(G,'zivory',x,.12,z,.8+q()*.6,.05,.6+q()*.4,q()*TAU,(q()-.5)*.3,(q()-.5)*.4);}
  tube(G,'zframe',[-r*.7,r*.6,-zl-.2],[-r*.7,r*.6+3,-zl-.2],.06,5);box(G,'zamber',-r*.7,r*.6+3.1,-zl-.2,.08,.08,.08);
+ for(let i=0;i<8;i++){const x0=-5.8+i*1.45,x1=x0+1.45;quad(G,'zfloor',[x0,.035,-7.9],[x0,.035,7.9],[x1,.035,7.9],[x1,.035,-7.9],[0,1,0]);}
  return{lights:[[0,r*.92-.95,0,'flicker'],[-r*.7,r*.6+3.2,-zl-.2,'beacon'],[1.6,4.8,-.2,'spark']]};}
 function* buildDome(G){const q=rng(77),r=6.6,nu=24,nv=7,ky=.82,P=(th,ph,rr)=>[Math.sin(ph)*Math.cos(th)*rr,Math.sin(th)*rr*ky,Math.cos(ph)*Math.cos(th)*rr];
  const gone=(i,j)=>(j<2&&(i===0||i===23))||(j>=2&&j<=5&&i>=8&&i<=11)||(j>=3&&i===12)||(j===6&&(i%5===2))||(j>2&&q2(i,j)<.06);
@@ -214,12 +281,13 @@ function* buildDome(G){const q=rng(77),r=6.6,nu=24,nv=7,ky=.82,P=(th,ph,rr)=>[Ma
  tube(G,'zdark',[0,r*ky-.2,0],[0,3.6,0],.02,4);tube(G,'zframe',[0,3.5,0],[0,3.65,0],.25,10,.08);box(G,'zamber',0,3.47,0,.17,.02,.17);
  for(const[x,z,s,yw]of[[-3.4,1.2,.42,.3],[-3.0,2.0,.3,.8],[3.6,-1.8,.38,.1]]){box(G,'zcrate',x,s*.85,z,s,s*.85,s*.8,yw);box(G,'zgold',x,s*1.3,z,s*1.02,.03,s*.82,yw);}
  for(let k=0;k<14;k++){const a=q()*TAU,x=Math.sin(a)*(r+.5+q()*1.5),z=Math.cos(a)*(r+.5+q()*1.5);if(Math.abs(x)<2&&z>0)continue;lump(G,'zdust',x,0,z,.6+q(),.25+q()*.3,.5+q()*.7,k*3+11);}
+ for(let i=0;i<20;i++){const t0=i/20*TAU,t1=(i+1)/20*TAU,R0=6.35;tri(G,'zfloor',[0,.035,0],[Math.sin(t1)*R0,.035,Math.cos(t1)*R0],[Math.sin(t0)*R0,.035,Math.cos(t0)*R0],[0,1,0]);}
  return{lights:[[0,3.35,0,'flicker'],[0,r*ky+3.35,0,'beacon']]};}
 // interior light factor per ruin (ruin-local point); 1 = full daylight
 function shadeFn(id){const lamp=(L,p)=>{let s=0;for(const l of L){const d=(p[0]-l[0])**2+(p[1]-l[1])**2+(p[2]-l[2])**2;s+=.55*Math.exp(-d/3.2);}return s;};
- if(id==='rocketWreck'){const L=[[1.5,rocketAxisY(1.5)+RR*.8,0],[5.5,rocketAxisY(5.5)+RR*.8,0],[9.4,rocketAxisY(9.4)+RR*.8,0],[9.6,1.4,-1.2]];
+ if(id==='rocketWreck'){const L=[[1.5,rocketAxisY(1.5)+RR*.8,0],[5.5,rocketAxisY(5.5)+RR*.8,0],[9.4,rocketAxisY(9.4)+RR*.8,0],[9.6,1.4,-1.2],[2.8,1.2,-.4],[6.8,1.2,-.4],[9.2,1.2,-.4]];
   const NP=[[8.4,1],[8.4+5.4*.16,1],[8.4+5.4*.3,.97],[8.4+5.4*.46,.89],[8.4+5.4*.62,.75],[8.4+5.4*.76,.55],[8.4+5.4*.88,.32],[8.4+5.4*.96,.12],[13.8,0]],rp=X=>{const y=YC-X/S;if(y<=8.4)return y<1.8?.9:1;for(let i=1;i<NP.length;i++)if(y<=NP[i][0]){const a=NP[i-1],b=NP[i],t=(y-a[0])/(b[0]-a[0]);return a[1]+(b[1]-a[1])*t;}return 0;};
-  return p=>{const X=p[0],dy=p[1]-rocketAxisY(X),rr=Math.hypot(dy,p[2]);if(rr>RR*rp(X)*.975-.02||X<-15.5||X>16)return 1;const o=(X-4.8)**2*.6+(p[1]-1.3)**2+(p[2]-RR)**2;return Math.min(1,.1+.42*Math.exp(-o/8)+lamp(L,p));};}
+  return p=>{const X=p[0],dy=p[1]-rocketAxisY(X),rr=Math.hypot(dy,p[2]);if(rr>RR*rp(X)*.975-.02||X<-15.5||X>16)return 1;const o=(X-4.8)**2*.6+(p[1]-1.3)**2+(p[2]-RR)**2;return Math.min(.62,.12+.22*Math.exp(-o/8)+.65*lamp(L,p));};}
  if(id==='oldStation')return p=>{if(Math.abs(p[0])>6.4||Math.abs(p[2])>4.4||p[1]>3.35)return 1;const door=.6*Math.exp(-(p[0]**2+(p[2]-4.5)**2)/7),hole=p[0]>.5?.25+.3*Math.min(1,(p[0]-.5)/3):0;return Math.min(1,.16+door+hole+lamp([[-2.2,2.4,0],[-4.84,.95,-2.2]],p));};
  if(id==='brokenHangar')return p=>{if(Math.abs(p[2])>7.95||p[0]**2+(p[1]/.92)**2>(6*.975)**2)return 1;const front=.65*Math.exp(-((8-p[2])**2)/14),shaft=.35*Math.exp(-(p[0]**2*.3+(p[2]+.5)**2*.25))+.25*Math.exp(-((p[0]+3.2)**2*.3+(p[2]-4.5)**2*.3));return Math.min(1,.15+front+shaft+lamp([[0,4.4,-4.5],[0,4.4,0],[0,4.4,4.5]],p));};
  if(id==='fallenDome')return p=>{const rr=p[0]**2+p[2]**2+(p[1]/.82)**2;if(rr>(6.6*.97)**2&&!(Math.abs(p[0])<1.45&&p[2]>6&&p[2]<9&&p[1]<1.55))return 1;const gap=.45*Math.exp(-((p[0]-5)**2+(p[2]+2.4)**2)/10),door=.6*Math.exp(-(p[0]**2+(p[2]-8.8)**2)/8);return Math.min(1,.15+gap+door+lamp([[0,3.3,0],[1.2,.8,.6]],p));};
@@ -235,5 +303,6 @@ function* build(R,ch){const G={},F={},y0=Core.height(R.x,R.z,ch||1);let info={li
  const lights=(info.lights||[]).map(([x,y,z,t])=>({x:R.x+c*x+s*z,y:y0+y,z:R.z-s*x+c*z,t}));
  return{G:OUT,lights};}
 function buildSync(R,ch){const g=build(R,ch);let r;do r=g.next();while(!r.done);return r.value;}
-root.MoonRuins2={MAT,layout,build,buildSync,blocked,cameraBlocked,rocketHole,segHit};
+function inside(x,z){const R=near(x,z,0);if(!R)return false;const L=layout(R),[lx,lz]=L.local(x,z);return L.ceil(lx,lz)!==null;}
+root.MoonRuins2={inside,MAT,layout,build,buildSync,blocked,cameraBlocked,rocketHole,segHit};
 })(typeof window!=='undefined'?window:globalThis);
