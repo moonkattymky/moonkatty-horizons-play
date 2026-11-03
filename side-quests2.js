@@ -73,6 +73,7 @@ const logic={ST,DM,HG,STRING,ringRadial,CRYSTAL,PANEL,GEN,SPOTS,SPK,SHELF,CRATE,
  padLv(st,k){const[wx,wz]=HG.W(PADS[k].a,PADS[k].b),u=logic.topAt(st,wx,wz);return u<0?-1:st.crates[u].lv;},
  stackReady(st){return logic.padLv(st,0)>=1;},
  canTakeBP(st,px,pz,alt){return !st.bp&&logic.stackReady(st)&&alt>SHELF.top-.2&&Math.hypot(px-BP[0],pz-BP[1])<1.7;}};
+const scanBusy=()=>{try{const L3=root.MoonLife3;return !!(L3&&L3.scanBusy&&L3.scanBusy());}catch(e){return false;}};   // life #3 borrows the dome scanner for its record
 const API={logic,st:null,sp:null,get held(){return !!(API.st&&API.st.held>=0)||!!(API.sp&&API.sp.held);}};
 root.MoonSide2=API;
 if(typeof module!=='undefined'&&module.exports)module.exports=API;
@@ -83,7 +84,7 @@ const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(logic.persist(API.st
 const tt=(k,fb,p)=>{try{const v=root._t?root._t(k,p):null;return v&&v!==k?v:fb;}catch(e){return fb;}};
 const NAMES={scanner:['side.scanner','find the hidden crystal by the dome'],power:['side.power','turn on the station power'],crates:['side.crates','reach the hangar shelf']};
 API.name=k=>tt(NAMES[k][0],NAMES[k][1]);
-API.objectives=()=>{const st=API.st,o=[];if(!st)return o;if(!st.found)o.push(['scanner',DM.x,DM.z]);if(!st.power)o.push(['power',ST.x,ST.z]);if(!st.bp)o.push(['crates',HG.x,HG.z]);return o;};
+API.objectives=()=>{const st=API.st,o=[];if(!st)return o;if(!st.found&&!scanBusy())o.push(['scanner',DM.x,DM.z]);if(!st.power)o.push(['power',ST.x,ST.z]);if(!st.bp)o.push(['crates',HG.x,HG.z]);return o;};
 API.quests=()=>{const st=API.st;return st?[['scanner',DM,st.found],['power',ST,st.power],['crates',HG,st.bp]]:[];};
 API.floor=(x,z,alt)=>API.st?logic.floor(API.st,x,z,alt):0;
 const toast=s=>{const g=G();g&&g.toast&&g.toast(s);};
@@ -118,7 +119,7 @@ function draw(r,state,p){const st=API.st;if(!st||!p)return;const ch=state&&state
  // ① crystal + a soft pool of light on the ground (the clue: look where the light falls)
  if(!st.found&&Math.hypot(p.x-CRYSTAL[0],p.z-CRYSTAL[1])<60){const[cx,cz]=CRYSTAL,y=r.terrain(cx,cz,ch);
   if(glow)r.put('mineralGlow',cx,y+.05,cz,2.4,1,2.4,[.95,.95,.85],0,22,.18+.05*Math.sin(t*1.7));
-  if(logic.crystalVisible(st,p.x,p.z)){const cf=camFade(r,cx,y+.5,cz),b=Math.sin(t*2)*.05;r.put('sphere',cx,y+.55+b,cz,.3,.56,.3,[.1,.45,.95],t*.8,0,.04+.05*cf);if(glow)r.put('mineralGlow',cx,y+.05,cz,1.2,1,1.2,[.2,.6,1],0,22,.35);}}
+  if(!scanBusy()&&logic.crystalVisible(st,p.x,p.z)){const cf=camFade(r,cx,y+.5,cz),b=Math.sin(t*2)*.05;r.put('sphere',cx,y+.55+b,cz,.3,.56,.3,[.1,.45,.95],t*.8,0,.04+.05*cf);if(glow)r.put('mineralGlow',cx,y+.05,cz,1.2,1,1.2,[.2,.6,1],0,22,.35);}}
  // ② panel + lights
  if(Math.hypot(p.x-ST.x,p.z-ST.z)<70){const[px,pz]=PANEL,y=r.terrain(px,pz,ch);r.put('cube',px,y+1.1,pz,.7,.9,.12,DARK,ST.yaw,0,0);
   r.put('cube',px,y+1.1,pz,.5,.6,.14,st.power?[.3,1,.5]:[.35,.4,.5],ST.yaw,12,(st.power?.35:.06+.05*Math.sin(t*3))*camFade(r,px,y+1.1,pz));
@@ -145,7 +146,7 @@ function pick(){const g=G();if(!g||!g.player||!API.st)return null;const p=g.play
  if(API.sp&&API.sp.held)return logic.canFeed(st,API.sp,p.x,p.z)?'feed':null;
  if(st.held>=0)return'put';if(busyOther())return null;
  if(logic.canCatch(st,API.sp,p.x,p.z,alt))return'spark';
- if(logic.canTakeCrystal(st,p.x,p.z))return'crystal';
+ if(!scanBusy()&&logic.canTakeCrystal(st,p.x,p.z))return'crystal';
  if(logic.canTakeBP(st,p.x,p.z,alt))return'bp';
  if(Math.hypot(p.x-HG.x,p.z-HG.z)<12&&logic.nearCrate(st,p.x,p.z,alt)>=0)return'take';return null;}
 const LBL={put:()=>tt('carry.put','Put down'),take:()=>tt('carry.take','Pick up'),crystal:()=>tt('carry.take','Pick up'),bp:()=>tt('carry.take','Pick up'),spark:()=>tt('carry.take','Pick up'),feed:()=>tt('sq.sp_put','Put in generator')};
@@ -169,7 +170,7 @@ const st2=document.createElement('style');st2.textContent='@keyframes mkscan{0%{
 sc.onclick=()=>{const g=G();if(!g||!g.player)return;let h=null;try{h=API.extScan&&API.extScan(g.player);}catch(e){}h=h||logic.heat(g.player.x,g.player.z);toast(tt('sq.sc_name','Scanner')+': '+tt('sq.sc_'+h.band,h.band));};
 let hints={},lastBand='',lastPer=0;
 function loop(){try{const g=G();if(g&&g.player&&API.st){const p=g.player,st=API.st;
-  if(!hints.sc&&!st.found&&Math.hypot(p.x-DM.x,p.z-DM.z)<24){hints.sc=1;setTimeout(()=>toast(tt('sq.sc_hint','A crew crystal is hidden near the dome.')),3200);}
+  if(!hints.sc&&!st.found&&!scanBusy()&&Math.hypot(p.x-DM.x,p.z-DM.z)<24){hints.sc=1;setTimeout(()=>toast(tt('sq.sc_hint','A crew crystal is hidden near the dome.')),3200);}
   if(!st.power&&Math.hypot(p.x-ST.x,p.z-ST.z)<40){if(!API.sp)API.sp=logic.spark();const dt=Math.min(.05,Math.max(0,(performance.now()-(loop.l||performance.now()))/1000));logic.sparkStep(API.sp,p.x,p.z,dt);
    if(!hints.sp&&Math.hypot(p.x-ST.x,p.z-ST.z)<26){hints.sp=1;toast(tt('sq.sp_hint','The generator spark escaped! Catch it.'));}
    if(API.sp.tired&&!API.sp.held&&!hints.spt&&Math.hypot(p.x-API.sp.x,p.z-API.sp.z)<9){hints.spt=1;toast(tt('sq.sp_tired','The spark is tired - grab it!'));}else if(!API.sp.tired)hints.spt=0;
