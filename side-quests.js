@@ -31,11 +31,12 @@ const logic={
  nearBeacon(st,px,pz){let b=-1,bd=PRESS_R;BEACONS.forEach(([x,z],i)=>{const d=d2(x,z,px,pz);if(d<bd){bd=d;b=i;}});return b;},
  press(st,i){if(st.lit)return{ok:false,why:'done'};if(st.seq.includes(i))return{ok:false,why:'on'};
   if(ORDER[st.seq.length]!==i){st.seq=[];return{ok:true,wrong:true};}st.seq.push(i);if(st.seq.length===ORDER.length){st.lit=true;return{ok:true,done:true};}return{ok:true,step:st.seq.length};},
- blocked(st,x,z){if(d2(x,z,TX[0],TX[1])<TX_R)return true;for(const[bx,bz]of BEACONS)if(d2(x,z,bx,bz)<BEACON_R)return true;if(d2(x,z,BOARD[0],BOARD[1])<.45)return true;
+ blocked(st,x,z){if(d2(x,z,TX[0],TX[1])<TX_R)return true;if(!domeOff(st))for(const[bx,bz]of BEACONS)if(d2(x,z,bx,bz)<BEACON_R)return true;if(!domeOff(st)&&d2(x,z,BOARD[0],BOARD[1])<.45)return true;
   for(let i=0;i<st.parts.length;i++){const p=st.parts[i];if(i===st.held||p.in)continue;if(d2(x,z,p.x,p.z)<PART_R)return true;}return false;},
  persist(st,p){const s2=JSON.parse(JSON.stringify(st));if(s2.held>=0&&p&&Number.isFinite(p.x)&&Number.isFinite(p.z)){s2.parts[s2.held].x=p.x;s2.parts[s2.held].z=p.z;}s2.held=-1;delete s2.seq;return s2;}
 };
-const API={logic,st:null,get held(){return !!(API.st&&API.st.held>=0)||!!(root.MoonSide2&&root.MoonSide2.held);},get ownHeld(){return !!(API.st&&API.st.held>=0);}};
+const domeOff=st=>!!(st&&!st.lit&&root.MoonLife2&&root.MoonLife2.postponeDome&&root.MoonLife2.postponeDome());   // life #2 has its own beacon step: postpone the dome puzzle until c2_navigator (nothing earned is lost)
+const API={logic,domeOff,st:null,get held(){return !!(API.st&&API.st.held>=0)||!!(root.MoonSide2&&root.MoonSide2.held);},get ownHeld(){return !!(API.st&&API.st.held>=0);}};
 root.MoonSide=API;
 if(typeof module!=='undefined'&&module.exports)module.exports=API;
 if(typeof document==='undefined')return;
@@ -76,7 +77,7 @@ function draw(r,state,p){const st=API.st;if(!st||!p)return;const ch=state&&state
   st.parts.forEach((pt,i)=>{if(pt.in||i===st.held)return;const y=r.terrain(pt.x,pt.z,ch);part(r,pt.t,pt.x,y,pt.z,pt.yaw,1);
    if(Math.hypot(p.x-pt.x,p.z-pt.z)<15){if(glow)r.put('mineralGlow',pt.x,y+.04,pt.z,1.1,1,1.1,[1.0,.75,.32],0,22,.28+.12*Math.sin(t*2.6+i));if(paw)paw(r,pt.x,y+1.0,pt.z,t+i);}});}
  if(st.held>=0){const pt=st.parts[st.held],y=r.terrain(p.x,p.z,ch)+(p.alt||0),fx=-Math.sin(p.yaw||0),fz=-Math.cos(p.yaw||0);part(r,pt.t,p.x+fx*.34,y+.4,p.z+fz*.34,(p.yaw||0)+.4,.78,.22);}
- if(near(p,DM,80)){BEACONS.forEach(([bx,bz],i)=>{const by=r.terrain(bx,bz,ch),on=st.lit||st.seq.includes(i),col=COLORS[i],bf=camFade(r,bx,by+1.72,bz);
+ if(near(p,DM,80)&&!domeOff(st)){BEACONS.forEach(([bx,bz],i)=>{const by=r.terrain(bx,bz,ch),on=st.lit||st.seq.includes(i),col=COLORS[i],bf=camFade(r,bx,by+1.72,bz);
    r.put('cylinder',bx,by+.7,bz,.36,1.4,.36,DARK);r.put('cylinder',bx,by+1.42,bz,.5,.09,.5,GOLD,0,0,.15);
    r.put('sphere',bx,by+1.72,bz,.46,.46,.46,on?col:col.map(v=>v*.45),0,on&&bf>.3?12:0,on?(.45+.15*Math.sin(t*3+i))*bf:0);if(on&&bf>0)r.put('cylinder',bx,by+3.6,bz,.08,3.4,.08,col,0,12,.35*bf);
    if(on&&glow)r.put('mineralGlow',bx,by+.04,bz,1.6,1,1.6,col,0,22,.35);
@@ -92,7 +93,7 @@ function pick(){const g=G();if(!g||!API.st)return null;const p=g.player,st=API.s
  if(st.held>=0)return logic.atTransmitter(p.x,p.z)?'install':'put';
  if(root.MoonCarry&&root.MoonCarry.own||root.MoonSide2&&root.MoonSide2.held)return null;
  if(near(p,ST,30)){nearI=logic.nearPart(st,p.x,p.z);if(nearI>=0)return'take';}
- if(near(p,DM,30)&&!st.lit){nearI=logic.nearBeacon(st,p.x,p.z);if(nearI>=0&&!st.seq.includes(nearI))return'on';}return null;}
+ if(near(p,DM,30)&&!st.lit&&!domeOff(st)){nearI=logic.nearBeacon(st,p.x,p.z);if(nearI>=0&&!st.seq.includes(nearI))return'on';}return null;}
 function ctx(){mode=pick();return mode?txt[mode]():null;}API.ctx=ctx;
 function label(){const b=document.querySelector('#interact span'),btn=document.querySelector('#interact');if(!b)return;const w=ctx();
  if(w){if(b.textContent!==w)b.textContent=w;btn.style.opacity=1;}}
@@ -110,8 +111,8 @@ document.body.appendChild(pill);
 let hintS=false,hintD=false;
 function loop(){try{const g=G();if(g&&g.player&&API.st){const p=g.player,st=API.st;label();
   if(!hintS&&!st.fixed&&Math.hypot(p.x-ST.x,p.z-ST.z)<22){hintS=true;g.toast&&g.toast(txt.stHint());}
-  if(!hintD&&!st.lit&&Math.hypot(p.x-DM.x,p.z-DM.z)<22){hintD=true;g.toast&&g.toast(txt.bcHint());}
-  const C=root.MoonCarry,list=[];if(C&&C.st&&!C.st.cleared)list.push(['rocket',C.RUIN.x,C.RUIN.z]);if(!st.fixed)list.push(['station',ST.x,ST.z]);if(!st.lit)list.push(['dome',DM.x,DM.z]);if(root.MoonSide2&&root.MoonSide2.objectives)for(const o of root.MoonSide2.objectives())list.push(o);
+  if(!hintD&&!st.lit&&!domeOff(st)&&Math.hypot(p.x-DM.x,p.z-DM.z)<22){hintD=true;g.toast&&g.toast(txt.bcHint());}
+  const C=root.MoonCarry,list=[];if(C&&C.st&&!C.st.cleared)list.push(['rocket',C.RUIN.x,C.RUIN.z]);if(!st.fixed)list.push(['station',ST.x,ST.z]);if(!st.lit&&!domeOff(st))list.push(['dome',DM.x,DM.z]);if(root.MoonSide2&&root.MoonSide2.objectives)for(const o of root.MoonSide2.objectives())list.push(o);
   let best=null,bd=260;for(const q of list){const d=Math.hypot(p.x-q[1],p.z-q[2]);if(d<bd){bd=d;best=q;}}
   const dir=document.querySelector('#destination'),top=dir&&!dir.hidden?dir.getBoundingClientRect().bottom+8:null;
   if(best&&top&&!document.querySelector('dialog[open]')){pill.textContent='★ '+txt.side((txt['n_'+best[0]]||(()=>root.MoonSide2.name(best[0])))(),Math.round(bd));pill.style.top=top+'px';pill.style.display='block';}else pill.style.display="none";}}catch(e){root.__sideErr=String(e.stack||e);}
@@ -133,5 +134,5 @@ async function report(key,start){const id=SIDE_IDS[key],UI=root.MoonGrowthUI;if(
 API.points={ids:SIDE_IDS,state:()=>pts,report};
 setInterval(()=>{try{const g=G(),p=g&&g.player,st=API.st,C=root.MoonCarry;if(!p||!st)return;
  const q=[['rocket',C&&C.RUIN,C&&C.st&&C.st.cleared],['station',ST,st.fixed],['dome',DM,st.lit]];if(root.MoonSide2&&root.MoonSide2.quests)for(const x of root.MoonSide2.quests())q.push(x);
- for(const[k,f,ok]of q){const id=SIDE_IDS[k];if(!f||pts.done[id])continue;if(!pts.seen[id]&&(ok||Math.hypot(p.x-f.x,p.z-f.z)<40)){report(k,true);return;}if(ok&&pts.seen[id]){report(k,false);return;}}}catch(e){}},2500);
+ for(const[k,f,ok]of q){const id=SIDE_IDS[k];if(!f||pts.done[id])continue;if(k==='dome'&&domeOff(st))continue;if(!pts.seen[id]&&(ok||Math.hypot(p.x-f.x,p.z-f.z)<40)){report(k,true);return;}if(ok&&pts.seen[id]){report(k,false);return;}}}catch(e){}},2500);
 })(typeof globalThis!=='undefined'?globalThis:this);

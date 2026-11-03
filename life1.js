@@ -164,7 +164,8 @@ function draw(r,state,p){if(!p)return;const ch=state&&state.chapter,t=performanc
   if(glow){r.put('mineralGlow',A.bx,y+1.5,A.bz,1.6*u,1,1.6*u,[.45,.9,1],Math.atan2(-A.dx,-A.dz),22,.45+.15*Math.sin(t*5),Math.PI/2);}
   const sx=-A.dz,sz=A.dx;
   for(let k=0;k<4;k++){const[x,z]=A.figs[k],y=r.terrain(x,z,ch),b=Math.sin(t*2+k)*.06,fl=.75+.25*Math.sin(t*9+k*2);
-   const Hs=1.15;r.put('sphere',x,y+(1.45+b)*Hs,z,.2*u*Hs,.22*u*Hs,.2*u*Hs,[.12,.62,.9],0,12,.42*fl);r.put('cylinder',x,y+(.95+b)*Hs,z,.17*u*Hs,.65*u*Hs,.17*u*Hs,[.08,.5,.82],0,12,.36*fl);r.put('sphere',x-sx*.13*Hs,y+(1.68+b)*Hs,z-sz*.13*Hs,.08*u*Hs,.08*u*Hs,.08*u*Hs,[.4,.95,1],0,12,.5*fl);r.put('sphere',x+sx*.13*Hs,y+(1.68+b)*Hs,z+sz*.13*Hs,.08*u*Hs,.08*u*Hs,.08*u*Hs,[.4,.95,1],0,12,.5*fl);
+   const Hs=1.15,HC=[[1,.5,.12],[.3,.6,1],[.3,.95,.4],[.12,.62,.9]][k],HB=HC.map(v=>v*.8);r.put('sphere',x,y+(1.45+b)*Hs,z,.2*u*Hs,.22*u*Hs,.2*u*Hs,HC,0,12,.42*fl);r.put('cylinder',x,y+(.95+b)*Hs,z,.17*u*Hs,.65*u*Hs,.17*u*Hs,HB,0,12,.36*fl);   // each crew hologram in its member's colour (engineer, navigator, scout, base)
+r.put('sphere',x-sx*.13*Hs,y+(1.68+b)*Hs,z-sz*.13*Hs,.08*u*Hs,.08*u*Hs,.08*u*Hs,[.4,.95,1],0,12,.5*fl);r.put('sphere',x+sx*.13*Hs,y+(1.68+b)*Hs,z+sz*.13*Hs,.08*u*Hs,.08*u*Hs,.08*u*Hs,[.4,.95,1],0,12,.5*fl);
    if(glow)r.put('mineralGlow',x,y+.04,z,.9*u,1,.9*u,[.1,.65,1],0,22,.45);r.put('mineralGlow',x,y+1.6,z,1.3*u,1,1.3*u,[.1,.6,1],Math.atan2(sx,sz),22,.25,Math.PI/2);}}}
 // ---- context button
 let mode=null;

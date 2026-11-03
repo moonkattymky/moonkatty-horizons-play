@@ -25,6 +25,11 @@ function pose(id,hx,hz,t,p){if(!ROUTINES[id])return null;const{s,f,k}=routine(id
  return q;}
 // static work props + moving props (crate, crystal, tool), sparks (not on low tier)
 function props(r,id,hx,hz,q,t,ch,low){const T=(x,z)=>r.terrain(x,z,ch),put=(sh,x,y,z,sx,sy,sz,c,yaw=0,kind=0,glow=0,pitch=0,roll=0)=>r.put(sh,x,y,z,sx,sy,sz,c,yaw,kind,glow,pitch,roll);
+ {const L=root.MoonCrewLook&&root.MoonCrewLook[id],E=r.eye;if(L&&E&&q){const sc=L.sc,gy=T(q.x,q.z)+(q.hop||0)+(q.alt||0),ex=E[0]-q.x,ez=E[2]-q.z,d=Math.hypot(ex,ez)||1,bx=ex/d,bz=ez/d,rx=bz,rz=-bx,cy=Math.atan2(ex,ez),at=(k,h,f)=>[q.x+rx*k*sc+bx*f,gy+h*sc,q.z+rz*k*sc+bz*f];   // role props, placed toward the camera so they read on the billboard
+  {const[x,y,z]=at(.34,1.42,.22);put('sphere',x,y,z,.1,.1,.04,L.suit,cy,12,.9);}   // role badge on the shoulder
+  if(id==='engineer'){const[x,y,z]=at(.62,1.0,.28);put('cube',x,y,z,.09,.62,.06,[.8,.82,.86],cy,0,.1,0,-.45);const[w,v,u]=at(.75,1.3,.28);put('cube',w,v,u,.24,.12,.07,[.8,.82,.86],cy,0,.1,0,-.45);   const[bx2,by,bz2]=at(0,.82,.02);put('cylinder',bx2,by,bz2,.44,.09,.44,[.95,.42,.08],0,0,.15);const[hx,hy,hz]=at(-.3,.8,.3);put('cube',hx,hy,hz,.14,.16,.08,[.35,.2,.1],cy);}
+  else if(id==='navigator'){const[x,y,z]=at(-.42,1.1,.3);put('cube',x,y,z,.32,.24,.04,[.1,.12,.16],cy,0,0,-.3);put('cube',x+bx*.025,y,z+bz*.025,.27,.19,.02,[.3,.7,1],cy,12,.75+.2*Math.sin(t*3),-.3);}
+  else if(id==='scout'){const[x,y,z]=at(.2,2.2,.12);put('cube',x,y,z,.1,.07,.06,[.15,.16,.17],cy);put('sphere',x+bx*.04,y,z+bz*.04,.045,.045,.03,[.9,1,.85],cy,12,1);   for(const k of[-.07,.07]){const[u,v,w]=at(k,1.12,.32);put('cylinder',u,v,w,.06,.17,.06,[.12,.13,.14],cy,0,0,Math.PI/2);}}}}
  if(ROCK[id]){const[x,z]=[hx+ROCK[id][0],hz+ROCK[id][1]],y=T(x,z);put('sphere',x,y+.2,z,.55,.42,.5,C.rock);put('cone',x+.1,y+.5,z,.12,.45,.12,C.cry,0,12,.7,.2,.1);put('cone',x-.2,y+.4,z+.15,.09,.32,.09,C.cryV,0,12,.7,-.2,.3);}
  if(PILE[id]){const[x,z]=[hx+PILE[id][0],hz+PILE[id][1]],y=T(x,z);if(id==='scout'){for(let i=0;i<4;i++)put('cone',x+Math.cos(i*1.6)*.18,y+.15,z+Math.sin(i*1.6)*.18,.08,.28,.08,i%2?C.cryV:C.cry,0,12,.6,Math.cos(i)*.4,Math.sin(i)*.4);}
   else{put('cube',x,y+.22,z,.44,.44,.44,C.crate);put('cube',x+.05,y+.62,z+.04,.36,.36,.36,C.crate,.4);put('cube',x,y+.22,z-.225,.46,.06,.02,C.gold);}}
