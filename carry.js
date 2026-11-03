@@ -63,12 +63,12 @@ function draw(r,state,p){const st=API.st;if(!st||!p||Math.abs(p.x-RUIN.x)>70||Ma
   piece(r,{t:pc.t},p.x+fx*.3,y+.36+bob,p.z+fz*.3,(p.yaw||0)+.4,.6);}
  if(!st.cleared&&glow){const[zx,zz]=W(9.6,5.2);r.put('mineralGlow',zx,r.terrain(zx,zz,ch)+.03,zz,1.6,1,1.6,[1.0,.72,.3],0,22,.22+.06*Math.sin(t*2));}}
 // context button: Взять / Положить
-function ctx(){const g=G();if(!g||!g.player||!API.st)return null;const p=g.player;nearIdx=API.st.held>=0||(root.MoonSide&&root.MoonSide.held)?-1:logic.nearest(API.st,p.x,p.z);return API.st.held>=0?txt.put():nearIdx>=0?txt.take():null;}
+function ctx(){const g=G();if(!g||!g.player||!API.st)return null;if(API.st.held<0&&root.MoonLife1&&root.MoonLife1.ctx&&root.MoonLife1.ctx())return null;const p=g.player;nearIdx=API.st.held>=0||(root.MoonSide&&root.MoonSide.held)?-1:logic.nearest(API.st,p.x,p.z);return API.st.held>=0?txt.put():nearIdx>=0?txt.take():null;}
 API.ctx=ctx;
 function label(){const b=document.querySelector('#interact span'),btn=document.querySelector('#interact');if(!b)return;const want=ctx();
  if(want){if(b.textContent!==want)b.textContent=want;btn.style.opacity=1;btn.dataset.carry='1';}else if(btn.dataset.carry){delete btn.dataset.carry;}}
 function act(e){const btn=e.target&&e.target.closest&&e.target.closest('#interact');if(!btn)return;const g=G();if(!g||!API.st)return;const p=g.player;
- if(API.st.held<0&&(root.MoonSide&&root.MoonSide.held||logic.nearest(API.st,p.x,p.z)<0))return;if(false&&logic.nearest(API.st,p.x,p.z)<0)return;e.stopImmediatePropagation();e.preventDefault();
+ if(API.st.held<0&&(root.MoonSide&&root.MoonSide.held||logic.nearest(API.st,p.x,p.z)<0||root.MoonLife1&&root.MoonLife1.ctx&&root.MoonLife1.ctx()))return;if(false&&logic.nearest(API.st,p.x,p.z)<0)return;e.stopImmediatePropagation();e.preventDefault();
  if(API.st.held<0){if((p.alt||0)>.6)return;const r=logic.pick(API.st,p.x,p.z);if(r.ok)save();if(r.ok&&root.MoonSfx)try{root.MoonSfx('pick');}catch(_){}}
  else{const rd=g.renderer,state=g.state;const r=logic.drop(API.st,p.x,p.z,p.yaw||0,(x,z)=>rd.blocked(x,z,state,0)||!!(root.MoonRuins2&&root.MoonRuins2.blocked(x,z)));
   if(!r.ok){g.toast&&g.toast(txt.noroom());}else{save();if(r.justCleared)g.toast&&g.toast(txt.cleared());else if(!API.st.cleared){const n=API.st.pieces.filter(pc=>logic.inPass(pc.x,pc.z)).length;g.toast&&g.toast(txt.left(n));}}}

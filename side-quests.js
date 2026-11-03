@@ -35,7 +35,7 @@ const logic={
   for(let i=0;i<st.parts.length;i++){const p=st.parts[i];if(i===st.held||p.in)continue;if(d2(x,z,p.x,p.z)<PART_R)return true;}return false;},
  persist(st,p){const s2=JSON.parse(JSON.stringify(st));if(s2.held>=0&&p&&Number.isFinite(p.x)&&Number.isFinite(p.z)){s2.parts[s2.held].x=p.x;s2.parts[s2.held].z=p.z;}s2.held=-1;delete s2.seq;return s2;}
 };
-const API={logic,st:null,get held(){return !!(API.st&&API.st.held>=0);}};
+const API={logic,st:null,get held(){return !!(API.st&&API.st.held>=0)||!!(root.MoonSide2&&root.MoonSide2.held);},get ownHeld(){return !!(API.st&&API.st.held>=0);}};
 root.MoonSide=API;
 if(typeof module!=='undefined'&&module.exports)module.exports=API;
 if(typeof document==='undefined')return;
@@ -90,7 +90,7 @@ function draw(r,state,p){const st=API.st;if(!st||!p)return;const ch=state&&state
 let mode=null,nearI=-1;
 function pick(){const g=G();if(!g||!API.st)return null;const p=g.player,st=API.st;
  if(st.held>=0)return logic.atTransmitter(p.x,p.z)?'install':'put';
- if(root.MoonCarry&&root.MoonCarry.own)return null;
+ if(root.MoonCarry&&root.MoonCarry.own||root.MoonSide2&&root.MoonSide2.held)return null;
  if(near(p,ST,30)){nearI=logic.nearPart(st,p.x,p.z);if(nearI>=0)return'take';}
  if(near(p,DM,30)&&!st.lit){nearI=logic.nearBeacon(st,p.x,p.z);if(nearI>=0&&!st.seq.includes(nearI))return'on';}return null;}
 function ctx(){mode=pick();return mode?txt[mode]():null;}API.ctx=ctx;
@@ -111,15 +111,15 @@ let hintS=false,hintD=false;
 function loop(){try{const g=G();if(g&&g.player&&API.st){const p=g.player,st=API.st;label();
   if(!hintS&&!st.fixed&&Math.hypot(p.x-ST.x,p.z-ST.z)<22){hintS=true;g.toast&&g.toast(txt.stHint());}
   if(!hintD&&!st.lit&&Math.hypot(p.x-DM.x,p.z-DM.z)<22){hintD=true;g.toast&&g.toast(txt.bcHint());}
-  const C=root.MoonCarry,list=[];if(C&&C.st&&!C.st.cleared)list.push(['rocket',C.RUIN.x,C.RUIN.z]);if(!st.fixed)list.push(['station',ST.x,ST.z]);if(!st.lit)list.push(['dome',DM.x,DM.z]);
+  const C=root.MoonCarry,list=[];if(C&&C.st&&!C.st.cleared)list.push(['rocket',C.RUIN.x,C.RUIN.z]);if(!st.fixed)list.push(['station',ST.x,ST.z]);if(!st.lit)list.push(['dome',DM.x,DM.z]);if(root.MoonSide2&&root.MoonSide2.objectives)for(const o of root.MoonSide2.objectives())list.push(o);
   let best=null,bd=260;for(const q of list){const d=Math.hypot(p.x-q[1],p.z-q[2]);if(d<bd){bd=d;best=q;}}
   const dir=document.querySelector('#destination'),top=dir&&!dir.hidden?dir.getBoundingClientRect().bottom+8:null;
-  if(best&&top&&!document.querySelector('dialog[open]')){pill.textContent='★ '+txt.side(txt['n_'+best[0]](),Math.round(bd));pill.style.top=top+'px';pill.style.display='block';}else pill.style.display="none";}}catch(e){root.__sideErr=String(e.stack||e);}
+  if(best&&top&&!document.querySelector('dialog[open]')){pill.textContent='★ '+txt.side((txt['n_'+best[0]]||(()=>root.MoonSide2.name(best[0])))(),Math.round(bd));pill.style.top=top+'px';pill.style.display='block';}else pill.style.display="none";}}catch(e){root.__sideErr=String(e.stack||e);}
  requestAnimationFrame(loop);}
 requestAnimationFrame(loop);
 setInterval(()=>{if(API.st&&API.st.held>=0)save();},2000);root.addEventListener('pagehide',save);
 // ---- Moon Points: server checkpoints (server decides and pays; the client only reports). start = first visit, then completion.
-const PK='moonkatty-side-pts-v1',SIDE_IDS={rocket:'side_rocket_rubble',station:'side_station_tx',dome:'side_dome_beacons'};
+const PK='moonkatty-side-pts-v1',SIDE_IDS={rocket:'side_rocket_rubble',station:'side_station_tx',dome:'side_dome_beacons',scanner:'side_dome_scanner',power:'side_station_power',crates:'side_hangar_crates'};
 let pts={seen:{},done:{}};try{const o=JSON.parse(localStorage.getItem(PK)||'null');if(o&&typeof o==='object')pts={seen:o.seen||{},done:o.done||{}};}catch(e){}
 const savePts=()=>{try{localStorage.setItem(PK,JSON.stringify(pts));}catch(e){}};
 const wait={};let busy=false;
@@ -132,6 +132,6 @@ async function report(key,start){const id=SIDE_IDS[key],UI=root.MoonGrowthUI;if(
  finally{busy=false;}}
 API.points={ids:SIDE_IDS,state:()=>pts,report};
 setInterval(()=>{try{const g=G(),p=g&&g.player,st=API.st,C=root.MoonCarry;if(!p||!st)return;
- const q=[['rocket',C&&C.RUIN,C&&C.st&&C.st.cleared],['station',ST,st.fixed],['dome',DM,st.lit]];
+ const q=[['rocket',C&&C.RUIN,C&&C.st&&C.st.cleared],['station',ST,st.fixed],['dome',DM,st.lit]];if(root.MoonSide2&&root.MoonSide2.quests)for(const x of root.MoonSide2.quests())q.push(x);
  for(const[k,f,ok]of q){const id=SIDE_IDS[k];if(!f||pts.done[id])continue;if(!pts.seen[id]&&(ok||Math.hypot(p.x-f.x,p.z-f.z)<40)){report(k,true);return;}if(ok&&pts.seen[id]){report(k,false);return;}}}catch(e){}},2500);
 })(typeof globalThis!=='undefined'?globalThis:this);
